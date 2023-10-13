@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+    <HEAD>
+        <meta name="GENERATOR" content="CHM Editor">
+    </HEAD>
+    <BODY>
+        <OBJECT type="text/site properties">
+            <param name="FrameName" value="right">
+            <param name="Font" value="宋体,9,0">
+            <param name="ImageType" value="Book">
+            <param name="Window Styles" value="0x27">
+            <param name="ExWindow Styles" value="0x0">
+        </OBJECT>
+        <UL>
+            <LI> <OBJECT type="text/sitemap">
+                    <param name="Name" value="常见问题">
+                    <param name="ImageNumber" value="1">
+                </OBJECT>
+            </LI>
+            <UL>
+                <LI><OBJECT type="text/sitemap">
+                        <param name="Name" value="【更新日志】">
+                        <param name="Local" value="html/常见问题/【更新日志】.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI><OBJECT type="text/sitemap">
+                        <param name="Name" value="一键安装失败？手动安装教程">
+                        <param name="Local" value="html/常见问题/安装失败？手动安装教程.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+            </UL>
+            <LI> <OBJECT type="text/sitemap">
+                    <param name="Name" value="基本命令">
+                    <param name="ImageNumber" value="1">
+                </OBJECT>
+            </LI>
+            <UL>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="Ver 取插件版本">
+                        <param name="Local" value="html/基本命令/Ver.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetBasePath 取插件路径">
+                        <param name="Local" value="html/基本命令/GetBasePath.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetID 取对象ID">
+                        <param name="Local" value="html/基本命令/GetID.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetLastError 获取插件命令的最后错误">
+                        <param name="Local" value="html/基本命令/GetLastError.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="SetAutoParamArray 设置自动识别对应传入参数">
+                        <param name="Local" value="html/基本命令/SetAutoParamArray.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+            </UL>
+            <LI> <OBJECT type="text/sitemap">
+                    <param name="Name" value="构造命令">
+                    <param name="ImageNumber" value="1">
+                </OBJECT>
+            </LI>
+            <UL>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="Headers 构造协议头">
+                        <param name="Local" value="html/构造命令/Headers.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="Cookies 构造Cookies">
+                        <param name="Local" value="html/构造命令/Cookies.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="Data 构造URL主体">
+                        <param name="Local" value="html/构造命令/Data.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="FormData 构造表单主体">
+                        <param name="Local" value="html/构造命令/FormData.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="JsonData 构造JSON主体">
+                        <param name="Local" value="html/构造命令/JsonData.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+            </UL>
+            <LI> <OBJECT type="text/sitemap">
+                    <param name="Name" value="同步请求">
+                    <param name="ImageNumber" value="1">
+                </OBJECT>
+            </LI>
+            <UL>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_GET 请求指定资源的表示">
+                        <param name="Local" value="html/同步请求/HTTP_GET.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_POST 请求发送数据给服务器">
+                        <param name="Local" value="html/同步请求/HTTP_POST.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_HEAD 请求资源的标头信息">
+                        <param name="Local" value="html/同步请求/HTTP_HEAD.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_OPTIONS 请求网址的允许通信选项">
+                        <param name="Local" value="html/同步请求/HTTP_OPTIONS.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_PATCH 请求对资源进行部分修改">
+                        <param name="Local" value="html/同步请求/HTTP_PATCH.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_PUT 请求创建一个新的资源">
+                        <param name="Local" value="html/同步请求/HTTP_PUT.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_DELETE 请求方法删除指定的资源">
+                        <param name="Local" value="html/同步请求/HTTP_DELETE.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                    <param name="Name" value="HTTP_TRACE 对请求进行信息回环测试">
+                    <param name="Local" value="html/同步请求/HTTP_TRACE.html">
+                    <param name="ImageNumber" value="11">
+                </OBJECT>
+            </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_Request 超文本传输协议">
+                        <param name="Local" value="html/同步请求/HTTP_Request.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+            </UL>
+            <LI> <OBJECT type="text/sitemap">
+                    <param name="Name" value="其他命令">
+                    <param name="ImageNumber" value="1">
+                </OBJECT>
+            </LI>
+            <UL>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetStatus 获取返回状态">
+                        <param name="Local" value="html/其他命令/GetStatus.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetHeaders 获取返回协议头">
+                        <param name="Local" value="html/其他命令/GetHeaders.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetCookies 获取返回Cookies">
+                        <param name="Local" value="html/其他命令/GetCookies.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetHeaderByName 获取指定协议头的值">
+                        <param name="Local" value="html/其他命令/GetHeaderByName.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetCookieByName 获取指定Cookie的值">
+                        <param name="Local" value="html/其他命令/GetCookieByName.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="UpdateCookies 合并更新Cookies">
+                        <param name="Local" value="html/其他命令/UpdateCookies.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="GetJSON 解析JSON取值">
+                        <param name="Local" value="html/其他命令/GetJSON.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="JSON_toObject JSON字符串转字典对象">
+                        <param name="Local" value="html/其他命令/JSON_toObject.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="JSON_toString 字典对象转JSON字符串">
+                        <param name="Local" value="html/其他命令/JSON_toString.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+            </UL>
+        </UL>
+    </BODY>
+</HTML>

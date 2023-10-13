@@ -1,8 +1,12 @@
 Attribute VB_Name = "Sub_Main"
-
+Dim G_Baidu_Tongji_Http As Object
 
 Sub Main()
-    Call test_init
+    Call test_http_request
+    End
+
+    Call test_run_server
+    'Call test_init
     Call test_ver
     Call test_getbasepath
     Call test_getid
@@ -22,10 +26,15 @@ Sub Main()
     Call test_http_delete
     Call test_http_request
     Call test_http_proxy
+    Call test_http_proxy_auth
+    Call test_http_auth_basic
     Call test_http_ret_json
     Call test_http_upload_file
     Call test_bbs_anjian_signin
     Call test_http_ret_not_gzip
+    Call test_get_qq_nick_name
+    Call test_download_qq_avatar
+    Call test_Baidu_Translate
 
     Debug.Print "脚本已经停止运行"
 End Sub

@@ -13,6 +13,7 @@ Public Declare Function IsFileExist Lib "shlwapi.dll" Alias "PathFileExistsA" (B
 Public Const vbIDE As Long = 0
 Public Const vbEXE As Long = 1
 
+Public G_Init As Boolean
 Public G_AutoParam As Boolean
 
 

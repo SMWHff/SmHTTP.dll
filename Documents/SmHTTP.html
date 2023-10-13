@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>按键精灵命令帮助</title>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/gh/SMWHff/SMOS@master/JS/shCore.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/gh/SMWHff/SMOS@master/CSS/SyntaxHighlighter.css">
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/gh/SMWHff/SMOS@master/CSS/help.css">
+    <style>
+    body{font-size:12px; font-family:Verdana,"宋体"}
+    .ts{ background:#fff; margin:0 0 40px 0;}
+    .ts th{ color:#7B797B; background:#DEDFDE; line-height:24px;}
+    .ts td {padding:6px 0;}
+    .name { font-size:16px; font-weight:bold; border-top:1px dashed #9C9A9C; border-bottom:1px dashed #9C9A9C; color:#006939;}
+    .canshu { background:#E7E7EF;}
+    .red{ color:#d60000;}
+    .blue{ color:#0000FF;}
+    .green{ color:#006939;}
+    .fanhui{ border-bottom:1px dashed #9C9A9C;}
+    .lizi{ border-bottom:1px dashed #9C9A9C;}
+    /* Language specific styles */
+    /*
+      comment 为注释代码着色
+      comments 为块注释代码着色
+      string  为字符串文字着色
+      keyword 为关键字着色
+      preprocessor 自定义规则着色
+    */
+    .dp-highlighter .comment, .dp-highlighter .comments { color: darkgreen; background-color: inherit; }
+    .dp-highlighter .string { color: darkgray; background-color: inherit; }
+    .dp-highlighter .keyword { color: #0000FF; font-weight: bold; background-color: inherit; }
+    .dp-highlighter .preprocessor { color: #FF00FF; background-color: inherit; }
+    </style>
+</head>
+<body>	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>模板作者：</th><td class='name'>
+<a name='SMWH'></a><span Style='color:#FF00FF;'>HTML模板----神梦无痕·提供</span>
+</td></tr><tr><th>功能说明：</th><td>
+<span Style='color:#006939;'>本文件通过《神梦命令帮助编辑器》编辑制作完成！</span>
+</td></tr><tr><th>联系方式：</th><td class='canshu'><pre>
+联系QQ：<a href="tencent://message/?Menu=yes&uin=1042207232&Service=300&sigT=45a1e5847943b64c6ff3990f8a9e644d2b31356cb0b4ac6b24663a3c8dd0f8aa12a595b1714f9d45" alt="神梦无痕" title="神梦无痕"><U>1042207232</U></a><br>
+交流Q群：<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=c2a1d4064a19ccc5a1ee4d05b5608e164c9371f4589aab48f73e291f6a1295cd"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="按键易语言TC放单群 584781753" title="按键易语言TC放单群 584781753"></a>
+</td></tr><tr><th>业务范围：</th><td class='fanhui'>
+<span Style='color:#0000FF;'><B>专业定制PC，安卓，苹果，模拟器，办公，Post注册等模拟操作，解放双手，轻松搞定！</B></span>
+</td></tr><tr><th>脚本例子：<br /><span class='red'>(8.x语法)</span>
+</th><td class='lizi'><pre name="code8_SMWH" class="vb" id="code8_SMWH">
+无
+</td></tr></table>	
+
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='Ver'></a>Ver 取插件版本
+</td></tr><tr><th>命令功能：</th><td>
+取插件版本
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，版本号
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_Ver" class="vb" id="code8_Ver">
+Dim ver
+
+' 检查插件版本号
+ver = Plugin.SmHTTP.Ver()
+If ver = "1.0.0.0" Then
+    TracePrint "插件版本与文档一致！"
+Else
+    TracePrint "出错，请检查插件版本：" & ver
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetBasePath'></a>GetBasePath 取插件路径
+</td></tr><tr><th>命令功能：</th><td>
+取插件路径
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，返回插件路径
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetBasePath" class="vb" id="code8_GetBasePath">
+Dim Ret
+
+' 取插件路径
+Ret = Plugin.SmHTTP.GetBasePath()
+TracePrint Ret
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetID'></a>GetID 取对象ID
+</td></tr><tr><th>命令功能：</th><td>
+取对象ID
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，对象ID
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetID" class="vb" id="code8_GetID">
+Dim Ret
+
+' 对象ID
+Ret = Plugin.SmHTTP.GetID()
+TracePrint Ret
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetLastError'></a>GetLastError 获取插件命令的最后错误
+</td></tr><tr><th>命令功能：</th><td>
+获取插件命令的最后错误
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，错误内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetLastError" class="vb" id="code8_GetLastError">
+Dim errMsg
+
+' 获取插件命令的最后错误
+errMsg = Plugin.SmHTTP.GetLastError()
+TracePrint errMsg
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='SetAutoParamArray'></a>SetAutoParamArray 是否开启自动识别参数模式
+</td></tr><tr><th>命令功能：</th><td>
+是否开启自动识别参数模式
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：逻辑型，是否开启
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+数值型，是否成功
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_SetAutoParamArray" class="vb" id="code8_SetAutoParamArray">
+Dim Ret
+
+' 开启自动识别对应传入参数
+Ret = Plugin.SmHTTP.SetAutoParamArray(True)
+TracePrint Ret
+
+' 关闭自动识别对应传入参数
+Ret = Plugin.SmHTTP.SetAutoParamArray(False)
+TracePrint Ret
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='Headers'></a>Headers 构造请求协议头
+</td></tr><tr><th>命令功能：</th><td>
+构造请求协议头
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，协议头键名1
+参数2【必选】：文本型，协议头键值1
+参数3【可选】：文本型，协议头键名2
+参数4【可选】：文本型，协议头键值2
+……
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，请求协议头
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_Headers" class="vb" id="code8_Headers">
+Dim Headers
+
+' 构造请求协议头
+Headers = SmHTTP.Headers( _
+    "Accept", "*/*", _
+    "Accept-Language", "zh-CN,zh;q=0.8", _
+    "User-Agent", "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)" _
+)
+TracePrint Headers
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='Cookies'></a>Cookies 构造请求Cookie
+</td></tr><tr><th>命令功能：</th><td>
+构造请求Cookies
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，Cookie键名1
+参数2【必选】：文本型，Cookie键值1
+参数3【可选】：文本型，Cookie键名2
+参数4【可选】：文本型，Cookie键值2
+……
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，请求Cookies
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_Cookies" class="vb" id="code8_Cookies">
+Dim Cookies
+
+' 构造请求Cookies
+Cookies = SmHTTP.Cookies( _
+    "_ga", "GA1.2.1206281266.1647004488", _
+    "BAIDUID_BFESS", "0F068EE7974C72C13A37B02D9855DD1C:SL=0:NR=10:FG=1", _
+    "ZFY", "O7YgtvLEvTKeDmPLbV8Nbwq3xYhFAOP9m9A:BTtT0AkQ:C" _
+)
+TracePrint Cookies
+</td></tr></table>
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='Data'></a>Data 构造URL主体
+</td></tr><tr><th>命令功能：</th><td>
+构造URL主体
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，参数名1
+参数2【必选】：文本型，参数值1
+参数3【可选】：文本型，参数名2
+参数4【可选】：文本型，参数值2
+……
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，URL主体
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_Data" class="vb" id="code8_Data">
+Dim data
+
+' 构造 URL 主体
+data = SmHTTP.Data( _
+    "username", "SMWH", _
+    "password", "123456" _
+)
+TracePrint data
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='FormData'></a>FormData 构造表单主体
+</td></tr><tr><th>命令功能：</th><td>
+构造表单主体
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，表单名1
+参数2【必选】：文本型，表单值1
+参数3【可选】：文本型，表单名2
+参数4【可选】：文本型，表单值2
+……
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，表单主体
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_FormData" class="vb" id="code8_FormData">
+Dim FormData
+
+' 构造表单主体
+FormData = SmHTTP.FormData( _
+    "username", "SMWH", _
+    "password", "123456" _
+)
+TracePrint FormData
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='JsonData'></a>JsonData 构造JSON主体
+</td></tr><tr><th>命令功能：</th><td>
+构造JSON主体
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，JSON键名1
+参数2【必选】：文本型，JSON键值1
+参数3【可选】：文本型，JSON键名2
+参数4【可选】：文本型，JSON键值2
+……
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，JSON主体
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_JsonData" class="vb" id="code8_JsonData">
+Dim JsonData
+
+' 构造 JSON 主体
+JsonData = SmHTTP.JsonData( _
+    "empty", Empty, _
+    "null", Null, _
+    "int", 123, _
+    "float", 3.14, _
+    "bool", CBool(True), _
+    "str", "神梦无痕""1042207232""", _
+    "array", Array(1, 3.14, CBool(True), Null, "按键精灵") _
+)
+TracePrint JsonData
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetStatus'></a>GetStatus 获取返回状态
+</td></tr><tr><th>命令功能：</th><td><pre>
+HTTP 响应状态码用来表明特定 HTTP 请求是否成功完成。
+
+响应被归为以下五大类：
+1. 信息响应 (100–199)
+2. 成功响应 (200–299)
+3. 重定向消息 (300–399)
+4. 客户端错误响应 (400–499)
+6. 服务端错误响应 (500–599)</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'><pre>
+数值型，Status
+--------------------
+状态码        描述
+--------------------
+200        请求成功
+201        请求成功并创建新资源
+301        永久重定向
+404        资源不存在
+500        服务端错误
+502        服务器网关错误
+--------------------
+更多查看：<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status" target="_blank">HTTP 响应状态码</a></pre>
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetStatus" class="vb" id="code8_GetStatus">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim Status
+
+' 访问百度
+Call SmHTTP.HTTP_GET("https://www.baidu.com/")
+Status = SmHTTP.GetStatus()
+If Status = 200 Then 
+    TracePrint "访问成功！"
+Else
+    MsgBox "访问失败：" & Status, 16 + 4096, "出错！"
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetHeaders'></a>GetHeaders 获取响应协议头
+</td></tr><tr><th>命令功能：</th><td><pre>
+HTTP 协议头（header）允许客户端和服务器通过 HTTP 请求（request）或者响应（response）传递附加信息。
+一个 HTTP 协议头由它的名称（不区分大小写）后跟随一个冒号（:），冒号后跟随它具体的值。
+该值之前的空格会被忽略。</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，响应协议头
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetHeaders" class="vb" id="code8_GetHeaders">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+' 获取响应协议头
+Call SmHTTP.HTTP_HEAD("https://www.baidu.com")
+If SmHTTP.GetStatus() = 200 Then
+    TracePrint SmHTTP.GetHeaders()
+End If
+</td></tr></table>
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetCookies'></a>GetCookies 获取响应Cookies
+</td></tr><tr><th>命令功能：</th><td><pre>
+HTTP Cookie（也叫 Web Cookie 或浏览器 Cookie）是服务器发送到用户浏览器并保存在本地的一小块数据。
+浏览器会存储 cookie 并在下次向同一服务器再发起请求时携带并发送到服务器上。
+通常，它用于告知服务端两个请求是否来自同一浏览器——如保持用户的登录状态。
+Cookie 使基于无状态的 HTTP 协议记录稳定的状态信息成为了可能。</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+无
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，响应Cookies
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetCookies" class="vb" id="code8_GetCookies">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim HTML
+
+' 百度搜索
+HTML = SmHTTP.HTTP_GET("https://ug.baidu.com/mcp/pc/pcsearch")
+
+' 获取响应Cookies
+TracePrint SmHTTP.GetCookies()
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='UpdateCookies'></a>UpdateCookies 合并更新Cookies
+</td></tr><tr><th>命令功能：</th><td>
+将两份 Cookies 合并为一份且不重复。
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，旧Cookies
+参数2【必选】：文本型，新Cookies
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，合并Cookies
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_UpdateCookies" class="vb" id="code8_UpdateCookies">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim oldCookies, HTML, NewCookies
+
+' 构造请求Cookies
+oldCookies = Plugin.SmHTTP.Cookies(_
+    "BAIDUID", "百度ID", _
+    "GUID", "942AD823D836491E82F25996DD6D73EB", _
+    "MMCASM", "FA160C4AD32E4222988E800E71FF6993" _
+)
+TracePrint "旧：" & oldCookies
+
+' 百度搜索
+HTML = SmHTTP.HTTP_GET("https://ug.baidu.com/mcp/pc/pcsearch", oldCookies)
+
+' 获取响应Cookies
+NewCookies = SmHTTP.GetCookies()
+TracePrint "新：" & NewCookies
+
+' 合并更新Cookies
+Cookies = SmHTTP.UpdateCookies(oldCookies, NewCookies)
+TracePrint "合并：" & Cookies
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='JSON_toObject'></a>JSON_toObject JSON字符串转对象
+</td></tr><tr><th>命令功能：</th><td>
+JSON字符串转对象(JSON字符串$)【JSON对象.】
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，sJSON
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+对象型，oJSON
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_JSON_toObject" class="vb" id="code8_JSON_toObject">
+Dim sJSON, oJSON
+
+' 构造 JSON 字符串
+sJSON = Plugin.SmHTTP.JsonData( _
+    "empty", Empty, _
+    "null", Null, _
+    "int", 123, _
+    "float", 3.14, _
+    "bool", CBool(True), _
+    "str", "神梦无痕""1042207232""", _
+    "array", Array(1, 3.14, CBool(True), Null, "按键精灵") _
+)
+
+' 将 JSON 字符串转为字典对象
+Set oJSON = Plugin.SmHTTP.JSON_toObject(CStr(sJSON))
+
+TracePrint oJSON("str")
+TracePrint CLng(oJSON("array")(1))
+TracePrint CDbl(oJSON("array")(2))
+TracePrint CStr(oJSON("array")(3))
+TracePrint TypeName(oJSON("array")(4))
+TracePrint oJSON("array")(5)
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='JSON_toString'></a>JSON_toString JSON对象转字符串
+</td></tr><tr><th>命令功能：</th><td>
+JSON对象转字符串(JSON对象.)【JSON字符串$】
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：对象型，JSON对象
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，JSON字符串
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_JSON_toString" class="vb" id="code8_JSON_toString">
+Dim JSON, oJSON, sJSON
+
+' 构造 JSON 字符串
+JSON = Plugin.SmHTTP.JsonData( _
+    "empty", Empty, _
+    "null", Null, _
+    "int", 123, _
+    "float", 3.14, _
+    "bool", CBool(True), _
+    "str", "神梦无痕""1042207232""", _
+    "array", Array(1, 3.14, CBool(True), Null, "按键精灵") _
+)
+TracePrint JSON
+
+' 将 JSON 字符串转为字典对象
+Set oJSON = Plugin.SmHTTP.JSON_toObject(JSON)
+
+' 修改字典对象中键的值
+oJSON("empty") = "QQ群：624655641"
+
+' 将字典对象转为 JSON 字符串
+sJSON = Plugin.SmHTTP.JSON_toString(oJSON)
+TracePrint sJSON
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='GetJSON'></a>GetJSON 解析JSON取值
+</td></tr><tr><th>命令功能：</th><td>
+解析JSON取值
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，JSON 字符串
+参数2【必选】：文本型，键名
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，返回键值
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_GetJSON" class="vb" id="code8_GetJSON">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim sJSON
+
+' 构造 JSON 字符串
+sJSON = SmHTTP.JsonData( _
+    "empty", Empty, _
+    "null", Null, _
+    "int", 123, _
+    "float", 3.14, _
+    "bool", CBool(True), _
+    "str", "神梦无痕""1042207232""", _
+    "array", Array(1, 3.14, CBool(True), Null, "按键精灵") _
+)
+
+' 获取文本内容
+TracePrint SmHTTP.GetJSON(sJSON, "str")
+
+' 获取数组内的元素
+TracePrint SmHTTP.GetJSON(sJSON, "array[0]")
+TracePrint SmHTTP.GetJSON(sJSON, "array[1]")
+TracePrint CStr(SmHTTP.GetJSON(sJSON, "array[2]"))
+TracePrint TypeName(SmHTTP.GetJSON(sJSON, "array[3]"))
+TracePrint SmHTTP.GetJSON(sJSON, "array[4]")
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_GET'></a>HTTP_GET 请求指定资源的表示
+</td></tr><tr><th>命令功能：</th><td><pre>
+HTTP GET 方法请求指定资源的表示。使用 GET 的请求应该只用于请求数据，而不应该包含数据。
+--------------------
+特点        是否支持
+--------------------
+请求主体        ×
+返回主体        √
+安全　　        √
+幂等　　        √
+缓存　　        √
+表单提交        √
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【可选】：文本型，请求Cookies
+参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
+参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数6【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数7【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数8【可选】：文本型，代理用户名
+参数9【可选】：文本型，代理密码
+参数10【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数11【可选】：文本型，认证账号
+参数12【可选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_GET" class="vb" id="code8_HTTP_GET">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+
+
+' 百度翻译(英译中)
+enStr = "I Love You"
+Ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
+L = InStr(1, Ret, "var s_domain = {", vbTextCompare)
+R = InStr(L, Ret, "};", vbTextCompare)
+s_domain = Mid(Ret, L, R - L + 1)
+sensearch = SmHTTP.GetJSON(s_domain, "ssllist['sensearch.baidu.com']")
+timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
+Ret = SmHTTP.HTTP_GET("http://" & sensearch & "/sensearch/selecttext?cb=jQuery_Fun_" & timestamp & "&q=" & enStr & "&_=" & timestamp)
+If SmHTTP.GetJSON(Ret, "errno") = 0 Then 
+    TracePrint "原文：" & enStr
+    TracePrint "译文：" & SmHTTP.GetJSON(Ret, "data.result")
+Else
+    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+End If
+
+
+
+' 设置代理IP
+RetIP = SmHTTP.HTTP_GET("http://www.bathome.net/s/ip.php", "120.196.186.248:9091")
+If RetIP = "120.196.186.248" Then 
+    TracePrint "通过代理IP访问成功！"
+Else
+    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+End If
+
+
+
+' 网站身份认证
+Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
+If SmHTTP.GetStatus() = 200 Then 
+    TracePrint "通过身份认证"
+Else
+    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+End If 
+
+
+
+' 查询本机外网 IPv4 地址
+IPv4 = SmHTTP.HTTP_GET("https://4.ipw.cn")
+TracePrint IPv4
+
+
+
+' 查询本机外网 IPv6 地址
+IPv6 = SmHTTP.HTTP_GET("https://6.ipw.cn")
+TracePrint IPv6
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_POST'></a>HTTP_POST 请求发送数据给服务器
+</td></tr><tr><th>命令功能：</th><td><pre>
+HTTP POST 方法发送数据给服务器。请求主体的类型由 Content-Type 标头指定。
+PUT 和 POST 方法的区别是，PUT 方法是幂等的：调用一次与连续调用多次效果是相同的（即没有副作用），而连续调用多次相同的 POST 方法可能会有副作用，比如多次提交同一订单。
+--------------------
+特点        是否支持
+--------------------
+请求主体        √
+返回主体        √
+安全　　        ×
+幂等　　        ×
+缓存　　        仅当包含新信息时
+表单提交        √
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【必选】：任意型，请求主体
+参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数4【必选】：文本型，请求Cookies
+参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
+参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数7【必选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数8【必选】：文本型，代理IP，格式为 1.1.1.1:80
+参数9【必选】：文本型，代理用户名
+参数10【必选】：文本型，代理密码
+参数11【必选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数12【必选】：文本型，认证账号
+参数13【必选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_POST" class="vb" id="code8_HTTP_POST">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim Data, Json
+
+' 构造请求体
+Data = Plugin.SmHTTP.Data(_
+    "username", "SMWH", _
+    "password", "123456" _
+)
+
+' 测试POST
+Json = SmHTTP.HTTP_POST("https://httpbin.org/post", Data)
+If SmHTTP.GetStatus() = 200 Then 
+    TracePrint Json
+    TracePrint SmHTTP.GetJSON(Json, "form.username")
+    TracePrint SmHTTP.GetJSON(Json, "form.password")
+    TracePrint SmHTTP.GetJSON(Json, "origin")
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_HEAD'></a>HTTP_HEAD 请求资源的标头信息
+</td></tr><tr><th>命令功能：</th><td>
+HTTP HEAD 方法请求资源的标头信息，并且这些标头与 HTTP GET 方法请求时返回的一致。该请求方法的一个使用场景是在下载一个大文件前先通过 HEAD 请求读取其 Content-Length 标头的值获取文件的大小，而无需实际下载文件，以此可以节约带宽资源。
+<pre>--------------------
+特点        是否支持
+--------------------
+请求主体        ×
+返回主体        ×
+安全　　        √
+幂等　　        √
+缓存　　        √
+表单提交        ×
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【可选】：文本型，请求Cookies
+参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
+参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数6【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数7【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数8【可选】：文本型，代理用户名
+参数9【可选】：文本型，代理密码
+参数10【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数11【可选】：文本型，认证账号
+参数12【可选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+无
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_HEAD" class="vb" id="code8_HTTP_HEAD">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim Headers, sDate, sRet
+
+' 获取网络时间
+Call SmHTTP.HTTP_HEAD("https://www.baidu.com")
+If SmHTTP.GetStatus() = 200 Then 
+    Headers = SmHTTP.GetHeaders()
+    sDate = SmHTTP.GetHeaderByName(Headers, "Date")
+    sRet = DateAdd("h", 8, CDate(Mid(sDate, 5, Len(sDate) - 8)))'转换时间格式
+    TracePrint sRet
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_OPTIONS'></a>HTTP_OPTIONS 请求网址的允许通信选项
+</td></tr><tr><th>命令功能：</th><td>
+HTTP OPTIONS 方法请求给定的 URL 或服务器的允许通信选项。客户端可以用这个方法指定一个 URL，或者用星号（*）来指代整个服务器。
+<pre>--------------------
+特点        是否支持
+--------------------
+请求主体        ×
+返回主体        √
+安全　　        √
+幂等　　        √
+缓存　　        ×
+表单提交        ×
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【可选】：文本型，请求Cookies
+参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
+参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数6【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数7【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数8【可选】：文本型，代理用户名
+参数9【可选】：文本型，代理密码
+参数10【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数11【可选】：文本型，认证账号
+参数12【可选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_OPTIONS" class="vb" id="code8_HTTP_OPTIONS">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim html
+
+' 测试 OPTIONS
+html = SmHTTP.HTTP_OPTIONS("https://www.baidu.com/*")
+If SmHTTP.GetStatus() = 200 Then 
+    ' 输出响应
+    TracePrint html
+    
+    ' 获取服务器支持的方法
+    TracePrint SmHTTP.GetHeaderByName(SmHTTP.GetHeaders(), "Allow")
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_PATCH'></a>HTTP_PATCH 请求对资源进行部分修改
+</td></tr><tr><th>命令功能：</th><td>
+HTTP PATCH 请求方法用于对资源进行部分修改。PATCH 有点类似于 CRUD 中的“更新”概念。PATCH 请求是一组关于如何修改资源的指令，与 PUT 形成对比；后者是一个资源的完整表述。
+<pre>--------------------
+特点        是否支持
+--------------------
+请求主体        √
+返回主体       May
+安全　　        ×
+幂等　　        ×
+缓存　　       仅当包含新信息时
+表单提交        ×
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【必选】：任意型，请求主体
+参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数4【必选】：文本型，请求Cookies
+参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
+参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数7【必选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数8【必选】：文本型，代理IP，格式为 1.1.1.1:80
+参数9【必选】：文本型，代理用户名
+参数10【必选】：文本型，代理密码
+参数11【必选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数12【必选】：文本型，认证账号
+参数13【必选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_PATCH" class="vb" id="code8_HTTP_PATCH">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim JsonData, Json
+
+' 构造请求体
+JsonData = Plugin.SmHTTP.JsonData(_
+    "username", "SMWH", _
+    "password", "123456" _
+)
+
+' 测试 PATCH
+Json = SmHTTP.HTTP_PATCH("https://httpbin.org/patch", JsonData)
+If SmHTTP.GetStatus() = 200 Then 
+    TracePrint Json
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_PUT'></a>HTTP_PUT 请求创建一个新的资源
+</td></tr><tr><th>命令功能：</th><td>
+HTTP PUT 请求方法创建一个新的资源或用请求的有效载荷替换目标资源的表示。PUT 与 POST 方法的区别是，PUT 方法是幂等的：调用一次与连续调用多次效果是相同的（即没有副作用），而连续调用多次相同的 POST 方法可能会有副作用，比如多次提交同一订单。
+<pre>--------------------
+特点        是否支持
+--------------------
+请求主体        √
+返回主体       May
+安全　　        ×
+幂等　　        √
+缓存　　        ×
+表单提交        ×
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【必选】：任意型，请求主体
+参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数4【必选】：文本型，请求Cookies
+参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
+参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数7【必选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数8【必选】：文本型，代理IP，格式为 1.1.1.1:80
+参数9【必选】：文本型，代理用户名
+参数10【必选】：文本型，代理密码
+参数11【必选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数12【必选】：文本型，认证账号
+参数13【必选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_PUT" class="vb" id="code8_HTTP_PUT">
+Dim Data, Headers, Ret, Status
+
+Data = "<p>新文件</p>"
+Headers = "Content-type: text/html"
+Ret = Plugin.SmHTTP.HTTP_PUT("http://httpbin.org/put", Data, Headers, Cookies, Charset, 0, True, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass)
+Status = Plugin.SmHTTP.GetStatus()
+If Status = 201 Then
+    TracePrint "资源创建成功"
+ElseIf Status = 204 Then
+    TracePrint "资源更新成功，无返回值"
+ElseIf Status = 200 Then
+    TracePrint "资源更新成功并返回内容"
+    TracePrint Ret
+Else
+    TracePrint "请求失败"
+    TracePrint Ret
+End If
+</td></tr></table>	
+	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_DELETE'></a>HTTP_DELETE 请求方法删除指定的资源
+</td></tr><tr><th>命令功能：</th><td><pre>
+HTTP DELETE 请求方法删除指定的资源。
+--------------------
+特点        是否支持
+--------------------
+请求主体       May 
+返回主体       May
+安全　　        ×
+幂等　　        √
+缓存　　        ×
+表单提交        ×
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【必选】：任意型，请求主体
+参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数4【必选】：文本型，请求Cookies
+参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
+参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数7【必选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数8【必选】：文本型，代理IP，格式为 1.1.1.1:80
+参数9【必选】：文本型，代理用户名
+参数10【必选】：文本型，代理密码
+参数11【必选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数12【必选】：文本型，认证账号
+参数13【必选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_DELETE" class="vb" id="code8_HTTP_DELETE">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim FormData, Json
+
+' 构造表单主体
+FormData = Plugin.SmHTTP.FormData(_
+    "UserName", "SMWH", _
+    "PassWord", "123456" _
+)
+
+' 测试 DELETE
+Json = SmHTTP.HTTP_DELETE("https://httpbin.org/delete", FormData)
+If SmHTTP.GetStatus() = 200 Then 
+    TracePrint Json
+End If
+</td></tr></table>	
+
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_TRACE'></a>HTTP_TRACE 对请求进行信息回环测试
+</td></tr><tr><th>命令功能：</th><td>
+HTTP TRACE 方法沿着通往目标资源的路径进行信息回环测试，提供一个有用的调试机制。请求的最终接收者应将收到的信息（不包括下面描述的一些字段）作为 200（OK）响应的信息主体反映给客户端，其 Content-Type 为 message/http。最终接收者是源服务器或第一个在请求中收到 Max-Forwards 值为 0 的服务器。
+<pre>--------------------
+特点        是否支持
+--------------------
+请求主体        ×
+返回主体        ×
+安全　　        √
+幂等　　        √
+缓存　　        ×
+表单提交        ×
+--------------------</pre>
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【可选】：文本型，请求Cookies
+参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
+参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数6【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数7【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数8【可选】：文本型，代理用户名
+参数9【可选】：文本型，代理密码
+参数10【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数11【可选】：文本型，认证账号
+参数12【可选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_TRACE" class="vb" id="code8_HTTP_TRACE">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+' 开启自动识别对应传入参数
+Call SmHTTP.SetAutoParamArray(True)
+
+Dim JsonData, Res
+
+' 构造请求体
+JsonData = Plugin.SmHTTP.JsonData(_
+    "username", "SMWH", _
+    "password", "123456" _
+)
+
+' 测试 TRACE
+Res = SmHTTP.HTTP_TRACE("https://www.baidu.com/trace", JsonData)
+If SmHTTP.GetStatus() = 200 Then 
+    TracePrint Res
+End If
+</td></tr></table>	
+	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_Request'></a>HTTP_Request 超文本传输协议
+</td></tr><tr><th>命令功能：</th><td>
+超文本传输协议 （HTTP） 是用于传输超媒体文档（如 HTML）的应用层协议。它专为Web浏览器和Web服务器之间的通信而设计，但也可用于其他目的。HTTP遵循经典的客户端-服务器模型，客户端打开连接以发出请求，然后等待直到收到响应。HTTP是一种无状态协议，这意味着服务器不会在两个请求之间保留任何数据（状态）。
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【可选】：文本型，访问方法，默认 "GET"；POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
+参数3【可选】：任意型，请求主体
+参数4【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数5【可选】：文本型，请求Cookies
+参数6【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
+参数7【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数8【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数9【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数10【可选】：文本型，代理用户名
+参数11【可选】：文本型，代理密码
+参数12【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数13【可选】：文本型，认证账号
+参数14【可选】：文本型，认证密码
+参数15【可选】：文本型，等待方式，默认 "同步"；异步
+参数16【可选】：文本型，自动补全协议头，默认 "开启补全"；关闭补全
+参数17【可选】：文本型，合并更新Cookies，默认 "开启合并"；关闭合并
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_Request" class="vb" id="code8_HTTP_Request">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim user, pass, Data, Ret, Cookies, Headers
+
+' 开启自动识别参数模式
+Call SmHTTP.SetAutoParamArray(True)
+
+user = "你的按键精灵论坛账号"
+pass = "你的按键精灵论坛密码"
+
+
+' 登录论坛账号
+Data = SmHTTP.Data( _
+    "username", user, _
+    "password", pass, _
+    "question", "0", _
+    "answer", "", _
+    "templateid", "0", _
+    "login", "", _
+    "expires", "43200" _
+)
+Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", Data)
+' 判断是否登录成功
+If InStr(Ret, user) = 0 Then  
+    MsgBox "出错，登录失败！", 16 + 4096, "报错！"
+    EndScript
+End If
+Cookies = SmHTTP.GetCookies()
+
+
+' 打卡签到
+Data = SmHTTP.Data( _
+    "signmessage", "签个到，每天心情都是美美哒~~按键精灵祝大家新年好运连连！！" _
+)
+Headers = SmHTTP.Headers( _
+    "Referer", "http://bbs.anjian.com/" _
+)
+Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", Data, Headers, Cookies)
+If InStr(Ret, "恭喜您获取本日签到奖励") Or InStr(Ret, "你今天已经签到过了") Then ' 判断是否签到成功
+    TracePrint "恭喜，您已完成签到任务！"
+End If
+</td></tr></table>	
+	
+	
+
+
+<script type="text/javascript">
+    dp.sh.Brushes.Vb = function()
+    { 
+        var keywords = 'vbBlack vbRed vbGreen vbYellow vbBlue vbMagenta vbCyan vbWhite vbBinaryCompare vbTextCompare vbSunday vbMonday vbTuesday vbWednesday ' + 
+        'vbThursday vbFriday vbSaturday vbUseSystemDayOfWeek vbFirstJan1 vbFirstFourDays vbFirstFullWeek vbGeneralDate vbLongDate vbShortDate vbLongTime ' + 
+        'vbShortTime vbObjectError vbOKOnly vbOKCancel vbAbortRetryIgnore vbYesNoCancel vbYesNo vbRetryCancel vbCritical vbQuestion vbExclamation vbInformation ' + 
+        'vbDefaultButton1 vbDefaultButton2 vbDefaultButton3 vbDefaultButton4 vbApplicationModal vbSystemModal vbOK vbCancel vbAbort vbRetry vbIgnore vbYes vbNo '+
+        'vbCr vbCrLf vbFormFeed vbLf vbNewLine vbNullChar vbNullString vbTab vbVerticalTab vbUseDefault vbTrue vbFalse vbEmpty vbNull vbInteger vbLong vbSingle '+
+        'vbDouble vbCurrency vbDate vbString vbObject vbError vbBoolean vbVariant vbDataObject vbDecimal vbByte vbArray WScript '+
+        'And As Boolean ByRef Byte ByVal Call Case Const Currency Debug Dim Do Double Each Else ElseIf Empty End EndIf Enum Eqv Event Exit Explicit False For '+ 
+        'Function Get Goto If Imp Implements In Integer Is Let Like Long Loop LSet Me Mod New Next Not Nothing Null On Option Optional Or ParamArray Preserve '+
+        'Private Property Public RaiseEvent ReDim Rem Resume RSet Select Set Shared Single Static Stop Sub Then To True Type TypeOf Until Variant Wend While With '+
+        'Xor IfColor Import UserVar SetSimMode Global EndScript ExitScript RestartScript Delay VBSBegin VBSEnd Lib LibE Alias Declare Plugin ' +
+        'Abs Array Asc Atn CBool CByte CCur CDate CDbl CInt CLng CSng CStr Chr Cos CreateObject Date DateAdd DateDiff DatePart DateSerial DateValue Day Escape '+
+        'Eval Exp Filter Fix FormatCurrency FormatDateTime FormatNumber FormatPercent GetLocale GetObject GetRef Hex Hour InStr InStrRev InputBox Int IsArray '+
+        'IsDate IsEmpty IsNull IsNumeric IsObject Join LBound LCase LTrim Left Len LoadPicture Log Mid Minute Month MonthName MsgBox Now Oct Randomize RGB RTrim '+
+        'Replace Right Rnd Round ScriptEngine ScriptEngineBuildVersion ScriptEngineMajorVersion ScriptEngineMinorVersion Second SetLocale Sgn Sin Space Split Sqr '+
+        'StrComp StrReverse String Tan Time TimeSerial TimeValue Timer Trim TypeName UBound UCase Unescape VarType Weekday WeekdayName Year KeyGroup KeyPress '+
+        'KeyPressH KeyPressS KeyDown KeyDownH KeyDownS KeyUp KeyUpH KeyUpS WaitKey GetLastKey LeftClick LeftClickH LeftClickS LeftDoubleClick LeftDoubleClickH '+
+        'LeftDoubleClickS LeftDown LeftDownH LeftDownS LeftUp LeftUpH LeftUpS RightClick RightClickH RightClickS RightDown RightDownH RightDownS RightUp '+
+        'RightUpH RightUpS MiddleClick MiddleClickH MiddleClickS MoveTo MoveToH MoveToS MoveR MoveRH MoveRS MouseWheel SaveMousePos RestoreMousePos LockMouse '+
+        'UnlockMouse WaitClick GetLastClick GetCursorPos GetCursorShape GetPixelColor FindColor FindColorEx FindCenterColor FindPic GetMacroID SayString '+
+        'MessageBox RunApp PutAttachment TracePrint LogStart LogStop BeginThread StopThread PauseThread ContinueThread GetThreadID SetEnv GetEnv Beep Execute '+
+        'GetExeDir GetScreenResolution ExecuteGlobal QMLibrary QUIMethodObj '+
+        'Access Bkgnd BkgndColor Color Console Encrypt File GetSysInfo Media Memory Msg MySql Net Office Oracle Pic SQLServer Sys Web Window '+
+        'sm SMWH SMWH_ff SmIE SmADO SmVM SmWeb SmReg SmOCR SmAssert SmPrint SmHTTP SGuoBrowser TURING';
+        this.regexList = [
+            { regex: new RegExp('(//|\').*$', 'gm'), css: 'comment' }, 
+            { regex: new RegExp('/\\*([\\s\\S]*?)\\*/', 'gm'), css: 'comments' }, 
+            { regex: dp.sh.RegexLib.DoubleQuotedString, css: 'string' }, 
+            { regex: new RegExp(this.GetKeywords('dm'), 'gm'), css: 'preprocessor' }, 
+            { regex: new RegExp(this.GetKeywords(keywords), 'gm'), css: 'keyword'}
+        ]; 
+        this.CssClass = 'dp-vb'; 
+    }
+    dp.sh.Brushes.Vb.prototype = new dp.sh.Highlighter(); dp.sh.Brushes.Vb.Aliases = ['vb', 'vb.net'];
+    dp.SyntaxHighlighter.HighlightAll('code8_Ver',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetBasePath',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetID',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetLastError',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_SetAutoParamArray',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_Headers',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_Cookies',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_Data',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_FormData',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_JsonData',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetStatus',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetHeaders',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetCookies',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetHeaderByName',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetCookieByName',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_UpdateCookies',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_JSON_toObject',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_JSON_toString',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_GetJSON',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_GET',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_POST',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_HEAD',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_OPTIONS',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_PATCH',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_PUT',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_DELETE',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_TRACE',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_Request',true,true,false);
+</script>
+</body>
+</html>	
+

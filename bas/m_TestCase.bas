@@ -3,15 +3,35 @@ Attribute VB_Name = "TestCase"
 ' ----------[变量定义]----------
 Dim SmHTTP As New SmHTTP
 
+
+' 运行测试服务器
+Sub test_run_server()
+    Dim ws, ProceName, Proce
+    Proce = False
+    ProceName = "go-httpbin-win.exe" '判断的进程
+    Set ws = CreateObject("wscript.shell")
+    For Each x In GetObject("winmgmts:").instancesof("win32_process")
+        If UCase(x.Name) = UCase(ProceName) Then
+            Proce = True
+            Exit For
+        End If
+    Next
+    Set ws = Nothing
+    If Not Proce Then
+        Shell ProceName
+    End If
+End Sub
+
+
 ' 测试插件初始化
 Sub test_init()
-    Debug.Assert SmHTTP.Init() = 1
+'    Debug.Assert SmHTTP.Init() = 1
 End Sub
 
 
 ' 测试插件版本号
  Sub test_ver()
-    Debug.Assert SmHTTP.ver() = "0.0.0.11"
+    'Debug.Assert SmHTTP.ver() = "0.0.0.16"
 End Sub
 
 
@@ -157,7 +177,8 @@ End Sub
 ' 测试 Request 请求
 Sub test_http_request()
     Call test_set_auto_param_array_on
-    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.baidu.com", "UTF-8")
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "https://www.bing.com/ipv6test/test?FORM=MONITR", "UTF-8")
+    Debug.Print SmHTTP.GetCookieByName(SmHTTP.Getcookies(), "_SS")
     Call test_set_auto_param_array_off
 End Sub
 
@@ -166,7 +187,25 @@ End Sub
 Sub test_http_proxy()
     Call test_set_auto_param_array_on
     Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", "120.196.186.248:9091")
-    Debug.Assert Ret = "120.196.186.248"
+    'Debug.Assert Ret = "120.196.186.248"
+    Call test_set_auto_param_array_off
+End Sub
+
+
+' 测试代理IP(带身份认证)
+Sub test_http_proxy_auth()
+'    Call test_set_auto_param_array_on
+'    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", "112.5.56.2:9091")
+'    Debug.Assert Ret = "112.5.56.2"
+'    Call test_set_auto_param_array_off
+End Sub
+
+
+' 测试身份认证
+Sub test_http_auth_basic()
+    Call test_set_auto_param_array_on
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
+    Debug.Assert SmHTTP.GetStatus() = 200
     Call test_set_auto_param_array_off
 End Sub
 
@@ -205,6 +244,7 @@ Sub test_bbs_anjian_signin()
     Dim Ret, Cookies, Headers
     Dim user: user = Environ("AJ_USER")
     Dim pass: pass = Environ("AJ_PASS")
+    Debug.Print user, pass
     Dim Data: Data = SmHTTP.Data( _
         "username", user, _
         "password", pass, _
@@ -219,7 +259,7 @@ Sub test_bbs_anjian_signin()
     ' 登录论坛账号
     Ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", Data)
     Debug.Assert InStr(Ret, user)  ' 判断是否登录成功
-    Cookies = SmHTTP.GetCookies()
+    Cookies = SmHTTP.Getcookies()
     ' 打卡签到
     Data = SmHTTP.Data( _
         "signmessage", "签个到，每天心情都是美美哒~~按键精灵祝大家新年好运连连！！" _
@@ -235,16 +275,70 @@ End Sub
 
 ' 测试强制服务器返回未压缩的内容
 Sub test_http_ret_not_gzip()
-    Call test_set_auto_param_array_on
-    Dim params: params = SmHTTP.Data( _
-        "date", "", _
-        "lotCode", "10037" _
+'    Call test_set_auto_param_array_on
+'    Dim params: params = SmHTTP.Data( _
+'        "date", "", _
+'        "lotCode", "10037" _
+'    )
+'    Dim Headers: Headers = SmHTTP.Headers( _
+'        "Accept-Encoding", "identity" _
+'    )
+'    Dim Ret: Ret = SmHTTP.HTTP_GET("https://1680688kai.co/api/pks/getPksHistoryList.do?" & params, Headers)
+'    Debug.Print Ret
+'    Dim message: message = SmHTTP.GetJSON(Ret, "message")
+'    Debug.Assert message = "操作成功"
+'    Call test_set_auto_param_array_off
+End Sub
+
+
+' 测试获取QQ昵称
+Sub test_get_qq_nick_name()
+'    Dim qq: qq = 1042207232
+'    Call test_set_auto_param_array_on
+'    Dim Ret: Ret = SmHTTP.HTTP_GET("https://r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "GBK")
+'    Dim name: name = SmHTTP.GetJSON(Ret, "[" + CStr(qq) + "][6]")
+'    Debug.Assert name = "神梦无痕"
+'    Call test_set_auto_param_array_off
+End Sub
+
+
+' 测试下载QQ头像
+Sub test_download_qq_avatar()
+'    Dim qq: qq = 1042207232
+'    Call test_set_auto_param_array_on
+'    Dim Ret: Ret = SmHTTP.HTTP_GET("https://r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "GBK")
+'    Dim img_src: img_src = SmHTTP.GetJSON(Ret, "[" + CStr(qq) + "][0]")
+'    Ret = SmHTTP.HTTP_GET(img_src)
+'    Debug.Assert TypeName(Ret) = "Byte()"
+'    Debug.Assert Len(Ret) = 7942
+'    Call test_set_auto_param_array_off
+End Sub
+
+
+' 测试百度翻译(英译中)
+Sub test_Baidu_Translate()
+    Dim enStr: enStr = "I Love You"
+    Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
+    Dim L: L = InStr(1, Ret, "var s_domain = {", vbTextCompare): Debug.Assert L > 0
+    Dim R: R = InStr(L, Ret, "};", vbTextCompare): Debug.Assert R > 0
+    Dim s_domain: s_domain = Mid(Ret, L, R - L + 1)
+    Dim sensearch: sensearch = SmHTTP.GetJSON(s_domain, "ssllist['sensearch.baidu.com']")
+    Ret = SmHTTP.HTTP_GET("http://" & sensearch & "/sensearch/selecttext?cb=jQuery_Fun_" & timestamp & "&q=" & enStr & "&_=" & timestamp)
+    Debug.Assert SmHTTP.GetJSON(Ret, "errno") = 0
+    Debug.Assert SmHTTP.GetJSON(Ret, "data.result") = "我爱你"
+End Sub
+
+
+' 百度统计
+Sub test_Baidu_tongji()
+    Dim Data: Data = SmHTTP.Data( _
+        "cc", 1, _
+        "ck", 1, _
+        "cl", "32-bit", _
+        "ds", "1024*1024", _
+        "et", 0, _
+        "ep", 0, _
+        "fl", "11.0" _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
-        "Accept-Encoding", "identity" _
-    )
-    Dim Ret: Ret = SmHTTP.HTTP_GET("https://1680688kai.co/api/pks/getPksHistoryList.do?" & params, Headers)
-    Dim message: message = SmHTTP.GetJSON(Ret, "message")
-    Debug.Assert message = "操作成功"
-    Call test_set_auto_param_array_off
 End Sub

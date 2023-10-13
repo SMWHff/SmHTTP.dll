@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>HTTP_PATCH</title>
+    <script type="text/javascript" src="../../JS/shCore.js" charset="gbk"></script>
+    <link rel="stylesheet" type="text/css" href="../../CSS/SyntaxHighlighter.css">
+    <link rel="stylesheet" type="text/css" href="../../CSS/help.css">
+    <style>
+    body{font-size:12px; font-family:Verdana,"宋体"}
+    .ts{ background:#fff; margin:0 0 40px 0;}
+    .ts th{ color:#7B797B; background:#DEDFDE; line-height:24px;}
+    .ts td {padding:6px 0;}
+    .name { font-size:16px; font-weight:bold; border-top:1px dashed #9C9A9C; border-bottom:1px dashed #9C9A9C; color:#006939;}
+    .canshu { background:#E7E7EF;}
+    .red{ color:#d60000;}
+    .blue{ color:#0000FF;}
+    .green{ color:#006939;}
+    .fanhui{ border-bottom:1px dashed #9C9A9C;}
+    .lizi{ border-bottom:1px dashed #9C9A9C;}
+    /* Language specific styles */
+    /*
+      comment 为注释代码着色
+      comments 为块注释代码着色
+      string  为字符串文字着色
+      keyword 为关键字着色
+      preprocessor 自定义规则着色
+    */
+    .dp-highlighter .comment, .dp-highlighter .comments { color: darkgreen; background-color: inherit; }
+    .dp-highlighter .string { color: darkgray; background-color: inherit; }
+    .dp-highlighter .keyword { color: #0000FF; font-weight: bold; background-color: inherit; }
+    .dp-highlighter .preprocessor { color: #FF00FF; background-color: inherit; }
+    </style>
+</head>
+<body>	
+
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_Request'></a>HTTP_Request 超文本传输协议
+</td></tr><tr><th>命令功能：</th><td>
+超文本传输协议 （HTTP） 是用于传输超媒体文档（如 HTML）的应用层协议。它专为Web浏览器和Web服务器之间的通信而设计，但也可用于其他目的。HTTP遵循经典的客户端-服务器模型，客户端打开连接以发出请求，然后等待直到收到响应。HTTP是一种无状态协议，这意味着服务器不会在两个请求之间保留任何数据（状态）。
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，网址
+参数2【可选】：文本型，访问方法，默认 "GET"；POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
+参数3【可选】：任意型，请求主体
+参数4【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数5【可选】：文本型，请求Cookies
+参数6【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
+参数7【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数8【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数9【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数10【可选】：文本型，代理用户名
+参数11【可选】：文本型，代理密码
+参数12【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数13【可选】：文本型，认证账号
+参数14【可选】：文本型，认证密码
+参数15【可选】：文本型，等待方式，默认 "同步"；异步
+参数16【可选】：文本型，自动补全协议头，默认 "开启补全"；关闭补全
+参数17【可选】：文本型，合并更新Cookies，默认 "开启合并"；关闭合并
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，响应内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_Request" class="vb" id="code8_HTTP_Request">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim user, pass, Data, Ret, Cookies, Headers
+
+' 开启自动识别参数模式
+Call SmHTTP.SetAutoParamArray(True)
+
+user = "你的按键精灵论坛账号"
+pass = "你的按键精灵论坛密码"
+
+
+' 登录论坛账号
+Data = SmHTTP.Data( _
+    "username", user, _
+    "password", pass, _
+    "question", "0", _
+    "answer", "", _
+    "templateid", "0", _
+    "login", "", _
+    "expires", "43200" _
+)
+Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", Data)
+' 判断是否登录成功
+If InStr(Ret, user) = 0 Then  
+    MsgBox "出错，登录失败！", 16 + 4096, "报错！"
+    EndScript
+End If
+Cookies = SmHTTP.GetCookies()
+
+
+' 打卡签到
+Data = SmHTTP.Data( _
+    "signmessage", "签个到，每天心情都是美美哒~~按键精灵祝大家新年好运连连！！" _
+)
+Headers = SmHTTP.Headers( _
+    "Referer", "http://bbs.anjian.com/" _
+)
+Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", Data, Headers, Cookies)
+If InStr(Ret, "恭喜您获取本日签到奖励") Or InStr(Ret, "你今天已经签到过了") Then ' 判断是否签到成功
+    TracePrint "恭喜，您已完成签到任务！"
+End If
+</td></tr></table>	
+	
+	
+
+
+<script type="text/javascript">
+    dp.sh.Brushes.Vb = function()
+    { 
+        var keywords = 'vbBlack vbRed vbGreen vbYellow vbBlue vbMagenta vbCyan vbWhite vbBinaryCompare vbTextCompare vbSunday vbMonday vbTuesday vbWednesday ' + 
+        'vbThursday vbFriday vbSaturday vbUseSystemDayOfWeek vbFirstJan1 vbFirstFourDays vbFirstFullWeek vbGeneralDate vbLongDate vbShortDate vbLongTime ' + 
+        'vbShortTime vbObjectError vbOKOnly vbOKCancel vbAbortRetryIgnore vbYesNoCancel vbYesNo vbRetryCancel vbCritical vbQuestion vbExclamation vbInformation ' + 
+        'vbDefaultButton1 vbDefaultButton2 vbDefaultButton3 vbDefaultButton4 vbApplicationModal vbSystemModal vbOK vbCancel vbAbort vbRetry vbIgnore vbYes vbNo '+
+        'vbCr vbCrLf vbFormFeed vbLf vbNewLine vbNullChar vbNullString vbTab vbVerticalTab vbUseDefault vbTrue vbFalse vbEmpty vbNull vbInteger vbLong vbSingle '+
+        'vbDouble vbCurrency vbDate vbString vbObject vbError vbBoolean vbVariant vbDataObject vbDecimal vbByte vbArray WScript '+
+        'And As Boolean ByRef Byte ByVal Call Case Const Currency Debug Dim Do Double Each Else ElseIf Empty End EndIf Enum Eqv Event Exit Explicit False For '+ 
+        'Function Get Goto If Imp Implements In Integer Is Let Like Long Loop LSet Me Mod New Next Not Nothing Null On Option Optional Or ParamArray Preserve '+
+        'Private Property Public RaiseEvent ReDim Rem Resume RSet Select Set Shared Single Static Stop Sub Then To True Type TypeOf Until Variant Wend While With '+
+        'Xor IfColor Import UserVar SetSimMode Global EndScript ExitScript RestartScript Delay VBSBegin VBSEnd Lib LibE Alias Declare Plugin ' +
+        'Abs Array Asc Atn CBool CByte CCur CDate CDbl CInt CLng CSng CStr Chr Cos CreateObject Date DateAdd DateDiff DatePart DateSerial DateValue Day Escape '+
+        'Eval Exp Filter Fix FormatCurrency FormatDateTime FormatNumber FormatPercent GetLocale GetObject GetRef Hex Hour InStr InStrRev InputBox Int IsArray '+
+        'IsDate IsEmpty IsNull IsNumeric IsObject Join LBound LCase LTrim Left Len LoadPicture Log Mid Minute Month MonthName MsgBox Now Oct Randomize RGB RTrim '+
+        'Replace Right Rnd Round ScriptEngine ScriptEngineBuildVersion ScriptEngineMajorVersion ScriptEngineMinorVersion Second SetLocale Sgn Sin Space Split Sqr '+
+        'StrComp StrReverse String Tan Time TimeSerial TimeValue Timer Trim TypeName UBound UCase Unescape VarType Weekday WeekdayName Year KeyGroup KeyPress '+
+        'KeyPressH KeyPressS KeyDown KeyDownH KeyDownS KeyUp KeyUpH KeyUpS WaitKey GetLastKey LeftClick LeftClickH LeftClickS LeftDoubleClick LeftDoubleClickH '+
+        'LeftDoubleClickS LeftDown LeftDownH LeftDownS LeftUp LeftUpH LeftUpS RightClick RightClickH RightClickS RightDown RightDownH RightDownS RightUp '+
+        'RightUpH RightUpS MiddleClick MiddleClickH MiddleClickS MoveTo MoveToH MoveToS MoveR MoveRH MoveRS MouseWheel SaveMousePos RestoreMousePos LockMouse '+
+        'UnlockMouse WaitClick GetLastClick GetCursorPos GetCursorShape GetPixelColor FindColor FindColorEx FindCenterColor FindPic GetMacroID SayString '+
+        'MessageBox RunApp PutAttachment TracePrint LogStart LogStop BeginThread StopThread PauseThread ContinueThread GetThreadID SetEnv GetEnv Beep Execute '+
+        'GetExeDir GetScreenResolution ExecuteGlobal QMLibrary QUIMethodObj '+
+        'Access Bkgnd BkgndColor Color Console Encrypt File GetSysInfo Media Memory Msg MySql Net Office Oracle Pic SQLServer Sys Web Window '+
+        'sm SMWH SMWH_ff SmIE SmADO SmVM SmWeb SmReg SmOCR SGuoBrowser TURING';
+        this.regexList = [
+            { regex: new RegExp('(//|\').*$', 'gm'), css: 'comment' }, 
+            { regex: new RegExp('/\\*([\\s\\S]*?)\\*/', 'gm'), css: 'comments' }, 
+            { regex: dp.sh.RegexLib.DoubleQuotedString, css: 'string' }, 
+            { regex: new RegExp(this.GetKeywords('dm'), 'gm'), css: 'preprocessor' }, 
+            { regex: new RegExp(this.GetKeywords(keywords), 'gm'), css: 'keyword'}
+        ]; 
+        this.CssClass = 'dp-vb'; 
+    }
+    dp.sh.Brushes.Vb.prototype = new dp.sh.Highlighter(); dp.sh.Brushes.Vb.Aliases = ['vb', 'vb.net'];
+    dp.SyntaxHighlighter.ClipboardSwf = "http://www.vrbrothers.com/cn/qmacro/qmdn/htmls/zh_chs/qm/scripts/clipboard.swf";
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_Request',true,true,false);
+
+</script>
+</body>
+</html>	
+

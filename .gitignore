@@ -1,0 +1,49 @@
+##ignore this file##
+qmc/
+dump/
+qtemp/
+script_backup/
+Releases/
+lib/命令帮助/
+QMScript/自动备份/
+*.chm
+
+.vscode
+.classpath
+.project
+.settings
+.idea
+ ##filter databfile、sln file##
+*.mdb
+*.ldb
+*.sln
+# compression file
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.via
+*.tmp
+*.err
+*.log
+*.iml
+*.bak
+*.ex~
+# OS generated files #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+.factorypath
+ShieldModule.dat
+/.mvn/
+/mvnw.cmd
+/mvnw

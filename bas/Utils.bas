@@ -1,8 +1,8 @@
 Attribute VB_Name = "Utils"
 Option Explicit
 Private Declare Function SafeArrayGetDim Lib "oleaut32.dll" (ByRef saArray() As Any) As Long 'API判断数组为空或没有初始化
-Private Declare Sub CopyMemory Lib "KERNEL32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
-
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Private Declare Function MymachineC Lib "kernel32" Alias "GetVolumeInformationA" (ByVal lpRootPathName As String, ByVal lpVolumeNameBuffer As String, ByVal nVolumeNameSize As Long, lpVolumeSerialNumber As Long, lpMaximumComponentLength As Long, lpFileSystemFlags As Long, ByVal lpFileSystemNameBuffer As String, ByVal nFileSystemNameSize As Long) As Long
 
 
 ' 不定数量参数正则匹配（传入参数，参数类型，匹配模式，保存参数, 返回匹配结果）
@@ -437,7 +437,7 @@ Function T_GetNetTime() As String
     Dim IPArr()
     
     On Error Resume Next
-    IPArr = Array("223.5.5.5", "223.6.6.6", "114.55.27.46")
+    IPArr = Array("223.5.5.5", "223.6.6.6", "119.29.29.98", "114.55.27.46")
     
     Set http = CreateObject("WinHttp.WinHttpRequest.5.1")
     http.SetTimeouts 100, 100, 100, 100
@@ -465,7 +465,7 @@ Public Function Fun_GetJSON(ByVal JSONStr As String, ByVal key As String) As Var
     Dim temp    As String
     Dim Ret     As Variant
 
-    On Error Resume Next
+    'On Error Resume Next
     L1 = InStr(JSONStr, "{"): L2 = InStrRev(JSONStr, "}")
     If L1 > 0 And L2 > L1 Then
         sJSON = Mid(JSONStr, L1, L2 - L1 + 1)
@@ -490,4 +490,82 @@ Public Function Fun_GetJSON(ByVal JSONStr As String, ByVal key As String) As Var
         Set sc = Nothing
     End If
     Fun_GetJSON = Ret
+End Function
+
+
+' 计算文件的 MD5
+Public Function Fun_MD5_File(ByVal file_name As String) As String
+    Dim wi          As Object
+    Dim file_hash   As Object
+    Dim hash_value  As String
+    Dim i           As Long
+    
+    Set wi = CreateObject("WindowsInstaller.Installer")
+    Set file_hash = wi.FileHash(file_name, 0)
+    hash_value = ""
+    For i = 1 To file_hash.FieldCount
+        hash_value = hash_value & BigEndianHex(file_hash.IntegerData(i))
+    Next
+    Fun_MD5_File = hash_value
+    Set file_hash = Nothing
+    Set wi = Nothing
+End Function
+Private Function BigEndianHex(ByVal iInt As Long) As String
+    Dim Result  As String
+    Dim b1      As Long
+    Dim b2      As Long
+    Dim b3      As Long
+    Dim b4      As Long
+    
+    Result = Hex(iInt)
+    b1 = Mid(Result, 7, 2)
+    b2 = Mid(Result, 5, 2)
+    b3 = Mid(Result, 3, 2)
+    b4 = Mid(Result, 1, 2)
+    BigEndianHex = b1 & b2 & b3 & b4
+End Function
+
+
+' 获取硬盘序列号
+Public Function GetHDDSN()
+    Dim Ret, 硬盘序列号, Maxlen, Sysflag As Long: Dim VolName, FsysName As String
+    Ret = MymachineC("c:\", VolName, 256, 硬盘序列号, Maxlen, Sysflag, FsysName, 256)
+    GetHDDSN = Hex(硬盘序列号) & Hex(Sysflag)
+End Function
+
+
+' 获取主板序列号
+Public Function GetBaseBoard()
+    Dim objWMIService   As Object
+    Dim colItems        As Object
+    Dim objItem         As Variant
+    Dim Ret             As String
+    
+    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+    Set colItems = objWMIService.ExecQuery("Select * from Win32_BaseBoard")
+    For Each objItem In colItems
+        Ret = objItem.SerialNumber
+    Next
+    Set colItems = Nothing
+    Set objWMIService = Nothing
+    GetBaseBoard = Ret
+End Function
+
+
+
+' 获取BIOS序列号
+Public Function GetBIOS()
+    Dim objWMIService   As Object
+    Dim colItems        As Object
+    Dim objItem         As Variant
+    Dim Ret             As String
+    
+    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+    Set colItems = objWMIService.ExecQuery("Select * from Win32_BIOS")
+    For Each objItem In colItems
+        Ret = objItem.SerialNumber
+    Next
+    Set colItems = Nothing
+    Set objWMIService = Nothing
+    GetBIOS = Ret
 End Function

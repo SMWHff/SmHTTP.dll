@@ -1,0 +1,47 @@
+[OPTIONS]
+Compiled file=神梦HTTP请求插件文档.chm
+Contents file=SmHTTP.hhc
+Binary Index=Yes
+Index file=SmHTTP.hhk
+Default topic=html\常见问题\【更新日志】.html
+Title=神梦HTTP请求插件文档
+Default Window=Main
+Language=0x804 中文(简体，中国)
+Full-text search=Yes
+[FILES]
+SmHTTP.hhc
+SmHTTP.hhk
+js\shCore.js
+css\help.css
+css\SyntaxHighlighter.css
+html\常见问题\【更新日志】.html
+html\常见问题\安装失败？手动安装教程.html
+html\基本命令\Ver.html
+html\基本命令\GetBasePath.html
+html\基本命令\GetID.html
+html\基本命令\GetLastError.html
+html\基本命令\SetAutoParamArray.html
+html\构造命令\Headers.html
+html\构造命令\Cookies.html
+html\构造命令\Data.html
+html\构造命令\FormData.html
+html\构造命令\JsonData.html
+html\同步请求\HTTP_GET.html
+html\同步请求\HTTP_POST.html
+html\同步请求\HTTP_HEAD.html
+html\同步请求\HTTP_OPTIONS.html
+html\同步请求\HTTP_PATCH.html
+html\同步请求\HTTP_PUT.html
+html\同步请求\HTTP_DELETE.html
+html\同步请求\HTTP_Request.html
+html\其他命令\GetStatus.html
+html\其他命令\GetHeaders.html
+html\其他命令\GetCookies.html
+html\其他命令\GetHeaderByName.html
+html\其他命令\GetCookieByName.html
+html\其他命令\UpdateCookies.html
+html\其他命令\GetJSON.html
+html\其他命令\JSON_toObject.html
+html\其他命令\JSON_toString.html
+[WINDOWS]
+Main="神梦HTTP请求插件文档","SmHTTP.hhc","SmHTTP.hhk","html\常见问题\【更新日志】.html","html\常见问题\【更新日志】.html",,,,,144672,270,14462,[50,50,750,550],0x0000000,,,,,0,0

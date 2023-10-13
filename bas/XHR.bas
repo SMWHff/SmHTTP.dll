@@ -1,6 +1,15 @@
 Attribute VB_Name = "XHR"
 Option Explicit
 
+
+' 身份认证枚举
+Public Enum HTTPREQUEST_AUTHORIZATION
+    HTTP_AUTH_BASIC = 0     ' 基本认证
+    HTTP_AUTH_DIGEST = 2    ' 摘要认证
+    HTTP_AUTH_FORMBASE = 3  ' 表单认证
+End Enum
+
+
 Private Enum METHOD_OPTIONS
     METHOD_GET = 0
     METHOD_POST = 1
@@ -155,13 +164,16 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
                                 Optional ByVal Proxy As String, _
                                 Optional ByVal ProxyUser As String, _
                                 Optional ByVal ProxyPass As String, _
-                                Optional ByVal ProxyID As Long = 1, _
+                                Optional ByVal AuthType As String, _
+                                Optional ByVal AuthUser As String, _
+                                Optional ByVal AuthPass As String, _
                                 Optional ByVal IsAsync As Boolean, _
                                 Optional ByVal CompleteHeaders As Boolean = True, _
                                 Optional ByVal CompleteCookies As Boolean = True, _
                                 Optional ByRef Res_Status As Long, _
                                 Optional ByRef Res_Headers As String, _
-                                Optional ByRef Res_Cookies As String _
+                                Optional ByRef Res_Cookies As String, _
+                                Optional ByRef Res_Body As Variant _
                             ) As Variant
                             
     Dim http                As WinHttpRequest
@@ -175,6 +187,7 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
     Dim ResBody             As Variant
     Dim Result              As Variant
     
+Begin:
     On Error Resume Next
     ' 对象继承
     If this Is Nothing Then
@@ -187,7 +200,7 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
     If Timeout = -1 Or LCase(Charset) = "byte()" Then
         Timeout = -1    ' 无限等待
     ElseIf Timeout < 1 Then
-        Timeout = 30000
+        Timeout = 30000 ' 默认30秒
     Else
         Timeout = Timeout * 1000
     End If
@@ -209,13 +222,21 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
     ' 设置是否重定向
     http.Option(WinHttpRequestOption_EnableRedirects) = Redirects
     
-    ' 设置代理服务器认证
+    ' 设置代理身份认证信息
     If Len(ProxyUser) <> 0 And Len(ProxyPass) <> 0 Then
-        http.SetCredentials ProxyUser, ProxyPass, ProxyID
-        If ProxyID = HTTPREQUEST_SETCREDENTIALS_FOR_PROXY Then
-            UserPassB64 = Base64Encoder(ProxyUser & ":" & ProxyPass)
-            http.SetRequestHeader "Proxy-Authorization", "Basic " & UserPassB64
-        End If
+        http.SetCredentials ProxyUser, ProxyPass, HTTPREQUEST_SETCREDENTIALS_FOR_PROXY
+    End If
+    
+    ' 设置代理身份认证信息
+    If Len(AuthUser) <> 0 And Len(AuthPass) <> 0 Then
+        Select Case UCase(AuthType)
+        Case "BASIC"    ' 基本认证
+            http.SetCredentials AuthUser, AuthPass, HTTP_AUTH_BASIC
+        Case "DIGEST"   ' 摘要认证
+            Headers = Headers & vbCrLf & "WWW-Authenticate: DIGEST 摘要信息"
+        Case "FORMBASE" ' 表单认证
+            
+        End Select
     End If
     
     
@@ -306,6 +327,9 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
     ' 返回状态码
     Res_Status = http.Status
     
+    ' 返回二进制内容
+    Res_Body = http.ResponseBody
+    
     ' 返回网页内容
     If InStr("HEAD", Method) = 0 Then
         ResBody = http.ResponseBody
@@ -316,7 +340,7 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
     ElseIf Len(ContentTypeCharset) <> 0 And Len(Charset) = 0 Then
         Result = http.ResponseText
     ElseIf Len(ResBody) > 0 Then
-        ' 如果没有指定编码，则自动从网页源码中获取
+        ' 如果没有指定编码，则自动从网页源码中获取，如果获取失败，则默认 UTF-8
         If Len(Charset) = 0 Then Charset = GetCharsetMatch(http.ResponseText)
         If Len(Charset) = 0 Then Charset = "UTF-8"
         Set ObjStream = CreateObject("Adodb.Stream")

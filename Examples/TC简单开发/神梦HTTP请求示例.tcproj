@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Project>
+<ProjInfo>
+<EnterFile>神梦HTTP请求示例.t</EnterFile>
+<Language>1</Language>
+<Version>5.0</Version>
+<ExeIco/>
+<Platform>pc</Platform>
+</ProjInfo>
+<DesignInfo>
+<LockedCtrl></LockedCtrl>
+</DesignInfo>
+<VersionInfo>
+<FileDescription>TC Setup</FileDescription>
+<ProductName>TC</ProductName>
+<FileVersion>1.0.0.0</FileVersion>
+<ProductVersion>1.0.0.0</ProductVersion>
+<InternalName>TC</InternalName>
+<CompanyName>简单软件</CompanyName>
+<LegalCopyright>(C)&lt;简单软件&gt;保留所有版权</LegalCopyright>
+</VersionInfo>
+</Project>

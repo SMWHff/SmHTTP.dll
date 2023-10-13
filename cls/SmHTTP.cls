@@ -26,13 +26,16 @@ Option Explicit
 Private cls_WinHttp     As WinHttpRequest
 Private cls_AutoParam   As Boolean
 Private cls_Status      As Long
+Private cls_Stream()    As Byte
 Private cls_Headers     As String
 Private cls_Cookies     As String
 Private cls_ContentType As String
 Private cls_Boundary    As String
-Private cls_Init        As Boolean
 
-Public 调试开关 As Boolean
+Private 调试开关 As Boolean
+
+
+
 
 
 '========================================【插件基本信息】========================================
@@ -69,6 +72,19 @@ Public Function SetAutoParamArray(ByVal Enable As Variant) As Long
 Attribute SetAutoParamArray.VB_Description = "设置自动识别对应传入参数"
     G_AutoParam = Enable
     SetAutoParamArray = 1
+    
+    ' 百度统计代码
+    If G_Init = False Then
+        G_Init = True
+        On Error Resume Next
+        Dim Baidu_Tongji_Http As WinHttpRequest
+        Set Baidu_Tongji_Http = CreateObject("WinHttp.WinHttpRequest.5.1")
+        Baidu_Tongji_Http.Open "GET", "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368", True
+        Baidu_Tongji_Http.SetRequestHeader "Referer", "http://www.SmHTTP.com/"
+        Baidu_Tongji_Http.SetRequestHeader "Cookie", "HMACCOUNT=" & Utils.GetHDDSN() & Utils.GetBaseBoard() & Utils.GetBIOS()
+        Baidu_Tongji_Http.Send
+        Set Baidu_Tongji_Http = Nothing
+    End If
 End Function
 
 
@@ -160,25 +176,25 @@ Public Function FormData(ParamArray Args()) As Variant
             IsBinary = True
             key = Mid(key, 2)
             If VarType(value) = vbArray + vbByte Then
-                ValueBuff = value
+                ValueBuff() = value
                 fileName = key
             ElseIf IsFileExist(value) Then
-                ValueBuff = Utils.ReadBin(value)
+                ValueBuff() = Utils.ReadBin(value)
                 fileName = Mid(value, InStrRev(value, "\") + 1)
             End If
             fileType = "application/octet-stream"
             If InStr(Args(i), "/") > 0 Then fileType = Args(i): i = i + 1
         Else
-            ValueBuff = Utils.ToBin(value)
+            ValueBuff() = Utils.ToBin(value)
         End If
         ReDim Preserve Result(UBound(Result) + 1)
-        Result(UBound(Result)) = Array(key, ValueBuff, fileName, fileType)
+        Result(UBound(Result)) = Array(key, ValueBuff(), fileName, fileType)
     Wend
     
     head = "--" & boundary & vbCrLf
     For i = 0 To UBound(Result)
         key = Result(i)(0)
-        ValueBuff = Result(i)(1)
+        ValueBuff() = Result(i)(1)
         fileName = Result(i)(2)
         fileType = Result(i)(3)
         Data = head & "Content-Disposition: form-data; name=""" & key & """"
@@ -192,78 +208,22 @@ Public Function FormData(ParamArray Args()) As Variant
         End If
         Data = Data & vbCrLf
         If IsBinary Then
-            Call Utils.BinCat(bin, Utils.ToBin(Data))
-            Call Utils.BinCat(bin, ValueBuff)
-            Call Utils.BinCat(bin, Utils.ToBin(vbCrLf))
+            Call Utils.BinCat(bin(), Utils.ToBin(Data))
+            Call Utils.BinCat(bin(), ValueBuff)
+            Call Utils.BinCat(bin(), Utils.ToBin(vbCrLf))
         Else
-            Body = Body & Data & StrConv(ValueBuff, vbUnicode) & vbCrLf
+            Body = Body & Data & StrConv(ValueBuff(), vbUnicode) & vbCrLf
         End If
     Next
     
     If IsBinary Then
-        Result = Utils.BinCat(bin, Utils.ToBin("--" & boundary & "--" & vbCrLf))
+        Result = Utils.BinCat(bin(), Utils.ToBin("--" & boundary & "--" & vbCrLf))
     Else
         Result = Body & "--" & boundary & "--" & vbCrLf
     End If
     
     FormData = Result
 End Function
-'Public Function FormData(ParamArray Args())
-'    Dim i           As Long
-'    Dim name        As String
-'    Dim value       As String
-'    Dim fileName    As String
-'    Dim fileType    As String
-'    Dim FileList    As Variant
-'    Dim data        As String
-'    Dim v           As Variant
-'    Dim Content()   As Byte
-'    Dim DataBuff()  As Byte
-'    Dim Result()    As Variant
-'
-'    cls_Boundary = "WebKitFormBoundary" & IIf(App.LogMode = vbIDE, "SmHTTP", GetUnixTime()) & "SMWHff"
-'    cls_ContentType = "Content-Type:multipart/form-data; boundary=" & cls_Boundary & vbCrLf
-'
-'    FileList = Array()
-'    ReDim Result(0)
-'    While (i < UBound(Args))
-'        name = Args(i)
-'        value = Args(i + 1)
-'        If Left(name, 1) = "@" And IsFileExist(value) Then
-'            name = Mid(name, 2)
-'            fileName = Mid(value, InStrRev(value, "\") + 1)
-'            If InStr(Args(i + 2), "/") > 0 Then
-'                fileType = Args(i + 2)
-'                i = i + 1
-'            Else
-'                fileType = "application/octet-stream"
-'            End If
-'            ReDim Preserve Result(UBound(Result) + 1)
-'            Result(UBound(Result)) = "--" & cls_Boundary & vbCrLf & "Content-Disposition: form-data; name=""" & name & """; filename=""" & fileName & """" & vbCrLf & "Content-Type: " & fileType & vbCrLf & vbCrLf & "{" & name & "}" & vbCrLf
-'
-'            'ReDim Preserve FileList(UBound(FileList) + 1)
-'            'FileList(UBound(FileList)) = Array(name, T_BinToHex_XML(File_ReadByte(Value)))
-'        Else
-'            ReDim Preserve Result(UBound(Result) + 1)
-'            Result(UBound(Result)) = "--" & cls_Boundary & vbCrLf & "Content-Disposition: form-data; name=""" & name & """" & vbCrLf & vbCrLf & value & vbCrLf
-'        End If
-'        i = i + 2
-'    Wend
-'    ReDim Preserve Result(UBound(Result) + 1)
-'    Result(UBound(Result)) = "--" & cls_Boundary & "--" & vbCrLf
-'
-'    data = Join(Result, "")
-'    'DataBuff = StrConv(Data, vbFromUnicode)
-'    'Data = T_BinToHex_XML(DataBuff)
-'    '
-'    'For Each v In FileList
-'    '    name = T_BinToHex_XML(StrConv("{" & v(0) & "}", vbFromUnicode))
-'    '    Data = Replace(Data, name, v(0))
-'    'Next
-'    'DataBuff = T_HexToBin_XML(Data)
-'
-'    FormData = data
-'End Function
 
 
 ' 构造JSON主体
@@ -288,7 +248,7 @@ Attribute JsonData.VB_Description = "构造JSON主体"
         ElseIf IsObject(value) Then
             value = """" & TypeName(value) & """"
         ElseIf VarType(value) = vbEmpty Then
-            value = "null"
+            value = "''"
         ElseIf VarType(value) = vbArray + vbByte Then
             value = """字节集={...}"""
         ElseIf VarType(value) = vbString Then
@@ -328,7 +288,25 @@ Attribute GetStatus.VB_Description = "获取返回状态"
 End Function
 
 
-' 获取返回协议头
+' 获取返回的二进制内容
+Public Function GetStream(Optional ByVal Path As String = "") As Byte()
+    If cls_WinHttp Is Nothing Then
+        GetStream = cls_Stream
+    Else
+        GetStream = cls_WinHttp.ResponseBody
+    End If
+    
+    If Len(Path) > 0 And UBound(GetStream) > -1 Then
+        Dim Handle As Long
+        Handle = FreeFile() '获得文件的句柄
+        Open Path For Binary As #Handle
+            Put #Handle, , GetStream()
+        Close #Handle
+    End If
+End Function
+
+
+' 获取返回所有协议头
 Public Function GetHeaders() As String
 Attribute GetHeaders.VB_Description = "获取返回协议头"
     If cls_WinHttp Is Nothing Then
@@ -339,7 +317,7 @@ Attribute GetHeaders.VB_Description = "获取返回协议头"
 End Function
 
 
-' 获取返回Cookies
+' 获取返回所有Cookies
 Public Function GetCookies() As String
 Attribute GetCookies.VB_Description = "获取返回Cookies"
     If cls_WinHttp Is Nothing Then
@@ -350,6 +328,41 @@ Attribute GetCookies.VB_Description = "获取返回Cookies"
 End Function
 
 
+' 获取指定协议头的值
+Public Function GetHeaderByName(ByVal Headers As String, ByVal Name As String) As String
+    Dim Ret     As String
+    Dim Arr()   As String
+    
+    Const LIMIT = 2
+    
+    If Len(Name) > 0 Then
+        Arr = Split(vbCrLf & Headers & vbCrLf, vbCrLf & Name & ": ", LIMIT, vbTextCompare)
+        If UBound(Arr) = 1 Then
+            Ret = Split(Arr(1), vbCrLf)(0)
+        End If
+    End If
+    GetHeaderByName = Ret
+End Function
+
+
+' 获取指定Cookies的值
+Public Function GetCookieByName(ByVal Cookies As String, ByVal Name As String) As String
+    Dim Ret     As String
+    Dim Arr()   As String
+    
+    Const SEMICOLON = "; "
+    Const LIMIT = 2
+
+    If Len(Name) > 0 Then
+        Arr = Split(SEMICOLON & Cookies & SEMICOLON, SEMICOLON & Name & "=", LIMIT, vbTextCompare)
+        If UBound(Arr) = 1 Then
+            Ret = Split(Arr(1), SEMICOLON)(0)
+        End If
+    End If
+    GetCookieByName = Ret
+End Function
+
+
 ' 合并更新Cookies
 Public Function UpdateCookies(ByVal oldCookies As String, ByVal NewCookies As String) As String
 Attribute UpdateCookies.VB_Description = "合并更新Cookies"
@@ -357,14 +370,14 @@ Attribute UpdateCookies.VB_Description = "合并更新Cookies"
 End Function
 
 
-' JSON字符串转对象
-Public Function JSON_toObject(ByRef sJSON As String) As Object
+' JSON字符串转字典对象
+Public Function JSON_toObject(ByVal sJSON As String) As Object
 Attribute JSON_toObject.VB_Description = "JSON字符串转对象"
     Set JSON_toObject = JSON.parse(sJSON)
 End Function
 
 
-' JSON对象转字符串
+' 字典对象转JSON字符串
 Public Function JSON_toString(ByVal oJSON As Object) As String
 Attribute JSON_toString.VB_Description = "JSON对象转字符串"
     If Not oJSON Is Nothing Then
@@ -381,139 +394,80 @@ End Function
 
 
 
+
+
 '========================================【同步请求函数】========================================
 ' Get请求
-Public Function HTTP_GET(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_GET(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_GET.VB_Description = "Get请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_GET = HTTP_Request("GET", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_GET = HTTP_Request("GET", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Post请求
-Public Function HTTP_POST(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_POST(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_POST.VB_Description = "Post请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_POST = HTTP_Request("POST", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_POST = HTTP_Request("POST", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Head请求
-Public Function HTTP_HEAD(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_HEAD(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_HEAD.VB_Description = "Head请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_HEAD = HTTP_Request("HEAD", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_HEAD = HTTP_Request("HEAD", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Options请求
-Public Function HTTP_OPTIONS(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_OPTIONS(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_OPTIONS.VB_Description = "Options请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_OPTIONS = HTTP_Request("OPTIONS", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_OPTIONS = HTTP_Request("OPTIONS", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Patch请求
-Public Function HTTP_PATCH(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_PATCH(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_PATCH.VB_Description = "Patch请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_PATCH = HTTP_Request("PATCH", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_PATCH = HTTP_Request("PATCH", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Put请求
-Public Function HTTP_PUT(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_PUT(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_PUT.VB_Description = "Put请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_PUT = HTTP_Request("PUT", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_PUT = HTTP_Request("PUT", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Delete请求
-Public Function HTTP_DELETE(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
+Public Function HTTP_DELETE(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_DELETE.VB_Description = "Delete请求"
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    HTTP_DELETE = HTTP_Request("DELETE", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "同步")
+    HTTP_DELETE = HTTP_Request("DELETE", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
-
-
-
-
-'========================================【异步请求函数】========================================
-' 异步Get请求
-Public Function Async_GET(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_GET.VB_Description = "异步Get请求"
+' Trace请求
+Public Function HTTP_TRACE(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
+    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_GET = HTTP_Request("GET", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
+    HTTP_TRACE = HTTP_Request("TRACE", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
-' 异步Post请求
-Public Function Async_POST(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_POST.VB_Description = "异步Post请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_POST = HTTP_Request("POST", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
-End Function
 
-' 异步Head请求
-Public Function Async_HEAD(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_HEAD.VB_Description = "异步Head请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_HEAD = HTTP_Request("HEAD", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
-End Function
-
-' 异步Options请求
-Public Function Async_OPTIONS(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_OPTIONS.VB_Description = "异步Options请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_OPTIONS = HTTP_Request("OPTIONS", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
-End Function
-
-' 异步Patch请求
-Public Function Async_PATCH(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_PATCH.VB_Description = "异步Patch请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_PATCH = HTTP_Request("PATCH", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
-End Function
-
-' Async_PUT
-Public Function Async_PUT(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_PUT.VB_Description = "异步Put请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_PUT = HTTP_Request("PUT", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
-End Function
-
-' 异步Delete请求
-Public Function Async_DELETE(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional Timeout As Variant = 0, Optional Redirects As Variant = True, Optional Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal ProxyID As Variant = 1) As Variant
-Attribute Async_DELETE.VB_Description = "异步Delete请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
-    Async_DELETE = HTTP_Request("DELETE", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, ProxyID, "异步")
-End Function
-
-Public Function Init() As Long
-Attribute Init.VB_Description = "初始化"
-    Dim 到期时间, 提示
-    
-    到期时间 = #1/1/2023 11:59:59 PM#
-    If T_GetNetTime() < 到期时间 Then
-        cls_Init = True
-        提示 = "初始化成功！内测版到期时间：" & 到期时间 & "，只限用于测试，请勿用于生产环境！"
-        If App.LogMode = vbIDE Then
-            Debug.Print 提示
-        Else
-            Throw "Init", 提示
-        End If
-    Else
-        cls_Init = False
-        MsgBox "出错，内测版已到期，请加Q群：624655641  下载最新版！", vbCritical + vbSystemModal, "错误提示！"
-        Shell "explorer.exe ""tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A3632343635353634312C2274696D655374616D70223A313532363734303633387D0A"""
-    End If
-    Init = Abs(cls_Init)
-End Function
-    
-        
-
-
+' HTTP请求
 Public Function HTTP_Request(ParamArray Args()) As Variant
 Attribute HTTP_Request.VB_Description = "HTTP请求"
 Attribute HTTP_Request.VB_UserMemId = 0
     Dim Ret         As Variant
     Dim Har         As String
+    Dim i           As Long
     Dim v           As Variant
     Dim Method      As Variant
     Dim URL         As Variant
@@ -525,10 +479,13 @@ Attribute HTTP_Request.VB_UserMemId = 0
     Dim Redirects   As Variant
     Dim Proxies     As Variant
     Dim Proxy       As Variant
-    Dim UserPass    As Variant
     Dim ProxyUser   As Variant
     Dim ProxyPass   As Variant
-    Dim ProxyID     As Variant
+    Dim UserPass    As Variant
+    Dim AuthType    As Variant
+    Dim AuthType_i  As Variant
+    Dim AuthUser    As Variant
+    Dim AuthPass    As Variant
     Dim SyncAsync   As Variant
     Dim CompHeaders As Variant
     Dim CompCookies As Variant
@@ -536,12 +493,12 @@ Attribute HTTP_Request.VB_UserMemId = 0
     
     
     ' 判断是否为内测版
-    If App.Major = 0 Then
-        If Not cls_Init Then
-            MsgBox "出错，当前是内测版，所以需要先执行 Init() 初始化插件！", vbCritical + vbSystemModal, "错误提示！"
-            Exit Function
-        End If
-    End If
+    'If App.Major = 0 Then
+    '    If Not cls_Init Then
+    '        MsgBox "出错，当前是内测版，所以需要先执行 Init() 初始化插件！", vbCritical + vbSystemModal, "错误提示！"
+    '        Exit Function
+    '    End If
+    'End If
     
     
     
@@ -577,19 +534,21 @@ Attribute HTTP_Request.VB_UserMemId = 0
                 Set sc = CreateObject("MSScriptControl.ScriptControl")
                 sc.Language = "JScript"
                 sc.AddCode "var $ = " & Har & ";"
-                Method = sc.Eval("$.method")
-                URL = sc.Eval("$.url")
-                Data = sc.Eval("$.data")
-                Headers = sc.Eval("$.headers")
-                Cookies = sc.Eval("$.cookies")
-                Charset = sc.Eval("$.charset")
-                Timeout = sc.Eval("$.timeout")
-                Redirects = sc.Eval("$.redirects")
-                Proxy = sc.Eval("$.proxy")
-                ProxyUser = sc.Eval("$.proxyUser")
-                ProxyPass = sc.Eval("$.proxyPass")
-                ProxyID = sc.Eval("$.proxyId") ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                SyncAsync = (sc.Eval("$.syncAsync") = "同步")
+                Method = sc.Eval("$.method|''")
+                URL = sc.Eval("$.url|''")
+                Data = sc.Eval("$.data|''")
+                Headers = sc.Eval("$.headers|''")
+                Cookies = sc.Eval("$.cookies|''")
+                Charset = sc.Eval("$.charset|''")
+                Timeout = sc.Eval("$.timeout|30")
+                Redirects = sc.Eval("$.redirects|true")
+                Proxy = sc.Eval("$.proxy|''")
+                ProxyUser = sc.Eval("$.proxyUser|''")
+                ProxyPass = sc.Eval("$.proxyPass|''")
+                AuthUser = sc.Eval("$.authUser|''")
+                AuthPass = sc.Eval("$.authPass|''")
+                AuthType = sc.Eval("$.authType|''")
+                SyncAsync = (sc.Eval("$.syncAsync|'同步'") = "同步")
                 sc.Reset
                 Set sc = Nothing
                 If G_AutoParam Then
@@ -598,8 +557,8 @@ Attribute HTTP_Request.VB_UserMemId = 0
                         ' 代理地址格式【用户名:密码@IP:端口号】
                         If Len(Proxies(0)) <> 0 Then
                             UserPass = Split(Proxies(0), ":")
-                            If UBound(UserPass) >= 0 Then ProxyUser = UserPass(0)
-                            If UBound(UserPass) >= 1 Then ProxyPass = UserPass(1)
+                            If UBound(UserPass) >= 0 Then AuthUser = UserPass(0)
+                            If UBound(UserPass) >= 1 Then AuthPass = UserPass(1)
                         End If
                         Proxy = Proxies(1) & Proxies(2)
                     End If
@@ -608,13 +567,14 @@ Attribute HTTP_Request.VB_UserMemId = 0
         End If
     ElseIf G_AutoParam Then
         Proxies = Array()
-        For Each v In Args
+        While i <= UBound(Args)
+            v = Args(i)
             Select Case True
             Case Utils.ArgumentsMatch(v, vbString, "^(GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE|CONNECT|PATCH)$", SavaArg:=Method)
                 Method = v
             Case Utils.ArgumentsMatch(v, vbString, "^(http|https)://.*$", SavaArg:=URL)
                 URL = v
-            Case Utils.ArgumentsMatch(v, vbString, "^(ASCII|UTF-8|UTF-16|Unicode|GB\d+|GBK|BIG5|Byte\(\))$", SavaArg:=Charset)
+            Case Utils.ArgumentsMatch(v, vbString, "^(ANSI|ASCII|UTF-8|UTF-16|Unicode|GB\d+|GBK|BIG5|Byte\(\))$", SavaArg:=Charset)
                 Charset = v
             Case Utils.ArgumentsMatch(v, vbDecimal, "x >= -1", SavaArg:=Timeout)
                 Timeout = v
@@ -628,10 +588,11 @@ Attribute HTTP_Request.VB_UserMemId = 0
                     If UBound(UserPass) >= 1 Then ProxyPass = UserPass(1)
                 End If
                 Proxy = Proxies(1) & Proxies(2)
-            Case Utils.ArgumentsMatch(v, vbDecimal, "x = 0 And x = 1", SavaArg:=ProxyID)
-                If Len(ProxyUser) <> 0 Then
-                    ProxyID = v
-                End If
+            Case Utils.ArgumentsMatch(v, vbString, "^(BASIC|DIGEST|FORMBASE)$", SavaArg:=AuthType)
+                AuthType = v
+                If i + 1 <= UBound(Args) Then AuthUser = Args(i + 1)
+                If i + 2 <= UBound(Args) Then AuthPass = Args(i + 2)
+                i = i + 2
             Case Utils.ArgumentsMatch(v, vbString, "^(同步|异步)$", SavaArg:=SyncAsync)
                 SyncAsync = (v = "异步")
             Case Utils.ArgumentsMatch(v, vbString, "^(开启|关闭)补全$", SavaArg:=CompHeaders)
@@ -645,7 +606,8 @@ Attribute HTTP_Request.VB_UserMemId = 0
             Case Utils.ArgumentsMatch(v, vbVariant, SavaArg:=Data)
                 Data = v
             End Select
-        Next
+            i = i + 1
+        Wend
     Else
         If UBound(Args) >= 0 Then Method = Args(0)
         If UBound(Args) >= 1 Then URL = Args(1)
@@ -658,10 +620,12 @@ Attribute HTTP_Request.VB_UserMemId = 0
         If UBound(Args) >= 8 Then Proxy = Args(8)
         If UBound(Args) >= 9 Then ProxyUser = Args(9)
         If UBound(Args) >= 10 Then ProxyPass = Args(10)
-        If UBound(Args) >= 11 Then ProxyID = Args(11)
-        If UBound(Args) >= 12 Then SyncAsync = IIf(VarType(Args(12)) = vbBoolean, Args(12), Args(12) = "异步")
-        If UBound(Args) >= 13 Then CompHeaders = IIf(VarType(Args(13)) = vbBoolean, Args(13), Args(13) <> "关闭补全")
-        If UBound(Args) >= 14 Then CompCookies = IIf(VarType(Args(14)) = vbBoolean, Args(14), Args(14) <> "关闭合并")
+        If UBound(Args) >= 11 Then AuthType = Args(11)
+        If UBound(Args) >= 12 Then AuthUser = Args(12)
+        If UBound(Args) >= 13 Then AuthPass = Args(13)
+        If UBound(Args) >= 14 Then SyncAsync = IIf(VarType(Args(14)) = vbBoolean Or IsNumeric(Args(14)), Args(14) <> 0, Args(14) = "异步")
+        If UBound(Args) >= 15 Then CompHeaders = IIf(VarType(Args(15)) = vbBoolean Or IsNumeric(Args(15)), Args(15) <> 0, Args(15) <> "关闭补全")
+        If UBound(Args) >= 16 Then CompCookies = IIf(VarType(Args(16)) = vbBoolean Or IsNumeric(Args(16)), Args(16) <> 0, Args(16) <> "关闭合并")
     End If
     
     ' 构造主体用的数据类型
@@ -672,10 +636,10 @@ Attribute HTTP_Request.VB_UserMemId = 0
     ' 设置参数默认值
     If IsEmpty(Timeout) Then Timeout = 30
     If IsEmpty(Redirects) Then Redirects = True
-    If IsEmpty(ProxyID) Then ProxyID = 1
     If IsEmpty(SyncAsync) Then SyncAsync = False
     If IsEmpty(CompHeaders) Then CompHeaders = True
     If IsEmpty(CompCookies) Then CompCookies = True
+    
     
     If 调试开关 Then
         Debug.Print "Method：", Method
@@ -689,13 +653,15 @@ Attribute HTTP_Request.VB_UserMemId = 0
         Debug.Print "Proxy：", Proxy
         Debug.Print "ProxyUser：", ProxyUser
         Debug.Print "ProxyPass：", ProxyPass
-        Debug.Print "ProxyID：", ProxyID
+        Debug.Print "AuthType：", AuthType
+        Debug.Print "AuthUser：", AuthUser
+        Debug.Print "AuthPass：", AuthPass
         Debug.Print "SyncAsync：", SyncAsync
         Debug.Print "CompHeaders：", CompHeaders
         Debug.Print "CompCookies：", CompCookies
     End If
     
-    HTTP_Request = XHR.WinHtpRequest(cls_WinHttp, _
+    HTTP_Request = XHR.WinHtpRequest(this:=cls_WinHttp, _
         Method:=Method, _
         URL:=URL, _
         Data:=Data, _
@@ -707,13 +673,16 @@ Attribute HTTP_Request.VB_UserMemId = 0
         Proxy:=Proxy, _
         ProxyUser:=ProxyUser, _
         ProxyPass:=ProxyPass, _
-        ProxyID:=ProxyID, _
+        AuthType:=AuthType, _
+        AuthUser:=AuthUser, _
+        AuthPass:=AuthPass, _
         IsAsync:=SyncAsync, _
         CompleteHeaders:=CompHeaders, _
         CompleteCookies:=CompCookies, _
         Res_Status:=cls_Status, _
         Res_Headers:=cls_Headers, _
-        Res_Cookies:=cls_Cookies _
+        Res_Cookies:=cls_Cookies, _
+        Res_Body:=cls_Stream _
     )
 End Function
 
@@ -755,48 +724,42 @@ Public Function Get_Plugin_Description(ByVal ItemName As String) As String
         Description_Text = "构造JSON主体(参数列表)【JSON主体$】"
     Case "GetStatus"
         Description_Text = "获取返回状态()【状态&】"
+    Case "GetStream"
+        Description_Text = "获取返回的二进制内容([保存路径$])【返回字节集()】"
     Case "GetHeaders"
-        Description_Text = "获取返回协议头()【返回协议头$】"
+        Description_Text = "获取返回所有协议头()【返回协议头$】"
     Case "GetCookies"
-        Description_Text = "获取返回Cookies()【返回Cookies$】"
+        Description_Text = "获取返回所有Cookies()【返回Cookies$】"
+    Case "GetHeaderByName"
+        Description_Text = "获取指定协议头的值(所有协议头$, 键名$)【返回键值$】"
+    Case "GetCookieByName"
+        Description_Text = "获取指定协议头的值(所有Cookies$, 键名$)【返回Cookie$】"
     Case "UpdateCookies"
-        Description_Text = "合并更新Cookies()【合并Cookies$】"
+        Description_Text = "合并更新Cookies(旧Cookies$, 新Cookies$)【合并Cookies$】"
     Case "JSON_toObject"
-        Description_Text = "JSON字符串转对象(JSON字符串$)【JSON对象.】"
+        Description_Text = "JSON字符串转字典对象(JSON字符串$)【字典对象.】"
     Case "JSON_toString"
-        Description_Text = "JSON对象转字符串(JSON对象.)【JSON字符串$】"
+        Description_Text = "字典对象转JSON字符串(字典对象.)【JSON字符串$】"
     Case "GetJSON"
         Description_Text = "解析JSON取值(JSON字符串$, 键名$)【值】"
     Case "HTTP_GET"
-        Description_Text = "Get请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
+        Description_Text = "Get请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_POST"
-        Description_Text = "Post请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
+        Description_Text = "Post请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])"
     Case "HTTP_HEAD"
-        Description_Text = "Head请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
+        Description_Text = "Head请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])"
     Case "HTTP_OPTIONS"
-        Description_Text = "Options请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
+        Description_Text = "Options请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_PATCH"
-        Description_Text = "Patch请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
+        Description_Text = "Patch请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_PUT"
-        Description_Text = "Put请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
+        Description_Text = "Put请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_DELETE"
-        Description_Text = "Delete请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [代理标识=1〓服务器|0〓路由器&])【网页源码$】"
-    Case "Async_GET"
-        Description_Text = "异步Get请求()【是否成功|】"
-    Case "Async_POST"
-        Description_Text = "异步Post请求()【是否成功|】"
-    Case "Async_HEAD"
-        Description_Text = "异步Head请求()【是否成功|】"
-    Case "Async_OPTIONS"
-        Description_Text = "异步Options请求()【是否成功|】"
-    Case "Async_PATCH"
-        Description_Text = "异步Patch请求()【是否成功|】"
-    Case "Async_PUT"
-        Description_Text = "异步Put请求()【是否成功|】"
-    Case "Async_DELETE"
-        Description_Text = "异步Delete请求()【是否成功|】"
+        Description_Text = "Delete请求(网址$, [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
+    Case "HTTP_TRACE"
+        Description_Text = "Trace请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_Request"
-        Description_Text = "HTTP请求(网址$, [访问方法=GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE|CONNECT|PATCH$], [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理地址=〓格式为 user:pwd@1.1.1.1:80$], [代理标识=1〓服务器|0〓路由器&], [等待方式=同步|异步$], [自动补全协议头=开启补全|关闭补全$], [合并更新Cookies=开启合并|关闭合并$])【网页源码$】"
+        Description_Text = "HTTP请求(网址$, [访问方法=GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE|CONNECT|PATCH$], [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理地址=〓格式为 user:pwd@1.1.1.1:80$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$], [等待方式=同步|异步$], [自动补全协议头=开启补全|关闭补全$], [合并更新Cookies=开启合并|关闭合并$])【网页源码$】"
     '------------------------------------------------
     '为您的每个插件函数建立一个Case，就可以在按键精灵里显示插件的使用说明
     '------------------------------------------------
@@ -825,63 +788,56 @@ Public Function Get_Plugin_Interpret_Template(ByVal ItemName As String) As Strin
     Case "SetAutoParamArray"
         Description_Text = "设置自动识别对应传入参数 $1"
     Case "Headers"
-        Description_Text = "构造协议头 $1"
+        Description_Text = "构造协议头 $1: $2" & vbCrLf & "$3: $4"
     Case "Cookies"
-        Description_Text = "构造Cookie $1"
+        Description_Text = "构造Cookie $1=$2;$3=$4;"
     Case "Data"
-        Description_Text = "构造常用主体 $1"
+        Description_Text = "构造常用主体 $1=$2&$3=$4"
     Case "FormData"
         Description_Text = "构造表单主体 $1"
     Case "JsonData"
-        Description_Text = "取插件版本 $1"
+        Description_Text = "构造JSON主体 {""$1"":""$2"", ""$3"":""$4""}"
     Case "GetStatus"
         Description_Text = "获取返回状态"
+    Case "GetStream"
+        Description_Text = "获取返回的二进制内容，保存到路径 $1"
     Case "GetHeaders"
-        Description_Text = "获取返回协议头"
+        Description_Text = "获取返回所有协议头"
     Case "GetCookies"
-        Description_Text = "获取返回Cookies"
+        Description_Text = "获取返回所有Cookies"
+    Case "GetHeaderByName"
+        Description_Text = "从协议头 $1 中获取 $2 的值"
+    Case "GetCookieByName"
+        Description_Text = "从Cookies $1 中获取 $2 的值"
     Case "UpdateCookies"
-        Description_Text = "合并更新Cookies"
+        Description_Text = "将 $1 和 $2 两份 Cookies 进行合并更新"
     Case "JSON_toObject"
-        Description_Text = "JSON字符串转对象 $1"
+        Description_Text = "将JSON字符串 $1 转为字典对象"
     Case "JSON_toString"
-        Description_Text = "JSON对象转字符串 $1"
+        Description_Text = "将字典对象 $1 转为JSON字符串"
     Case "GetJSON"
-        Description_Text = "解析字符串 $1 并获取键名 $2 的值"
+        Description_Text = "解析JSON字符串 $1 并获取键名 $2 的值"
     Case "HTTP_GET"
-        Description_Text = "用 Get 方法请求 $1"
+        Description_Text = "用 Get 方法访问 $1 并带上请求头 $2 和请求Cookes $3 重定向为 $6 通过代理IP $7@$8:$9 通过 $10 身份认证 $11:12 在 $5 秒内返回 $4 编码格式的网页内容"
     Case "HTTP_POST"
-        Description_Text = "用 Post 方法请求 $1"
+        Description_Text = "用 Post 方法请求 $1 发送 $2 并带上请求头 $3 和请求Cookes $4 重定向为 $7 通过代理IP $8@$9:$10 通过 $11 身份认证 $12:13 在 $6 秒内返回 $5 编码格式的网页内容"
     Case "HTTP_HEAD"
-        Description_Text = "用 Head 方法请求 $1"
+        Description_Text = "用 Head 方法请求 $1 并带上请求头 $2 和请求Cookes $3 重定向为 $6 通过代理IP $7@$8:$9 通过 $10 身份认证 $11:12 在 $5 秒内返回协议头内容"
     Case "HTTP_OPTIONS"
-        Description_Text = "用 Options 方法请求 $1"
+        Description_Text = "用 Options 方法请求 $1 并带上请求头 $2 和请求Cookes $3 重定向为 $6 通过代理IP $7@$8:$9 通过 $10 身份认证 $11:12 在 $5 秒内返回 $4 编码格式的网页内容"
     Case "HTTP_PATCH"
-        Description_Text = "用 Patch 方法请求 $1"
+        Description_Text = "用 Patch 方法请求 $1 发送 $2 并带上请求头 $3 和请求Cookes $4 重定向为 $7 通过代理IP $8@$9:$10 通过 $11 身份认证 $12:13 在 $6 秒内返回 $5 编码格式的网页内容"
     Case "HTTP_PUT"
-        Description_Text = "用 Put 方法请求 $1"
+        Description_Text = "用 Put 方法请求 $1 发送 $2 并带上请求头 $3 和请求Cookes $4 重定向为 $7 通过代理IP $8@$9:$10 通过 $11 身份认证 $12:13 在 $6 秒内返回 $5 编码格式的网页内容"
     Case "HTTP_DELETE"
-        Description_Text = "用 Delete 方法请求 $1"
-    Case "Async_GET"
-        Description_Text = "用 Get 方法异步请求 $1"
-    Case "Async_POST"
-        Description_Text = "用 Post 方法异步请求 $1"
-    Case "Async_HEAD"
-        Description_Text = "用 Head 方法异步请求 $1"
-    Case "Async_OPTIONS"
-        Description_Text = "用 Options 方法异步请求 $1"
-    Case "Async_PATCH"
-        Description_Text = "用 Patch 方法异步请求 $1"
-    Case "Async_PUT"
-        Description_Text = "用 Put 方法异步请求 $1"
-    Case "Async_DELETE"
-        Description_Text = "用 Delete 方法异步请求 $1"
+        Description_Text = "用 Delete 方法请求 $1 发送 $2 并带上请求头 $3 和请求Cookes $4 重定向为 $7 通过代理IP $8@$9:$10 通过 $11 身份认证 $12:13 在 $6 秒内返回 $5 编码格式的网页内容"
+    Case "HTTP_TRACE"
+        Description_Text = "用 Trace 方法请求 $1 发送 $2 并带上请求头 $3 和请求Cookes $4 重定向为 $7 通过代理IP $8@$9:$10 通过 $11 身份认证 $12:13 在 $6 秒内返回 $5 编码格式的请求提交内容"
     Case "HTTP_Request"
-        Description_Text = "用 $1 方法请求 $1"
+        Description_Text = "用 $1 方法请求 $2 发送 $3 并带上请求头 $4 和请求Cookes $5 重定向为 $8 通过代理IP $9@$10$11 通过 $12 身份认证 $13:$14 在 $7 秒内返回 $6 编码格式的网页内容"
     '------------------------------------------------
     '为您的每个插件函数建立一个Case，就可以在按键精灵里显示插件的使用说明
     '------------------------------------------------
     End Select
     Get_Plugin_Interpret_Template = Translate_Description(Description_Text)
 End Function
-

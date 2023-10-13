@@ -1,0 +1,69 @@
+@import "SyntaxHighlighter.css";
+
+
+/* CSS Document */
+body{
+	font-size: 12px;
+	line-height: 1.8em;
+}
+
+label{
+	font-size: 1em;
+	font-weight: bold;
+	display:inline-block;
+	width: 6em;
+	text-align:right;
+	color: #777777;
+}
+
+td
+{
+	padding-top: 2px;
+	padding-right: 4px;
+	padding-bottom: 2px;
+	padding-left: 5px;
+}
+
+a
+{
+    font-family: verdana;
+    font-size: 1em;
+    color: #003399;
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+    color: #CC0000;
+}
+
+div#Name
+{
+    color: #006633;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 1.3em;
+    border-bottom-width: 1px;
+    border-bottom-style: dotted;
+    border-bottom-color: #999999;
+    letter-spacing: 0.1em;
+}
+div#Intro{
+	color: #222222;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 1em;	
+}
+div#Param
+{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-weight: normal;
+    font-size: 1em;       
+}
+
+div#ReturnVal{
+font-family: Verdana, Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 1em;	
+}
