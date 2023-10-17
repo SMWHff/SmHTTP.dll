@@ -1,6 +1,6 @@
 # SmHTTP.dll
 
-神梦HTTP请求插件
+用 VB6 编写 COM 类型的神梦HTTP请求插件
 
 <!-- PROJECT SHIELDS -->
 [![VB6][VB6-shield]][VB6-url]
@@ -8,8 +8,6 @@
 [![JSON][JSON-shield]][JSON-url]
 [![httpbin][httpbin-shield]][httpbin-url]
 [![Anjian][anjian-shield]][anjian-url]
-
-<br />
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -38,14 +36,12 @@
     ·
     <a href="https://github.com/SMWHff/SmHTTP.dll/issues">提出新特性</a>
   </p>
-
 </p>
 
 
  本项目面向开发者
  
 ## 目录
-
 - [上手指南](#上手指南)
   - [开发前的配置要求](#开发前的配置要求)
   - [安装步骤](#安装步骤)
@@ -79,7 +75,6 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 
 
 ### 文件目录说明
-
 ```
 文件目录
 ├─bas/
@@ -127,11 +122,11 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 
 #### 如何参与开源项目
 贡献使开源社区成为一个学习、激励和创造的绝佳场所。你所作的任何贡献都是**非常感谢**的。
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. `Fork` 当前项目
+2. 创建你自己的分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交修改内容 (`git commit -m 'Add some AmazingFeature'`)
+4. 上传到远程仓库 (`git push origin feature/AmazingFeature`)
+5. 打开一个拉取请求
 
 
 
@@ -140,9 +135,10 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 
 
 ### 作者
-1042207232@qq.com
-
-昵称:神梦无痕  &ensp; qq:1042207232    
+【昵称】：神梦无痕
+【ＱＱ】：[1042207232][QQ-url]
+【Ｑ群】：[624655641][QQun-url]
+【邮箱】：[1042207232@qq.com][QEmail-url]
 
  *您也可以在贡献者名单中参看所有参与该项目的开发者。*
 
@@ -177,6 +173,7 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 [license-url]: https://github.com/SMWHff/SmHTTP.dll/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/SMWHff
+[Win-shield]: https://img.shields.io/badge/OS-Windows-blue
 [VB6-shield]: https://img.shields.io/badge/Visual%20Basic-6.0-blue?labelColor=512BD4
 [VB6-url]: https://pc.qq.com/detail/19/detail_91139.html
 [anjian-shield]: https://img.shields.io/badge/%E6%8C%89%E9%94%AE%E7%B2%BE%E7%81%B5-2014-white?logoColor=24ab5e&labelColor=24ab5e
@@ -187,6 +184,6 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 [JSON-url]: http://www.ediy.co.nz/vbjson-json-parser-library-in-vb6-xidc55680.html
 [httpbin-shield]: https://img.shields.io/badge/httpbin.org-0.9.2-blue
 [httpbin-url]: https://httpbin.org/
-
-
-
+[QQ-url]: tencent://message/?Menu=yes&uin=1042207232&Site=&Service=200&sigT=2a39fb276d15586e1114e71f7af38e195148b0369a16a40fdad564ce185f72e8de86db22c67ec3c1
+[QQun-url]: tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A3632343635353634312C2274696D655374616D70223A313532363734303633387D0A
+[QEmail-url]: http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=0uPi5uDg4uXg4eCSo6P8sb2-

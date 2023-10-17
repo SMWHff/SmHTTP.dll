@@ -3,6 +3,12 @@ Option Explicit
 Private Declare Function SafeArrayGetDim Lib "oleaut32.dll" (ByRef saArray() As Any) As Long 'API判断数组为空或没有初始化
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 Private Declare Function MymachineC Lib "kernel32" Alias "GetVolumeInformationA" (ByVal lpRootPathName As String, ByVal lpVolumeNameBuffer As String, ByVal nVolumeNameSize As Long, lpVolumeSerialNumber As Long, lpMaximumComponentLength As Long, lpFileSystemFlags As Long, ByVal lpFileSystemNameBuffer As String, ByVal nFileSystemNameSize As Long) As Long
+Private Declare Function RegOpenKey Lib "advapi32.dll" Alias "RegOpenKeyA" (ByVal hKey As Long, ByVal lpSubKey As String, phkResult As Long) As Long
+Private Declare Function RegCloseKey Lib "advapi32.dll" (ByVal hKey As Long) As Long
+Private Declare Function GetUserDefaultLCID Lib "kernel32" () As Long
+Private Declare Function GetLocaleInfo Lib "kernel32" Alias "GetLocaleInfoA" (ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As String, ByVal cchData As Long) As Long
+Private Const LOCALE_SLANGDISPLAYNAME = &H6F
+
 
 
 ' 不定数量参数正则匹配（传入参数，参数类型，匹配模式，保存参数, 返回匹配结果）
@@ -569,3 +575,100 @@ Public Function GetBIOS()
     Set objWMIService = Nothing
     GetBIOS = Ret
 End Function
+
+
+' 获取IE浏览器UserAgent
+Public Function GetUserAgent() As String
+    Dim UserAgent       As String
+    Dim HTMLDocument    As HTMLDocument ' 引用 Microsoft HTML Object Library
+    Dim IE              As Object       ' 引用 Microsoft Internet Controls
+    Dim WSH             As Object       ' 引用 Microsoft Windows Script Host Object Model
+
+    Set HTMLDocument = CreateObject("htmlfile")
+    HTMLDocument.Open
+    UserAgent = HTMLDocument.parentWindow.navigator.UserAgent
+    Set HTMLDocument = Nothing
+    
+    If Len(UserAgent) = 0 Then
+        Set IE = CreateObject("InternetExplorer.Application")
+        IE.Visible = 0
+        IE.navigate "about:blank"
+        Do While IE.Busy
+            DoEvents
+        Loop
+        UserAgent = IE.document.parentWindow.navigator.UserAgent
+        IE.Quit
+    End If
+    GetUserAgent = UserAgent
+End Function
+
+
+' 获取屏幕颜色深度
+Public Function GetBitsPerPel() As Long
+    Dim objWMIService   As Object
+    Dim objItems        As Object
+    Dim objItem         As Object
+    Dim Bits            As Long
+    
+    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+    Set objItems = objWMIService.ExecQuery("Select * from Win32_DisplayConfiguration")
+    For Each objItem In objItems
+        Bits = objItem.BitsPerPel
+        If Bits Then Exit For
+    Next
+    Set objItems = Nothing
+    Set objWMIService = Nothing
+    GetBitsPerPel = Bits
+End Function
+
+
+' 获取屏幕分辨率
+Public Function GetScreenXY() As String
+    Dim ScRX            As Long
+    Dim ScRY            As Long
+    
+    ScRX = Screen.Width \ Screen.TwipsPerPixelX
+    ScRY = Screen.Height \ Screen.TwipsPerPixelY
+    GetScreenXY = ScRX & "*" & ScRY
+End Function
+
+
+' 判断是否支持JAVA
+Public Function IsJavaInstalled() As Boolean
+    Dim CLASSPATH As String
+    Dim JAVA_HOME As String
+    
+    IsJavaInstalled = False
+    CLASSPATH = Environ("CLASSPATH")
+    JAVA_HOME = Environ("JAVA_HOME")
+    
+    If Len(CLASSPATH) <> 0 And Len(JAVA_HOME) <> 0 Then
+        If Len(Dir(JAVA_HOME & "\bin\java.exe")) <> 0 Then
+            IsJavaInstalled = True
+        End If
+    End If
+End Function
+
+
+' 获取当前系统语言环境
+Public Function GetLanguageLocale() As String
+    Dim lngLCID         As Long
+    Dim strLocaleInfo   As String
+    Dim lngResult       As Long
+
+    ' 获取用户的默认语言环境
+    lngLCID = GetUserDefaultLCID()
+
+    ' 设置缓冲区大小
+    strLocaleInfo = Space(255)
+
+    ' 获取语言的显示名称
+    lngResult = GetLocaleInfo(lngLCID, LOCALE_SLANGDISPLAYNAME, strLocaleInfo, 255)
+    
+    If lngResult > 0 Then
+        GetLanguageLocale = Trim(Left$(strLocaleInfo, InStr(strLocaleInfo, vbNullChar) - 1))
+    Else
+        GetLanguageLocale = "Unknown"
+    End If
+End Function
+

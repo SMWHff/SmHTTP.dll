@@ -78,9 +78,13 @@ Attribute SetAutoParamArray.VB_Description = "设置自动识别对应传入参数"
         G_Init = True
         On Error Resume Next
         Dim Baidu_Tongji_Http As WinHttpRequest
+        Dim Args As String
+        Args = "cc=1&ck=1&cl=" & Utils.GetBitsPerPel() & "-bit&ds=" & Utils.GetScreenXY() & "&ln=" & Utils.GetLanguageLocale() & "&et=0&ep=0&fl=0&ja=" & Abs(Utils.IsJavaInstalled())
+        ' Debug.Print Args
         Set Baidu_Tongji_Http = CreateObject("WinHttp.WinHttpRequest.5.1")
-        Baidu_Tongji_Http.Open "GET", "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368", True
+        Baidu_Tongji_Http.Open "GET", "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368&" & Args, True
         Baidu_Tongji_Http.SetRequestHeader "Referer", "http://www.SmHTTP.com/"
+        Baidu_Tongji_Http.SetRequestHeader "User-Agent", Utils.GetUserAgent()
         Baidu_Tongji_Http.SetRequestHeader "Cookie", "HMACCOUNT=" & Utils.GetHDDSN() & Utils.GetBaseBoard() & Utils.GetBIOS()
         Baidu_Tongji_Http.Send
         Set Baidu_Tongji_Http = Nothing
@@ -400,7 +404,6 @@ End Function
 ' Get请求
 Public Function HTTP_GET(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_GET.VB_Description = "Get请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_GET = HTTP_Request("GET", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
@@ -408,7 +411,6 @@ End Function
 ' Post请求
 Public Function HTTP_POST(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_POST.VB_Description = "Post请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_POST = HTTP_Request("POST", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
@@ -416,7 +418,6 @@ End Function
 ' Head请求
 Public Function HTTP_HEAD(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_HEAD.VB_Description = "Head请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_HEAD = HTTP_Request("HEAD", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
@@ -424,7 +425,6 @@ End Function
 ' Options请求
 Public Function HTTP_OPTIONS(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_OPTIONS.VB_Description = "Options请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_OPTIONS = HTTP_Request("OPTIONS", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
@@ -432,7 +432,6 @@ End Function
 ' Patch请求
 Public Function HTTP_PATCH(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_PATCH.VB_Description = "Patch请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_PATCH = HTTP_Request("PATCH", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
@@ -440,7 +439,6 @@ End Function
 ' Put请求
 Public Function HTTP_PUT(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_PUT.VB_Description = "Put请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_PUT = HTTP_Request("PUT", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
@@ -448,14 +446,12 @@ End Function
 ' Delete请求
 Public Function HTTP_DELETE(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_DELETE.VB_Description = "Delete请求"
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_DELETE = HTTP_Request("DELETE", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Trace请求
 Public Function HTTP_TRACE(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
-    Set cls_WinHttp = New WinHttpRequest
     If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_TRACE = HTTP_Request("TRACE", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function

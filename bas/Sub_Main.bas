@@ -1,12 +1,13 @@
 Attribute VB_Name = "Sub_Main"
-Dim G_Baidu_Tongji_Http As Object
+Dim progress As Long
+
 
 Sub Main()
-    Call test_http_request
+    Call test_bbs_anjian_signin
     End
+    
 
     Call test_run_server
-    'Call test_init
     Call test_ver
     Call test_getbasepath
     Call test_getid
@@ -37,4 +38,10 @@ Sub Main()
     Call test_Baidu_Translate
 
     Debug.Print "脚本已经停止运行"
+End Sub
+
+
+
+Sub ProgressBar()
+    
 End Sub

@@ -5,7 +5,7 @@ Dim SmHTTP As New SmHTTP
 
 
 ' 运行测试服务器
-Sub test_run_server()
+Public Sub test_run_server()
     Dim ws, ProceName, Proce
     Proce = False
     ProceName = "go-httpbin-win.exe" '判断的进程
@@ -24,43 +24,43 @@ End Sub
 
 
 ' 测试插件初始化
-Sub test_init()
+Public Sub test_init()
 '    Debug.Assert SmHTTP.Init() = 1
 End Sub
 
 
 ' 测试插件版本号
- Sub test_ver()
+Public Sub test_ver()
     'Debug.Assert SmHTTP.ver() = "0.0.0.16"
 End Sub
 
 
 ' 测试插件的路径
-Sub test_getbasepath()
+Public Sub test_getbasepath()
     Debug.Assert SmHTTP.GetBasePath() = "E:\AppData\Roaming\GitHub\【VisualBasic - 开发项目】SmHTTP\SmHTTP.dll"
 End Sub
 
 
 ' 测试插件对象ID
-Sub test_getid()
+Public Sub test_getid()
     Debug.Assert SmHTTP.GetID() > 0
 End Sub
 
 
 ' 测试设置开启自动识别对应传入参数
-Sub test_set_auto_param_array_on()
+Public Sub test_set_auto_param_array_on()
     Debug.Assert SmHTTP.SetAutoParamArray(True) = 1
 End Sub
 
 
 ' 测试设置关闭自动识别对应传入参数
-Sub test_set_auto_param_array_off()
+Public Sub test_set_auto_param_array_off()
     Debug.Assert SmHTTP.SetAutoParamArray(False) = 1
 End Sub
 
 
 ' 测试构造请求头
-Sub test_headers()
+Public Sub test_headers()
     Debug.Assert SmHTTP.Headers( _
         "Accept", "*/*", _
         "Accept-Language", "zh-CN,zh;q=0.8", _
@@ -76,7 +76,7 @@ End Sub
 
 
 ' 构造Cookies
-Sub test_cookies()
+Public Sub test_cookies()
     Dim Ret: Ret = SmHTTP.Cookies( _
         "_ga", "GA1.2.1206281266.1647004488", _
         "BAIDUID_BFESS", "0F068EE7974C72C13A37B02D9855DD1C:SL=0:NR=10:FG=1", _
@@ -86,7 +86,7 @@ Sub test_cookies()
 End Sub
 
 ' 构造 URLData 请求体
-Sub test_data()
+Public Sub test_data()
     Dim Ret: Ret = SmHTTP.Data( _
         "username", "SMWH", _
         "password", "123456" _
@@ -95,7 +95,7 @@ Sub test_data()
 End Sub
 
 ' 构造 form-data 请求体
-Sub test_form_data()
+Public Sub test_form_data()
     Dim Ret: Ret = SmHTTP.FormData( _
         "username", "SMWH", _
         "password", "123456" _
@@ -112,70 +112,70 @@ Sub test_form_data()
 End Sub
 
 ' 构造 JSON 请求体
-Sub test_json_data()
+Public Sub test_json_data()
     Debug.Assert SmHTTP.JSONData( _
-        "Empty", Empty, _
+        "empty", Empty, _
         "null", Null, _
         "int", 123, _
         "float", 3.14, _
         "bool", True, _
         "str", "神梦无痕""1042207232""", _
         "array", Array(1, 3.14, True, Null, "按键精灵") _
-    ) = "{""Empty"":null,""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""神梦无痕\""1042207232\"""",""array"":[1,3.14,true,null,""按键精灵""]}"
+    ) = "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""神梦无痕\""1042207232\"""",""array"":[1,3.14,true,null,""按键精灵""]}"
 End Sub
 
 
 ' 测试 GET 请求
-Sub test_http_get()
+Public Sub test_http_get()
     Dim Ret: Ret = SmHTTP.HTTP_GET("http://127.0.0.1:8080/get")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 POST 请求
-Sub test_http_post()
+Public Sub test_http_post()
     Dim Ret: Ret = SmHTTP.HTTP_POST("http://127.0.0.1:8080/post", "username=SMWH&password=123456", "Content-Type: application/x-www-form-urlencoded")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 HEAD 请求
-Sub test_http_head()
+Public Sub test_http_head()
     Dim Ret: Ret = SmHTTP.HTTP_HEAD("http://127.0.0.1:8080/head")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 OPTIONS 请求
-Sub test_http_options()
+Public Sub test_http_options()
     Dim Ret: Ret = SmHTTP.HTTP_OPTIONS("http://127.0.0.1:8080/options")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 PATCH 请求
-Sub test_http_patch()
+Public Sub test_http_patch()
     Dim Ret: Ret = SmHTTP.HTTP_PATCH("http://127.0.0.1:8080/patch")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 PUT 请求
-Sub test_http_put()
+Public Sub test_http_put()
     Dim Ret: Ret = SmHTTP.HTTP_PUT("http://127.0.0.1:8080/put")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 DELETE 请求
-Sub test_http_delete()
+Public Sub test_http_delete()
     Dim Ret: Ret = SmHTTP.HTTP_DELETE("http://127.0.0.1:8080/delete")
     Debug.Assert SmHTTP.GetStatus() = 200
 End Sub
 
 
 ' 测试 Request 请求
-Sub test_http_request()
+Public Sub test_http_request()
     Call test_set_auto_param_array_on
     Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "https://www.bing.com/ipv6test/test?FORM=MONITR", "UTF-8")
     Debug.Print SmHTTP.GetCookieByName(SmHTTP.Getcookies(), "_SS")
@@ -184,7 +184,7 @@ End Sub
 
 
 ' 测试代理IP
-Sub test_http_proxy()
+Public Sub test_http_proxy()
     Call test_set_auto_param_array_on
     Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", "120.196.186.248:9091")
     'Debug.Assert Ret = "120.196.186.248"
@@ -193,7 +193,7 @@ End Sub
 
 
 ' 测试代理IP(带身份认证)
-Sub test_http_proxy_auth()
+Public Sub test_http_proxy_auth()
 '    Call test_set_auto_param_array_on
 '    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", "112.5.56.2:9091")
 '    Debug.Assert Ret = "112.5.56.2"
@@ -202,7 +202,7 @@ End Sub
 
 
 ' 测试身份认证
-Sub test_http_auth_basic()
+Public Sub test_http_auth_basic()
     Call test_set_auto_param_array_on
     Dim Ret: Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
     Debug.Assert SmHTTP.GetStatus() = 200
@@ -211,7 +211,7 @@ End Sub
 
 
 ' 测试返回JSON
-Sub test_http_ret_json()
+Public Sub test_http_ret_json()
     Call test_set_auto_param_array_on
     Dim URL: URL = "https://shenzhen.1200.com.cn/api/sale/querySecondHouse?cityId=11&pageSize=30&orderBy=DEFAULT&pageIndex=1&showAppreciateFlag=1"
     Dim Ret: Ret = SmHTTP.HTTP_Request("GET", URL)
@@ -222,7 +222,7 @@ End Sub
 
 
 ' 测试上传文件
-Sub test_http_upload_file()
+Public Sub test_http_upload_file()
     Dim URL: URL = "http://127.0.0.1:8080/post"
     Dim Data: Data = SmHTTP.FormData( _
         "@file", "C:\Users\SMWH\Pictures\Saved Pictures\纸飞机.png", "image/png", _
@@ -240,7 +240,7 @@ End Sub
 
 
 ' 测试按键精灵论坛签到
-Sub test_bbs_anjian_signin()
+Public Sub test_bbs_anjian_signin()
     Dim Ret, Cookies, Headers
     Dim user: user = Environ("AJ_USER")
     Dim pass: pass = Environ("AJ_PASS")
@@ -274,7 +274,7 @@ End Sub
 
 
 ' 测试强制服务器返回未压缩的内容
-Sub test_http_ret_not_gzip()
+Public Sub test_http_ret_not_gzip()
 '    Call test_set_auto_param_array_on
 '    Dim params: params = SmHTTP.Data( _
 '        "date", "", _
@@ -292,7 +292,7 @@ End Sub
 
 
 ' 测试获取QQ昵称
-Sub test_get_qq_nick_name()
+Public Sub test_get_qq_nick_name()
 '    Dim qq: qq = 1042207232
 '    Call test_set_auto_param_array_on
 '    Dim Ret: Ret = SmHTTP.HTTP_GET("https://r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "GBK")
@@ -303,7 +303,7 @@ End Sub
 
 
 ' 测试下载QQ头像
-Sub test_download_qq_avatar()
+Public Sub test_download_qq_avatar()
 '    Dim qq: qq = 1042207232
 '    Call test_set_auto_param_array_on
 '    Dim Ret: Ret = SmHTTP.HTTP_GET("https://r.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "GBK")
@@ -316,7 +316,7 @@ End Sub
 
 
 ' 测试百度翻译(英译中)
-Sub test_Baidu_Translate()
+Public Sub test_Baidu_Translate()
     Dim enStr: enStr = "I Love You"
     Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
     Dim Ret: Ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
@@ -331,7 +331,7 @@ End Sub
 
 
 ' 百度统计
-Sub test_Baidu_tongji()
+Public Sub test_Baidu_tongji()
     Dim Data: Data = SmHTTP.Data( _
         "cc", 1, _
         "ck", 1, _

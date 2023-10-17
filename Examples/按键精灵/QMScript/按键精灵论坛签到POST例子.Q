@@ -29,7 +29,7 @@ Import "SmHTTP.dll"
 
 
 ' 判断插件版本号
-Assert "1.0.0.0" = SmHTTP.Ver(), "出错，插件版本号不匹配！"
+Assert "1.0.0.1" = SmHTTP.Ver(), "出错，插件版本号不匹配！"
 
 
 ' 定义变量

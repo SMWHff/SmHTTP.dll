@@ -25,7 +25,7 @@ End If
 '====注册插件到系统====
 DLLName = "SmHTTP"   '插件英文名
 DLLPath = GetScriptDir() + "\"& DLLName &".dll"
-If IsFileExist(DLLPath) = False Then DLLPath = Mid(DLLPath, 1, InStrRev(DLLPath, "\TestCase")-1) + "\"& DLLName &".dll"
+If IsFileExist(DLLPath) = False Then DLLPath = Mid(DLLPath, 1, InStrRev(DLLPath, "\Examples")-1) + "\Releases\"& DLLName &".dll"
 If IsFileExist(DLLPath) Then
     SysDir = Left(WScript.FullName, InStrRev(WScript.FullName, "\")-1)
     CreateObject("WScript.Shell").Run SysDir & "\regsvr32.exe """ + DLLPath + """ /s", 0, True
@@ -38,6 +38,7 @@ End If
 '====创建对象引用====
 Set Plugin = New VbsQMPlugin
 Set SmHTTP = Plugin.SmHTTP
+
 
 Class VbsQMPlugin
     Private QM_SmHTTP
@@ -190,6 +191,11 @@ Public Function ExitScript()
     WScript.Quit
 End Function
 
+' 退出当前脚本的运行
+Public Function EndScript()
+    WScript.Quit
+End Function
+
 
 '运行程序
 Function RunApp(Path)
@@ -223,7 +229,11 @@ End Function
 
 '判断文件是否存在
 Function IsFileExist(Path)
-    IsFileExist = Createobject("Scripting.FileSystemObject").fileExists(Path)
+    If Path <> "" Then
+        IsFileExist = Createobject("Scripting.FileSystemObject").FileExists(Path)
+    Else
+        IsFileExist = False
+    End If
 End Function
 
 ' 断言
@@ -246,4 +256,16 @@ Function Run32()
             ExitScript
         End If
     End If
+End Function
+
+
+' 获取系统环境变量
+Function Environ(Expression)
+    Dim objShell, objEnv, strPath
+
+    Set objShell = CreateObject("WScript.Shell")
+    Set objEnv = objShell.Environment("Process")
+    Environ = objEnv(Expression)
+    Set objEnv = Nothing
+    Set objShell = Nothing
 End Function
