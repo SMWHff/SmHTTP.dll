@@ -1089,8 +1089,8 @@ End If
 </td></tr><tr><th>命令功能：</th><td>
 超文本传输协议 （HTTP） 是用于传输超媒体文档（如 HTML）的应用层协议。它专为Web浏览器和Web服务器之间的通信而设计，但也可用于其他目的。HTTP遵循经典的客户端-服务器模型，客户端打开连接以发出请求，然后等待直到收到响应。HTTP是一种无状态协议，这意味着服务器不会在两个请求之间保留任何数据（状态）。
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
-参数1【必选】：文本型，网址
-参数2【可选】：文本型，访问方法，默认 "GET"；POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
+参数1【必选】：文本型，访问方法：GET、POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
+参数2【必选】：文本型，网址
 参数3【可选】：任意型，请求主体
 参数4【可选】：文本型，请求协议头，一行一个用换行符隔开
 参数5【可选】：文本型，请求Cookies
@@ -1155,7 +1155,40 @@ If InStr(Ret, "恭喜您获取本日签到奖励") Or InStr(Ret, "你今天已�
 End If
 </td></tr></table>	
 	
-	
+
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_DownLoad'></a>HTTP_DownLoad 下载指定资源到本地
+</td></tr><tr><th>命令功能：</th><td>
+用 HTTP GET 方法请求下载指定资源到本地
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，下载地址
+参数2【必选】：文本型，保存路径
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+数值型，是否成功
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_DownLoad" class="vb" id="code8_HTTP_DownLoad">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim URL, Path, Ret
+URL = "https://bbs.anjian.com/templates/default/Images/logo1.png"
+Path = "C:\logo1.png"
+Ret = SmHTTP.HTTP_DownLoad(URL, Path)
+If Ret = 1 Then
+    TracePrint "下载成功！"
+    RunApp Path
+Else
+    MsgBox "出错，下载失败！", 16 + 4096, "报错！"
+End If
+</td></tr></table>	
+
+
+
+
 
 
 <script type="text/javascript">
@@ -1222,6 +1255,7 @@ End If
     dp.SyntaxHighlighter.HighlightAll('code8_HTTP_DELETE',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_HTTP_TRACE',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_HTTP_Request',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_DownLoad',true,true,false);
 </script>
 </body>
 </html>	

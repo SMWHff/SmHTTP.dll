@@ -7,6 +7,15 @@ Private Declare Function RegOpenKey Lib "advapi32.dll" Alias "RegOpenKeyA" (ByVa
 Private Declare Function RegCloseKey Lib "advapi32.dll" (ByVal hKey As Long) As Long
 Private Declare Function GetUserDefaultLCID Lib "kernel32" () As Long
 Private Declare Function GetLocaleInfo Lib "kernel32" Alias "GetLocaleInfoA" (ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As String, ByVal cchData As Long) As Long
+'获取当前程序全路径
+Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameA" (ByVal hModule As Long, ByVal lpFileName As String, ByVal nSize As Long) As Long
+'取自身进程命令行参数
+Private Declare Function GetCommandLine Lib "kernel32" Alias "GetCommandLineA" () As Long
+''拷贝内存数据
+'Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (pDst As Any, pSrc As Any, ByVal ByteLen As Long)
+'取字符串长度
+Private Declare Function lstrlen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
+
 Private Const LOCALE_SLANGDISPLAYNAME = &H6F
 
 
@@ -260,6 +269,43 @@ Public Function File_ReadByte(ByVal Path As String) As Byte()
     Set ADO = Nothing
 End Function
 
+'写出文件
+Public Function File_WriteByte(ByVal Path As String, ByVal Bytes) As Long
+    Dim ADO As Stream
+    Dim Ret As Long
+
+    If VarType(Bytes) = 8209 Then
+        If Len(Bytes) > 0 Then
+            Set ADO = CreateObject("ADODB.Stream")
+            ADO.Type = 1
+            ADO.Mode = 3
+            ADO.Open
+            ADO.Write Bytes
+            ADO.SaveToFile Path, 2
+            ADO.Close
+            Set ADO = Nothing
+            If Dir(Path) <> "" And Len(Path) > 0 Then
+                Ret = 1
+            End If
+        End If
+    End If
+    File_WriteByte = Ret
+End Function
+
+' 保存字节集到文件
+Public Function SaveFile(ByVal Path As String, ByRef Data As Variant) As Long
+    Dim Handle  As Long
+    Dim Ret     As Long
+    
+    If Len(Path) > 0 And VarType(Data) = vbArray + vbByte Then
+        Handle = FreeFile() '获得文件的句柄
+        Open Path For Binary As #Handle
+            Put #Handle, , Data
+        Close #Handle
+        If Len(Dir(Path)) > 0 Then Ret = 1
+    End If
+    SaveFile = Ret
+End Function
 
 '字节集连接
 Public Function Concat_Byte(ByRef Bin1() As Byte, ByRef Bin2() As Byte) As Byte()
@@ -629,7 +675,11 @@ Public Function GetScreenXY() As String
     
     ScRX = Screen.Width \ Screen.TwipsPerPixelX
     ScRY = Screen.Height \ Screen.TwipsPerPixelY
+<<<<<<< HEAD:bas/Utils.bas
     GetScreenXY = ScRX & "*" & ScRY
+=======
+    GetScreenXY = ScRX & "x" & ScRY
+>>>>>>> dev-1.0.0.2:Project/bas/Utils.bas
 End Function
 
 
@@ -650,6 +700,34 @@ Public Function IsJavaInstalled() As Boolean
 End Function
 
 
+<<<<<<< HEAD:bas/Utils.bas
+=======
+' 获取浏览器语言环境
+Public Function GetBrowserLanguage() As String
+    Dim Language        As String
+    Dim HTMLDocument    As HTMLDocument ' 引用 Microsoft HTML Object Library
+    Dim IE              As Object       ' 引用 Microsoft Internet Controls
+    
+    Set HTMLDocument = CreateObject("htmlfile")
+    HTMLDocument.Open
+    Language = HTMLDocument.parentWindow.navigator.userLanguage
+    Set HTMLDocument = Nothing
+    
+    If Len(Language) = 0 Then
+        Set IE = CreateObject("InternetExplorer.Application")
+        IE.Visible = 0
+        IE.navigate "about:blank"
+        Do While IE.Busy
+            DoEvents
+        Loop
+        Language = IE.document.parentWindow.navigator.Language
+        IE.Quit
+    End If
+    GetBrowserLanguage = LCase(Language)
+End Function
+
+
+>>>>>>> dev-1.0.0.2:Project/bas/Utils.bas
 ' 获取当前系统语言环境
 Public Function GetLanguageLocale() As String
     Dim lngLCID         As Long
@@ -672,3 +750,37 @@ Public Function GetLanguageLocale() As String
     End If
 End Function
 
+<<<<<<< HEAD:bas/Utils.bas
+=======
+
+'获取自身命令行参数
+Function GetCommLine() As String
+    Dim RetStr As Long, sLen As Long
+    Dim buffer As String
+
+    RetStr = GetCommandLine()
+    sLen = lstrlen(RetStr)
+    If sLen > 0 Then
+        GetCommLine = Space$(sLen)
+        CopyMemory ByVal GetCommLine, ByVal RetStr, sLen
+    End If
+End Function
+
+
+'获取自身执行文件名
+'Public Function GetMeExeName() As String
+'    Dim lRet As Long
+'    Dim Path As String
+'    Dim sRet As String
+'
+'    Path = String(255, 0)
+'    lRet = GetModuleFileName(0, Path, 255)
+'    Path = Left(Path, lRet)
+'    sRet = Mid(Path, InStrRev(Path, "\") + 1)
+'    If LCase(sRet) = "runner.exe" Or LCase(sRet) = "runnerlua.exe" Then
+'        Path = T_MidS(GetCommLine(), """", """")
+'        sRet = Mid(Path, InStrRev(Path, "\") + 1)
+'    End If
+'    GetMeExeName = sRet
+'End Function
+>>>>>>> dev-1.0.0.2:Project/bas/Utils.bas

@@ -56,8 +56,8 @@
 - [鸣谢](#鸣谢)
 
 ### 上手指南
-1. 复制 `SmHTTP.dll`、`SmHTTP.html` 文件
-2. 粘贴 到按键精灵根目录下的 `plugin` 文件夹里
+1. 安装 [Visual Basic 6.0][VB6-url]
+2. 双击 `神梦HTTP请求插件工程组.vbg` 打开项目工程
 
 
 ###### 开发前的配置要求
@@ -67,8 +67,7 @@
 
 
 ###### **安装步骤**
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
 ```sh
 git clone https://github.com/SMWHff/SmHTTP.dll.git
 ```
@@ -77,9 +76,8 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 ### 文件目录说明
 ```
 文件目录
-├─bas/
-├─cls/
 ├─Documents/
+│  ├─Literature/
 │  └─SmHTTP_chm/
 │      ├─bin/
 │      ├─css/
@@ -95,11 +93,17 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 │  ├─TC简单开发/
 │  ├─VBScript/
 │  └─按键精灵/
-├─frm/
+├─Project/
+│  ├─bas/
+│  ├─cls/
+│  ├─res/
+│  ├─TestCase/
+│  ├─SmHTTP.vbp
+│  └─TestSmHTTP.vbp
 ├─Releases/
-├─res/
 ├─LICENSE
-└─README.md
+├─README.md
+└─神梦HTTP请求插件工程组.vbg
 ```
 
 
@@ -135,18 +139,23 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 
 
 ### 作者
-【昵称】：神梦无痕
-【ＱＱ】：[1042207232][QQ-url]
-【Ｑ群】：[624655641][QQun-url]
-【邮箱】：[1042207232@qq.com][QEmail-url]
+【昵称】：[![神梦无痕][SMWHff-shield]][SMWHff-url]</br>
+【ＱＱ】：[![1042207232][QQ-shield]][QQ-url]</br>
+【Ｑ群】：[![624655641][QQun-shield]][QQun-url]</br>
+【邮箱】：[![1042207232@qq.com][QEmail-shield]][QEmail-url]</br>
 
- *您也可以在贡献者名单中参看所有参与该项目的开发者。*
+*您也可以在贡献者名单中参看所有参与该项目的开发者。*
 
 
 
 ### 版权说明
 该项目签署了 BSD 授权许可，详情请参阅 [LICENSE](https://github.com/SMWHff/SmHTTP.dll/blob/master/LICENSE)
 
+
+### 免责声明
+> 本软件（指 'SmHTTP.dll' 插件）按 "原样" 提供，不带任何形式的明示或暗示保证，包括但不限于适销性、特定用途的适用性和非侵权性。在任何情况下，作者或版权持有者均不承担任何索赔、损害赔偿或其他责任，无论是在一个行动的合同、侵权行为或其他方面，从而产生、引起或与本软件的使用或其他交易有关。
+> 使用者必须了解使用本软件进行网络请求可能受到各种法律法规和或第三方服务条款的约束，并且使用者应当自行确保其使用行为符合所有适用的法律和服务条款。作者或版权持有者不对因使用本软件而可能导致的任何形式的法律问题或损失承担责任。
+> 使用本软件即表示您了解并同意此免责声明。如果您不同意上述条款，请不要使用本软件。
 
 
 ### 鸣谢
@@ -184,6 +193,16 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 [JSON-url]: http://www.ediy.co.nz/vbjson-json-parser-library-in-vb6-xidc55680.html
 [httpbin-shield]: https://img.shields.io/badge/httpbin.org-0.9.2-blue
 [httpbin-url]: https://httpbin.org/
+<<<<<<< HEAD
 [QQ-url]: tencent://message/?Menu=yes&uin=1042207232&Site=&Service=200&sigT=2a39fb276d15586e1114e71f7af38e195148b0369a16a40fdad564ce185f72e8de86db22c67ec3c1
 [QQun-url]: tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A3632343635353634312C2274696D655374616D70223A313532363734303633387D0A
+=======
+[SMWHff-shield]: https://img.shields.io/badge/%E6%98%B5%E7%A7%B0-%E7%A5%9E%E6%A2%A6%E6%97%A0%E7%97%95-8A2BE2
+[SMWHff-url]: https://smwhff.com
+[QQ-shield]: https://img.shields.io/badge/QQ-1042207232-blue?logo=tencentqq&logoColor=EB1923
+[QQ-url]: http://wpa.qq.com/msgrd?v=3&uin=1042207232&site=qq&menu=yes
+[QQun-shield]: https://img.shields.io/badge/Q%E7%BE%A4-624655641-blue?logo=tencentqq&logoColor=4DC9FC
+[QQun-url]: https://qm.qq.com/cgi-bin/qm/qr?k=gIac3vFLxvho5YxrAmA1gZwsbMZ_xKky&jump_from=webapi&authKey=vSW162lX1N9zVYQOKNtGHdV//ZPZsRSb7TyRMktB0V4ofuy3LiuAwEFsRf8P7RXS
+[QEmail-shield]: https://img.shields.io/badge/Email-1042207232%40qq.com-blue?logo=gmail&logoColor=white
+>>>>>>> dev-1.0.0.2
 [QEmail-url]: http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=0uPi5uDg4uXg4eCSo6P8sb2-

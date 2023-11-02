@@ -26,7 +26,7 @@ Option Explicit
 Private cls_WinHttp     As WinHttpRequest
 Private cls_AutoParam   As Boolean
 Private cls_Status      As Long
-Private cls_Stream()    As Byte
+Private cls_Stream      As Variant
 Private cls_Headers     As String
 Private cls_Cookies     As String
 Private cls_ContentType As String
@@ -74,21 +74,21 @@ Attribute SetAutoParamArray.VB_Description = "设置自动识别对应传入参数"
     SetAutoParamArray = 1
     
     ' 百度统计代码
-    If G_Init = False Then
+    'If G_Init = False Then
         G_Init = True
         On Error Resume Next
         Dim Baidu_Tongji_Http As WinHttpRequest
         Dim Args As String
-        Args = "cc=1&ck=1&cl=" & Utils.GetBitsPerPel() & "-bit&ds=" & Utils.GetScreenXY() & "&ln=" & Utils.GetLanguageLocale() & "&et=0&ep=0&fl=0&ja=" & Abs(Utils.IsJavaInstalled())
-        ' Debug.Print Args
+        Args = "v=1.3.0&cc=1&ck=1&cl=" & Utils.GetBitsPerPel() & "-bit&ds=" & Utils.GetScreenXY() & "&ln=" & Utils.GetBrowserLanguage() & "&et=0&ep=0&fl=0&ja=" & Abs(Utils.IsJavaInstalled()) & "&u=" & Utils.EscapeURL("https://www.SmHTTP.com/") & "&tt=" & Utils.EscapeURL("神梦HTTP请求插件")
+        'Debug.Print Args
         Set Baidu_Tongji_Http = CreateObject("WinHttp.WinHttpRequest.5.1")
-        Baidu_Tongji_Http.Open "GET", "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368&" & Args, True
-        Baidu_Tongji_Http.SetRequestHeader "Referer", "http://www.SmHTTP.com/"
+        Baidu_Tongji_Http.Open "GET", "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368&" & Args, False
+        Baidu_Tongji_Http.SetRequestHeader "Referer", "https://www.SmHTTP.com/"
         Baidu_Tongji_Http.SetRequestHeader "User-Agent", Utils.GetUserAgent()
         Baidu_Tongji_Http.SetRequestHeader "Cookie", "HMACCOUNT=" & Utils.GetHDDSN() & Utils.GetBaseBoard() & Utils.GetBIOS()
         Baidu_Tongji_Http.Send
         Set Baidu_Tongji_Http = Nothing
-    End If
+    'End If
 End Function
 
 
@@ -292,7 +292,7 @@ Attribute GetStatus.VB_Description = "获取返回状态"
 End Function
 
 
-' 获取返回的二进制内容
+' 获取响应的二进制数据
 Public Function GetStream(Optional ByVal Path As String = "") As Byte()
     If cls_WinHttp Is Nothing Then
         GetStream = cls_Stream
@@ -300,13 +300,14 @@ Public Function GetStream(Optional ByVal Path As String = "") As Byte()
         GetStream = cls_WinHttp.ResponseBody
     End If
     
-    If Len(Path) > 0 And UBound(GetStream) > -1 Then
+    If Len(Path) > 0 And VarType(GetStream) = vbArray + vbByte Then
         Dim Handle As Long
         Handle = FreeFile() '获得文件的句柄
         Open Path For Binary As #Handle
             Put #Handle, , GetStream()
         Close #Handle
     End If
+    cls_Stream = Empty
 End Function
 
 
@@ -398,8 +399,6 @@ End Function
 
 
 
-
-
 '========================================【同步请求函数】========================================
 ' Get请求
 Public Function HTTP_GET(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
@@ -485,17 +484,6 @@ Attribute HTTP_Request.VB_UserMemId = 0
     Dim SyncAsync   As Variant
     Dim CompHeaders As Variant
     Dim CompCookies As Variant
-    
-    
-    
-    ' 判断是否为内测版
-    'If App.Major = 0 Then
-    '    If Not cls_Init Then
-    '        MsgBox "出错，当前是内测版，所以需要先执行 Init() 初始化插件！", vbCritical + vbSystemModal, "错误提示！"
-    '        Exit Function
-    '    End If
-    'End If
-    
     
     
     If UBound(Args) = -1 Then
@@ -595,7 +583,7 @@ Attribute HTTP_Request.VB_UserMemId = 0
                 CompHeaders = (v <> "关闭补全")
             Case Utils.ArgumentsMatch(v, vbString, "^(开启|关闭)合并$", SavaArg:=CompCookies)
                 CompCookies = (v <> "关闭合并")
-            Case Utils.ArgumentsMatch(v, vbString, "^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$", SavaArg:=Cookies) ' 旧表达式：^([^=\s\r\n]+=[^;\s\r\n]+;?\s?)+$
+            Case Utils.ArgumentsMatch(v, vbString, "^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$", SavaArg:=Cookies)
                 Cookies = v
             Case Utils.ArgumentsMatch(v, vbString, "(Accept|Accept-Encoding|Accept-Language|Cache-Control|Connection|Content-Type|Content-Length|Cookie|Host|Referer|Origin|User-Agent|X-Requested-With):.*", SavaArg:=Headers)
                 Headers = v
@@ -684,6 +672,74 @@ End Function
 
 
 
+'========================================【实际应用函数】========================================
+' HTTP下载
+Public Function HTTP_DownLoad(ByVal URL As String, ByVal SavePath As String) As Long
+    Dim ResBody As Variant
+    
+    ' 判断在 IDE 中
+    If App.LogMode = 0 Then On Error Resume Next
+    
+    ResBody = XHR.WinHtpRequest(this:=Nothing, Method:="GET", URL:=URL, Charset:="Byte()")
+    HTTP_DownLoad = SaveFile(SavePath, ResBody)
+    On Error GoTo 0
+    cls_Stream = Empty
+End Function
+
+
+' HTTP下载加强版
+Private Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths As String, Optional ByVal Method As String = "GET", Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 30, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
+    Dim http()      As Object
+    Dim URLArr()    As String
+    Dim PathArr()   As String
+    Dim i           As Long
+    Dim n           As Long
+    Dim t           As Long
+    Dim errRet      As String
+    Dim Ret()       As Variant
+    
+    If App.LogMode = 0 Then On Error Resume Next
+    
+    URLArr = Split(URLs, "|")
+    PathArr = Split(SavePaths, "|")
+    
+    If UBound(URLArr) < UBound(PathArr) Then
+        ReDim Preserve URLArr(UBound(PathArr))
+    Else
+        ReDim Preserve PathArr(UBound(URLArr))
+    End If
+    
+    ' 批量创建 HTTP 对象
+    ReDim http(UBound(URLArr))
+    For i = 0 To UBound(URLArr)
+        Set http(i) = New WinHttpRequest
+        Call XHR.WinHtpRequest(this:=http(i), Method:=Method, URL:=URLArr(i), Data:=Data, Headers:=Headers, Cookies:=Cookies, Charset:="Byte()", Redirects:=Redirects, Proxy:=Proxy, ProxyUser:=ProxyUser, AuthType:=AuthType, AuthUser:=AuthUser, AuthPass:=AuthPass, IsAsync:=True)
+    Next
+    ' 异步等待响应内容
+    ReDim Ret(UBound(URLArr))
+    t = Timer(): n = 0
+    Do
+        For i = 0 To UBound(URLArr)
+            If http(i).WaitForResponse(1) Then
+                If http(i).Status = 200 And Len(Ret(i)) = 0 Then
+                    n = n + 1
+                    Ret(i) = SaveFile(PathArr(i), http(i).ResponseBody)
+                    If Ret(i) = 0 Then
+                        errRet = errRet & URLArr(i) & "," & PathArr(i) & "|"
+                    End If
+                End If
+            End If
+        Next
+        DoEvents
+    Loop Until Timer() - t > Timeout And Timeout > -1 Or n = UBound(URLArr) + 1
+    ' 批量销毁 HTTP 对象
+    For i = 0 To UBound(URLArr)
+        Set http(i) = Nothing
+    Next
+    On Error GoTo 0
+    If Len(errRet) > 0 Then errRet = Left(errRet, Len(errRet) - 1)
+    HTTP_DownLoadEx = errRet
+End Function
 
 
 
@@ -756,6 +812,9 @@ Public Function Get_Plugin_Description(ByVal ItemName As String) As String
         Description_Text = "Trace请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_Request"
         Description_Text = "HTTP请求(网址$, [访问方法=GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE|CONNECT|PATCH$], [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理地址=〓格式为 user:pwd@1.1.1.1:80$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$], [等待方式=同步|异步$], [自动补全协议头=开启补全|关闭补全$], [合并更新Cookies=开启合并|关闭合并$])【网页源码$】"
+    Case "HTTP_DownLoad"
+        Description_Text = "HTTP下载(下载地址$, 保存路径$)【是否成功|】"
+    
     '------------------------------------------------
     '为您的每个插件函数建立一个Case，就可以在按键精灵里显示插件的使用说明
     '------------------------------------------------
@@ -831,6 +890,8 @@ Public Function Get_Plugin_Interpret_Template(ByVal ItemName As String) As Strin
         Description_Text = "用 Trace 方法请求 $1 发送 $2 并带上请求头 $3 和请求Cookes $4 重定向为 $7 通过代理IP $8@$9:$10 通过 $11 身份认证 $12:13 在 $6 秒内返回 $5 编码格式的请求提交内容"
     Case "HTTP_Request"
         Description_Text = "用 $1 方法请求 $2 发送 $3 并带上请求头 $4 和请求Cookes $5 重定向为 $8 通过代理IP $9@$10$11 通过 $12 身份认证 $13:$14 在 $7 秒内返回 $6 编码格式的网页内容"
+    Case "HTTP_DownLoad"
+        Description_Text = "下载 $1 并保存到 $2"
     '------------------------------------------------
     '为您的每个插件函数建立一个Case，就可以在按键精灵里显示插件的使用说明
     '------------------------------------------------

@@ -184,6 +184,8 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
     Dim Heads               As Variant
     Dim ContentType         As String
     Dim ContentTypeCharset  As String
+    Dim ContentEncoding     As String
+    Dim IsGzip              As Boolean
     Dim ResBody             As Variant
     Dim Result              As Variant
     
@@ -313,7 +315,6 @@ Begin:
         'Debug.Print "Res_Cookies=", Res_Cookies
     End If
     
-    
     ' 返回网页编码
     If InStr(Res_Headers, "Content-Type:") > 0 Then
         ContentType = http.GetResponseHeader("Content-Type")
@@ -324,11 +325,21 @@ Begin:
         End If
     End If
     
+    ' 返回压缩格式
+    If InStr(Res_Headers, "Content-Encoding:") > 0 Then
+        ContentEncoding = http.GetResponseHeader("Content-Encoding")
+        If InStr(ContentEncoding, "gzip") > 0 Then
+            IsGzip = True
+        End If
+    End If
+    
+    
     ' 返回状态码
     Res_Status = http.Status
     
     ' 返回二进制内容
     Res_Body = http.ResponseBody
+    
     
     ' 返回网页内容
     If InStr("HEAD", Method) = 0 Then
@@ -337,7 +348,7 @@ Begin:
     If UCase(Charset) = "ANSI" Then Charset = ""
     If LCase(Charset) = "byte()" Or ContentTypeCharset = "Byte()" Then
         Result = ResBody
-    ElseIf Len(ContentTypeCharset) <> 0 And Len(Charset) = 0 Then
+    ElseIf Len(ContentTypeCharset) <> 0 And Len(Charset) = 0 And IsGzip = False Then
         Result = http.ResponseText
     ElseIf Len(ResBody) > 0 Then
         ' 如果没有指定编码，则自动从网页源码中获取，如果获取失败，则默认 UTF-8

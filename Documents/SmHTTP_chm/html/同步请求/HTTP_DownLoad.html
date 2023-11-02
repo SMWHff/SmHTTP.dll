@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>HTTP_PATCH</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>HTTP_DownLoad</title>
     <script type="text/javascript" src="../../JS/shCore.js" charset="gbk"></script>
     <link rel="stylesheet" type="text/css" href="../../CSS/SyntaxHighlighter.css">
     <link rel="stylesheet" type="text/css" href="../../CSS/help.css">
@@ -38,73 +38,29 @@
 
 <table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
 <tr><th width='100px'>命令名称：</th><td class='name'>
-<a name='HTTP_Request'></a>HTTP_Request 超文本传输协议
+<a name='HTTP_DownLoad'></a>HTTP_DownLoad 下载指定资源到本地
 </td></tr><tr><th>命令功能：</th><td>
-超文本传输协议 （HTTP） 是用于传输超媒体文档（如 HTML）的应用层协议。它专为Web浏览器和Web服务器之间的通信而设计，但也可用于其他目的。HTTP遵循经典的客户端-服务器模型，客户端打开连接以发出请求，然后等待直到收到响应。HTTP是一种无状态协议，这意味着服务器不会在两个请求之间保留任何数据（状态）。
+用 HTTP GET 方法请求下载指定资源到本地
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
-参数1【必选】：文本型，访问方法：GET、POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
-参数2【必选】：文本型，网址
-参数3【可选】：任意型，请求主体
-参数4【可选】：文本型，请求协议头，一行一个用换行符隔开
-参数5【可选】：文本型，请求Cookies
-参数6【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
-参数7【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
-参数8【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
-参数9【可选】：文本型，代理IP，格式为 1.1.1.1:80
-参数10【可选】：文本型，代理用户名
-参数11【可选】：文本型，代理密码
-参数12【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
-参数13【可选】：文本型，认证账号
-参数14【可选】：文本型，认证密码
-参数15【可选】：文本型，等待方式，默认 "同步"；异步
-参数16【可选】：文本型，自动补全协议头，默认 "开启补全"；关闭补全
-参数17【可选】：文本型，合并更新Cookies，默认 "开启合并"；关闭合并
+参数1【必选】：文本型，下载地址
+参数2【必选】：文本型，保存路径
 
 </td></tr><tr><th>返回值：</th><td class='fanhui'>
-任意型，响应内容
+数值型，是否成功
 </td></tr><tr><th><span class='red'>脚本例子：</span>
-</th><td class='lizi'><pre name="code8_HTTP_Request" class="vb" id="code8_HTTP_Request">
+</th><td class='lizi'><pre name="code8_HTTP_DownLoad" class="vb" id="code8_HTTP_DownLoad">
 Import "SmHTTP.dll"
 Set SmHTTP = CreateObject("SMWH.SmHTTP")
 
-Dim user, pass, Data, Ret, Cookies, Headers
-
-' 开启自动识别参数模式
-Call SmHTTP.SetAutoParamArray(True)
-
-user = "你的按键精灵论坛账号"
-pass = "你的按键精灵论坛密码"
-
-
-' 登录论坛账号
-Data = SmHTTP.Data( _
-    "username", user, _
-    "password", pass, _
-    "question", "0", _
-    "answer", "", _
-    "templateid", "0", _
-    "login", "", _
-    "expires", "43200" _
-)
-Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", Data)
-' 判断是否登录成功
-If InStr(Ret, user) = 0 Then  
-    MsgBox "出错，登录失败！", 16 + 4096, "报错！"
-    EndScript
-End If
-Cookies = SmHTTP.GetCookies()
-
-
-' 打卡签到
-Data = SmHTTP.Data( _
-    "signmessage", "签个到，每天心情都是美美哒~~按键精灵祝大家新年好运连连！！" _
-)
-Headers = SmHTTP.Headers( _
-    "Referer", "http://bbs.anjian.com/" _
-)
-Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", Data, Headers, Cookies)
-If InStr(Ret, "恭喜您获取本日签到奖励") Or InStr(Ret, "你今天已经签到过了") Then ' 判断是否签到成功
-    TracePrint "恭喜，您已完成签到任务！"
+Dim URL, Path, Ret
+URL = "https://bbs.anjian.com/templates/default/Images/logo1.png"
+Path = "C:\logo1.png"
+Ret = SmHTTP.HTTP_DownLoad(URL, Path)
+If Ret = 1 Then
+    TracePrint "下载成功！"
+    RunApp Path
+Else
+    MsgBox "出错，下载失败！", 16 + 4096, "报错！"
 End If
 </td></tr></table>	
 	
@@ -136,7 +92,7 @@ End If
         'MessageBox RunApp PutAttachment TracePrint LogStart LogStop BeginThread StopThread PauseThread ContinueThread GetThreadID SetEnv GetEnv Beep Execute '+
         'GetExeDir GetScreenResolution ExecuteGlobal QMLibrary QUIMethodObj '+
         'Access Bkgnd BkgndColor Color Console Encrypt File GetSysInfo Media Memory Msg MySql Net Office Oracle Pic SQLServer Sys Web Window '+
-        'sm SMWH SMWH_ff SmIE SmADO SmVM SmWeb SmReg SmOCR SGuoBrowser TURING';
+        'sm SMWH SMWH_ff SmIE SmADO SmVM SmWeb SmReg SmOCR SmAssert SmPrint SmHTTP SGuoBrowser TURING';
         this.regexList = [
             { regex: new RegExp('(//|\').*$', 'gm'), css: 'comment' }, 
             { regex: new RegExp('/\\*([\\s\\S]*?)\\*/', 'gm'), css: 'comments' }, 
@@ -147,8 +103,7 @@ End If
         this.CssClass = 'dp-vb'; 
     }
     dp.sh.Brushes.Vb.prototype = new dp.sh.Highlighter(); dp.sh.Brushes.Vb.Aliases = ['vb', 'vb.net'];
-    dp.SyntaxHighlighter.ClipboardSwf = "http://www.vrbrothers.com/cn/qmacro/qmdn/htmls/zh_chs/qm/scripts/clipboard.swf";
-    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_Request',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_DownLoad',true,true,false);
 
 </script>
 </body>

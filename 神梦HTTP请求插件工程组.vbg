@@ -1,0 +1,3 @@
+VBGROUP 5.0
+Project=Project\SmHTTP.vbp
+StartupProject=Project\TestSmHTTP.vbp
