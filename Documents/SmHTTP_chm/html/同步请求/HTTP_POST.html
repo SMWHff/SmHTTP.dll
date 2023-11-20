@@ -93,6 +93,35 @@ If SmHTTP.GetStatus() = 200 Then
     TracePrint SmHTTP.GetJSON(Json, "form.password")
     TracePrint SmHTTP.GetJSON(Json, "origin")
 End If
+
+
+
+//-----------------POST上传图片到imgbb-----------------
+Dim Ret, RE, URL, Token, Timestamp, FormData
+Ret = SmHTTP.HTTP_GET("https://imgbb.com/")
+Set RE = New RegExp
+RE.Pattern = "PF.obj.config.json_api=""([^""]+?)"";"
+URL = RE.Execute(Ret)(0).SubMatches(0)
+RE.Pattern = "PF.obj.config.auth_token=""([^""]+?)"";"
+Token = RE.Execute(Ret)(0).SubMatches(0)
+Set RE = Nothing
+Timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
+FormData = SmHTTP.FormData( _
+    "@source", "C:\upload.png", "image/png", _
+    "type", "file", _
+    "action", "upload", _
+    "timestamp", Timestamp, _
+    "auth_token", Token _
+)
+json = SmHTTP.HTTP_POST(URL, FormData)
+If SmHTTP.GetStatus() = 200 Then 
+	TracePrint SmHTTP.GetJSON(json, "status_code")
+	TracePrint SmHTTP.GetJSON(json, "image.name")
+	TracePrint SmHTTP.GetJSON(json, "image.url")
+Else 
+	TracePrint json
+	ExitScript 
+End If
 </td></tr></table>	
 	
 	

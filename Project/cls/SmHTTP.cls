@@ -79,7 +79,7 @@ Attribute SetAutoParamArray.VB_Description = "设置自动识别对应传入参数"
         On Error Resume Next
         Dim Baidu_Tongji_Http As WinHttpRequest
         Dim Args As String
-        Args = "v=1.3.0&cc=1&ck=1&cl=" & Utils.GetBitsPerPel() & "-bit&ds=" & Utils.GetScreenXY() & "&ln=" & Utils.GetBrowserLanguage() & "&et=0&ep=0&fl=0&ja=" & Abs(Utils.IsJavaInstalled()) & "&u=" & Utils.EscapeURL("https://www.SmHTTP.com/") & "&tt=" & Utils.EscapeURL("神梦HTTP请求插件")
+        Args = "v=1.3.0&cc=1&ck=1&cl=" & Utils.GetBitsPerPel() & "-bit&ds=" & Utils.GetScreenXY() & "&ln=" & Utils.GetBrowserLanguage() & "&et=0&ep=0&fl=0&ja=" & Abs(Utils.IsJavaInstalled()) & "&u=" & Utils.EscapeURL("https://www.SmHTTP.com/") & "&tt=" & Utils.EscapeURL("神梦HTTP请求插件") & "&se=13&sw=" & Utils.EscapeURL(Utils.GetMeExeName()) & "&ww=" & Utils.EscapeURL("WW+" & Utils.GetMeExeName())
         'Debug.Print Args
         Set Baidu_Tongji_Http = CreateObject("WinHttp.WinHttpRequest.5.1")
         Baidu_Tongji_Http.Open "GET", "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368&" & Args, False
@@ -153,32 +153,30 @@ End Function
 '   图片文件的二进制内容 [换行]
 '   --分隔符(boundary)--
 Public Function FormData(ParamArray Args()) As Variant
+    Dim Result      As Variant
     Dim boundary    As String
     Dim i           As Long
-    Dim head        As String
-    Dim Data        As String
-    Dim Body        As String
-    Dim bin()       As Byte
-    Dim key         As Variant
+    Dim key         As String
     Dim value       As Variant
-    Dim ValueBuff() As Byte
     Dim fileName    As String
     Dim fileType    As String
-    Dim Result      As Variant
     Dim IsBinary    As Boolean
+    Dim ValueBuff() As Byte
+    Dim strValue    As String
+    Dim DataBuff()  As Byte
     
     boundary = "WebKitFormBoundary" & IIf(App.LogMode = vbIDE, "SmHTTP", GetUnixTime()) & "SMWHff"
     cls_ContentType = "Content-Type:multipart/form-data; boundary=" & boundary & vbCrLf
-    Result = Array()
     While (i < UBound(Args))
         ' Debug.Print "i < UBound(Args)=", i, UBound(Args)
         key = Args(i): i = i + 1
         value = Args(i): i = i + 1
-        fileName = ""
-        fileType = ""
         If Left(key, 1) = "@" Then
             IsBinary = True
             key = Mid(key, 2)
+            fileName = ""
+            fileType = ""
+            ' 取文件名
             If VarType(value) = vbArray + vbByte Then
                 ValueBuff() = value
                 fileName = key
@@ -186,47 +184,33 @@ Public Function FormData(ParamArray Args()) As Variant
                 ValueBuff() = Utils.ReadBin(value)
                 fileName = Mid(value, InStrRev(value, "\") + 1)
             End If
+            strValue = ValueBuff()
+            ' 取文件类型
             fileType = "application/octet-stream"
             If InStr(Args(i), "/") > 0 Then fileType = Args(i): i = i + 1
+            
+            Result = Result & StrConv("--" & boundary & vbCrLf, vbFromUnicode)
+            Result = Result & StrConv("Content-Disposition: form-data; name=""" & key & """; filename=""" & fileName & """" & vbCrLf, vbFromUnicode)
+            Result = Result & StrConv("Content-Type: " & fileType & vbCrLf & vbCrLf, vbFromUnicode)
+            Result = Result & strValue & ChrB(13) & ChrB(10)
         Else
-            ValueBuff() = Utils.ToBin(value)
+            Result = Result & StrConv("--" & boundary & vbCrLf, vbFromUnicode)
+            Result = Result & StrConv("Content-Disposition: form-data; name=""" & key & """" & vbCrLf & vbCrLf, vbFromUnicode)
+            Result = Result & StrConv(value & vbCrLf, vbFromUnicode)
         End If
-        ReDim Preserve Result(UBound(Result) + 1)
-        Result(UBound(Result)) = Array(key, ValueBuff(), fileName, fileType)
     Wend
+    ' 结尾分隔符
+    Result = Result & StrConv("--" & boundary & "--" & vbCrLf, vbFromUnicode)
     
-    head = "--" & boundary & vbCrLf
-    For i = 0 To UBound(Result)
-        key = Result(i)(0)
-        ValueBuff() = Result(i)(1)
-        fileName = Result(i)(2)
-        fileType = Result(i)(3)
-        Data = head & "Content-Disposition: form-data; name=""" & key & """"
-        If Len(fileName) <> 0 Then
-            Data = Data & "; filename=""" & fileName & """" & vbCrLf
-        Else
-            Data = Data & vbCrLf
-        End If
-        If Len(fileType) <> 0 Then
-            Data = Data & "Content-Type: " & fileType & vbCrLf
-        End If
-        Data = Data & vbCrLf
-        If IsBinary Then
-            Call Utils.BinCat(bin(), Utils.ToBin(Data))
-            Call Utils.BinCat(bin(), ValueBuff)
-            Call Utils.BinCat(bin(), Utils.ToBin(vbCrLf))
-        Else
-            Body = Body & Data & StrConv(ValueBuff(), vbUnicode) & vbCrLf
-        End If
-    Next
-    
+    ' 判断是否包含二进制文件
     If IsBinary Then
-        Result = Utils.BinCat(bin(), Utils.ToBin("--" & boundary & "--" & vbCrLf))
+        ' 强制转为字节数组
+        ReDim DataBuff(LenB(Result))
+        DataBuff() = Result
+        FormData = DataBuff
     Else
-        Result = Body & "--" & boundary & "--" & vbCrLf
+        FormData = StrConv(Result, vbUnicode)
     End If
-    
-    FormData = Result
 End Function
 
 
@@ -585,7 +569,7 @@ Attribute HTTP_Request.VB_UserMemId = 0
                 CompCookies = (v <> "关闭合并")
             Case Utils.ArgumentsMatch(v, vbString, "^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$", SavaArg:=Cookies)
                 Cookies = v
-            Case Utils.ArgumentsMatch(v, vbString, "(Accept|Accept-Encoding|Accept-Language|Cache-Control|Connection|Content-Type|Content-Length|Cookie|Host|Referer|Origin|User-Agent|X-Requested-With):.*", SavaArg:=Headers)
+            Case Utils.ArgumentsMatch(v, vbString, "^(Accept|Accept-Encoding|Accept-Language|Authorization|Cache-Control|Connection|Content-Type|Content-Length|Cookie|Host|Origin|Proxy-Authenticate|Range|Referer|User-Agent|X-Requested-With):.*", SavaArg:=Headers)
                 Headers = v
             Case Utils.ArgumentsMatch(v, vbVariant, SavaArg:=Data)
                 Data = v
@@ -628,7 +612,7 @@ Attribute HTTP_Request.VB_UserMemId = 0
     If 调试开关 Then
         Debug.Print "Method：", Method
         Debug.Print "URL：", URL
-        Debug.Print "Data：", IIf(Len(Data) > 1024, TypeName(Data) & "(" & Len(Data) & ")", Data)
+        Debug.Print "Data：", IIf(Len(Data) > 100, TypeName(Data) & "(" & Len(Data) & ")", Data)
         Debug.Print "Headers：", Headers
         Debug.Print "Cookies：", Cookies
         Debug.Print "Charset：", Charset
@@ -675,20 +659,21 @@ End Function
 '========================================【实际应用函数】========================================
 ' HTTP下载
 Public Function HTTP_DownLoad(ByVal URL As String, ByVal SavePath As String) As Long
-    Dim ResBody As Variant
+    Dim ResBody     As Variant
+    Dim Ret         As Long
     
     ' 判断在 IDE 中
     If App.LogMode = 0 Then On Error Resume Next
     
-    ResBody = XHR.WinHtpRequest(this:=Nothing, Method:="GET", URL:=URL, Charset:="Byte()")
-    HTTP_DownLoad = SaveFile(SavePath, ResBody)
+    ResBody = XHR.WinHtpRequest(this:=Nothing, Method:="GET", URL:=URL, Charset:="Byte()", Timeout:=0, Redirects:=True, IsAsync:=False, CompleteHeaders:=True, CompleteCookies:=True)
+    Ret = SaveFile(SavePath, ResBody)
     On Error GoTo 0
-    cls_Stream = Empty
+    HTTP_DownLoad = Ret
 End Function
 
 
 ' HTTP下载加强版
-Private Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths As String, Optional ByVal Method As String = "GET", Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 30, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
+Public Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths As String, Optional ByVal Method As String = "GET", Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Timeout As Variant = 30, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
     Dim http()      As Object
     Dim URLArr()    As String
     Dim PathArr()   As String
@@ -723,6 +708,7 @@ Private Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths 
             If http(i).WaitForResponse(1) Then
                 If http(i).Status = 200 And Len(Ret(i)) = 0 Then
                     n = n + 1
+                    '保存字节集到文件
                     Ret(i) = SaveFile(PathArr(i), http(i).ResponseBody)
                     If Ret(i) = 0 Then
                         errRet = errRet & URLArr(i) & "," & PathArr(i) & "|"
@@ -814,6 +800,8 @@ Public Function Get_Plugin_Description(ByVal ItemName As String) As String
         Description_Text = "HTTP请求(网址$, [访问方法=GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE|CONNECT|PATCH$], [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理地址=〓格式为 user:pwd@1.1.1.1:80$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$], [等待方式=同步|异步$], [自动补全协议头=开启补全|关闭补全$], [合并更新Cookies=开启合并|关闭合并$])【网页源码$】"
     Case "HTTP_DownLoad"
         Description_Text = "HTTP下载(下载地址$, 保存路径$)【是否成功|】"
+    Case "HTTP_DownLoadEx"
+        Description_Text = "HTTP下载加强版(下载地址$, 保存路径$, [访问方法=GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE|CONNECT|PATCH$], [请求主体], [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理地址=〓格式为 user:pwd@1.1.1.1:80$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$], [等待方式=同步|异步$], [自动补全协议头=开启补全|关闭补全$], [合并更新Cookies=开启合并|关闭合并$])【网页源码$】"
     
     '------------------------------------------------
     '为您的每个插件函数建立一个Case，就可以在按键精灵里显示插件的使用说明
@@ -892,6 +880,8 @@ Public Function Get_Plugin_Interpret_Template(ByVal ItemName As String) As Strin
         Description_Text = "用 $1 方法请求 $2 发送 $3 并带上请求头 $4 和请求Cookes $5 重定向为 $8 通过代理IP $9@$10$11 通过 $12 身份认证 $13:$14 在 $7 秒内返回 $6 编码格式的网页内容"
     Case "HTTP_DownLoad"
         Description_Text = "下载 $1 并保存到 $2"
+    Case "HTTP_DownLoadEx"
+        Description_Text = "用 $3 方法请求 $4 发送 $5 并带上请求头 $6 和请求Cookes $7 重定向为 $10 通过代理IP $11@$12$13 通过 $14 身份认证 $15:$16 在 $9 秒内并行下载 $1 并保存到 $2，"
     '------------------------------------------------
     '为您的每个插件函数建立一个Case，就可以在按键精灵里显示插件的使用说明
     '------------------------------------------------

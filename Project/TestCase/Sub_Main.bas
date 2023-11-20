@@ -7,10 +7,10 @@ Sub Main()
     Dim testName    As String
     Dim result      As String
     
-    'Call CallByName(TestSmHTTP, "test_http_downloadEx", VbMethod): End
+    'Call CallByName(TestSmHTTP, "test_http_upload_file_upload", VbMethod): End
     
     ' ÷¥––≤‚ ‘”√¿˝
-    testNameAll = TestTool.GetFuncNameAll(App.path & "\TestCase\cTestSmHTTP.cls")
+    testNameAll = TestTool.GetFuncNameAll(App.Path & "\TestCase\cTestSmHTTP.cls")
     For i = 0 To UBound(testNameAll)
         testName = testNameAll(i)
         Debug.Print "[" & Format$(i / UBound(testNameAll), "00%") & "]", testName

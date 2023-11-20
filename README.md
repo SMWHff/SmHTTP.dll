@@ -1,6 +1,6 @@
 # SmHTTP.dll
 
-用 VB6 编写 COM 类型的神梦HTTP请求插件
+神梦HTTP请求插件，用 VB6 开发的 ActiveX DLL 组件（COM+）
 
 <!-- PROJECT SHIELDS -->
 [![VB6][VB6-shield]][VB6-url]
@@ -56,20 +56,73 @@
 - [鸣谢](#鸣谢)
 
 ### 上手指南
-1. 安装 [Visual Basic 6.0][VB6-url]
+1. 安装 <a href="https://pc.qq.com/detail/19/detail_91139.html" target="_blank">Visual Basic 6.0</a>
 2. 双击 `神梦HTTP请求插件工程组.vbg` 打开项目工程
 
 
-###### 开发前的配置要求
+#### 开发前的配置要求
 1. 使用 Windows 操作系统
-2. 安装 [Visual Basic 6.0][VB6-url]
-3. 安装 [按键精灵2014][anjian-url]
+2. 安装 <a href="https://pc.qq.com/detail/19/detail_91139.html" target="_blank">Visual Basic 6.0</a>
+3. 安装 <a href="http://www.anjian.com/" target="_blank">按键精灵2014</a>
 
 
-###### **安装步骤**
+#### **安装步骤**
 1. Clone the repo
 ```sh
 git clone https://github.com/SMWHff/SmHTTP.dll.git
+```
+
+### 调用例子
+```
+' 作者：神梦无痕
+' ＱＱ：1042207232
+' Ｑ群：624655641
+'
+' 先将 SmHTTP.dll 注册到系统
+' 打开 CMD 窗口
+' 输入：regsvr32 SmHTTP.dll
+
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim user, pass, Data, Ret, Cookies, Headers
+
+' 开启自动识别参数模式
+Call SmHTTP.SetAutoParamArray(True)
+
+user = "你的按键精灵论坛账号"
+pass = "你的按键精灵论坛密码"
+
+
+' 登录论坛账号
+Data = SmHTTP.Data( _
+    "username", user, _
+    "password", pass, _
+    "question", "0", _
+    "answer", "", _
+    "templateid", "0", _
+    "login", "", _
+    "expires", "43200" _
+)
+Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", Data)
+' 判断是否登录成功
+If InStr(Ret, user) = 0 Then  
+    MsgBox "出错，登录失败！", 16 + 4096, "报错！"
+    EndScript
+End If
+Cookies = SmHTTP.GetCookies()
+
+
+' 打卡签到
+Data = SmHTTP.Data( _
+    "signmessage", "签个到，每天心情都是美美哒~~按键精灵祝大家新年好运连连！！" _
+)
+Headers = SmHTTP.Headers( _
+    "Referer", "http://bbs.anjian.com/" _
+)
+Ret = SmHTTP.HTTP_Request("POST", "http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", Data, Headers, Cookies)
+If InStr(Ret, "恭喜您获取本日签到奖励") Or InStr(Ret, "你今天已经签到过了") Then ' 判断是否签到成功
+    MsgBox "恭喜，您已完成签到任务！", 64 + 4096, "温馨提示"
+End If
 ```
 
 
@@ -107,7 +160,7 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 ```
 
 
-### 开发的架构 
+### 开发架构图
 ![ARCHITECTURE](ARCHITECTURE.png)
 
 
@@ -116,8 +169,8 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 
 
 ### 使用到的框架
-- [WinHTTP](https://learn.microsoft.com/zh-cn/windows/win32/winhttp/using-winhttp)
-- [JSON](https://www.json.org/json-zh.html)
+- <a href="https://learn.microsoft.com/zh-cn/windows/win32/winhttp/using-winhttp">WinHTTP</a>
+- <a href="https://www.json.org/json-zh.html">JSON</a>
 
 
 ### 贡献者
@@ -193,10 +246,6 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 [JSON-url]: http://www.ediy.co.nz/vbjson-json-parser-library-in-vb6-xidc55680.html
 [httpbin-shield]: https://img.shields.io/badge/httpbin.org-0.9.2-blue
 [httpbin-url]: https://httpbin.org/
-<<<<<<< HEAD
-[QQ-url]: tencent://message/?Menu=yes&uin=1042207232&Site=&Service=200&sigT=2a39fb276d15586e1114e71f7af38e195148b0369a16a40fdad564ce185f72e8de86db22c67ec3c1
-[QQun-url]: tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A3632343635353634312C2274696D655374616D70223A313532363734303633387D0A
-=======
 [SMWHff-shield]: https://img.shields.io/badge/%E6%98%B5%E7%A7%B0-%E7%A5%9E%E6%A2%A6%E6%97%A0%E7%97%95-8A2BE2
 [SMWHff-url]: https://smwhff.com
 [QQ-shield]: https://img.shields.io/badge/QQ-1042207232-blue?logo=tencentqq&logoColor=EB1923
@@ -204,5 +253,4 @@ git clone https://github.com/SMWHff/SmHTTP.dll.git
 [QQun-shield]: https://img.shields.io/badge/Q%E7%BE%A4-624655641-blue?logo=tencentqq&logoColor=4DC9FC
 [QQun-url]: https://qm.qq.com/cgi-bin/qm/qr?k=gIac3vFLxvho5YxrAmA1gZwsbMZ_xKky&jump_from=webapi&authKey=vSW162lX1N9zVYQOKNtGHdV//ZPZsRSb7TyRMktB0V4ofuy3LiuAwEFsRf8P7RXS
 [QEmail-shield]: https://img.shields.io/badge/Email-1042207232%40qq.com-blue?logo=gmail&logoColor=white
->>>>>>> dev-1.0.0.2
 [QEmail-url]: http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=0uPi5uDg4uXg4eCSo6P8sb2-

@@ -66,35 +66,35 @@ End Function
 
 'Base64编码
 Public Function Base64Encoder(ByRef Strs As Variant) As String
-    Dim Buf() As Byte, Str() As Byte
+    Dim Buf() As Byte, str() As Byte
     Dim Length As Long, mods As Long
     Const B64_CHAR_DICT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
     On Error GoTo over
     If VarType(Strs) = vbArray + vbByte Then
-        Str() = Strs
+        str() = Strs
     Else
-        Str() = StrConv(Strs, vbFromUnicode)
+        str() = StrConv(Strs, vbFromUnicode)
     End If
-    mods = (UBound(Str) + 1) Mod 3   '除以3的余数
-    Length = UBound(Str) + 1 - mods
+    mods = (UBound(str) + 1) Mod 3   '除以3的余数
+    Length = UBound(str) + 1 - mods
     ReDim Buf(Length / 3 * 4 + IIf(mods <> 0, 4, 0) - 1)
     Dim i As Long
     For i = 0 To Length - 1 Step 3
-        Buf(i / 3 * 4) = (Str(i) And &HFC) / &H4
-        Buf(i / 3 * 4 + 1) = (Str(i) And &H3) * &H10 + (Str(i + 1) And &HF0) / &H10
-        Buf(i / 3 * 4 + 2) = (Str(i + 1) And &HF) * &H4 + (Str(i + 2) And &HC0) / &H40
-        Buf(i / 3 * 4 + 3) = Str(i + 2) And &H3F
+        Buf(i / 3 * 4) = (str(i) And &HFC) / &H4
+        Buf(i / 3 * 4 + 1) = (str(i) And &H3) * &H10 + (str(i + 1) And &HF0) / &H10
+        Buf(i / 3 * 4 + 2) = (str(i + 1) And &HF) * &H4 + (str(i + 2) And &HC0) / &H40
+        Buf(i / 3 * 4 + 3) = str(i + 2) And &H3F
     Next
     If mods = 1 Then
-        Buf(Length / 3 * 4) = (Str(Length) And &HFC) / &H4
-        Buf(Length / 3 * 4 + 1) = (Str(Length) And &H3) * &H10
+        Buf(Length / 3 * 4) = (str(Length) And &HFC) / &H4
+        Buf(Length / 3 * 4 + 1) = (str(Length) And &H3) * &H10
         Buf(Length / 3 * 4 + 2) = 64
         Buf(Length / 3 * 4 + 3) = 64
     ElseIf mods = 2 Then
-        Buf(Length / 3 * 4) = (Str(Length) And &HFC) / &H4
-        Buf(Length / 3 * 4 + 1) = (Str(Length) And &H3) * &H10 + (Str(Length + 1) And &HF0) / &H10
-        Buf(Length / 3 * 4 + 2) = (Str(Length + 1) And &HF) * &H4
+        Buf(Length / 3 * 4) = (str(Length) And &HFC) / &H4
+        Buf(Length / 3 * 4 + 1) = (str(Length) And &H3) * &H10 + (str(Length + 1) And &HF0) / &H10
+        Buf(Length / 3 * 4 + 2) = (str(Length + 1) And &HF) * &H4
         Buf(Length / 3 * 4 + 3) = 64
     End If
     For i = 0 To UBound(Buf)
@@ -141,11 +141,11 @@ End Function
 
 
 '取出中间文本
-Function MidStr(ByVal Str As String, ByVal StrHome As String, Optional ByVal StrEnd As String = vbNullString)
+Function MidStr(ByVal str As String, ByVal StrHome As String, Optional ByVal StrEnd As String = vbNullString)
     Dim Ret, arr1, arr2
 
     Ret = ""
-    arr1 = Split(Str, StrHome, 2)
+    arr1 = Split(str, StrHome, 2)
     If UBound(arr1) = 1 Then
         If Len(StrEnd) = 0 Then
             Ret = arr1(1)
@@ -235,30 +235,30 @@ End Function
 
 
 ' 到字节集
-Public Function ToBin(ByVal Str As String) As Byte()
-    ToBin = StrConv(Str, vbFromUnicode)
+Public Function ToBin(ByVal str As String) As Byte()
+    ToBin = StrConv(str, vbFromUnicode)
 End Function
 
 
 ' 读入字节集
 Public Function ReadBin(ByVal Path As String) As Byte()
-    Dim BinFileNo As Long
-    Dim FileLen As Long
-    Dim FileByte() As Byte
+    Dim nFile       As Long
+    Dim FileLen     As Long
+    Dim FileByte()  As Byte
     
-    BinFileNo = FreeFile()      ' FreeFile 返回一个 Integer，代表下一个可供文件号
-    Open Path For Binary As #BinFileNo
-        FileLen = LOF(BinFileNo)
+    nFile = FreeFile()      ' FreeFile 返回一个 Integer，代表下一个可供文件号
+    Open Path For Binary As #nFile
+        FileLen = LOF(nFile) - 1
         ReDim FileByte(FileLen) As Byte
-        Get #BinFileNo, , FileByte()
-    Close #BinFileNo
+        Get #nFile, , FileByte()
+    Close #nFile
     ReadBin = FileByte()
 End Function
 
 
 '读入文件字节集
 Public Function File_ReadByte(ByVal Path As String) As Byte()
-    Dim ADO As Stream  '工程引用 Microsoft ActiveX Data Objects 2.5 Libary
+    Dim ADO As stream  '工程引用 Microsoft ActiveX Data Objects 2.5 Libary
 
     Set ADO = CreateObject("ADODB.Stream")
     ADO.Type = 1
@@ -271,7 +271,7 @@ End Function
 
 '写出文件
 Public Function File_WriteByte(ByVal Path As String, ByVal Bytes) As Long
-    Dim ADO As Stream
+    Dim ADO As stream
     Dim Ret As Long
 
     If VarType(Bytes) = 8209 Then
@@ -293,14 +293,16 @@ Public Function File_WriteByte(ByVal Path As String, ByVal Bytes) As Long
 End Function
 
 ' 保存字节集到文件
-Public Function SaveFile(ByVal Path As String, ByRef Data As Variant) As Long
+Public Function SaveFile(ByVal Path As String, ByVal Data As Variant) As Long
     Dim Handle  As Long
+    Dim Bin()   As Byte
     Dim Ret     As Long
     
     If Len(Path) > 0 And VarType(Data) = vbArray + vbByte Then
+        Bin() = Data
         Handle = FreeFile() '获得文件的句柄
         Open Path For Binary As #Handle
-            Put #Handle, , Data
+            Put #Handle, , Bin()
         Close #Handle
         If Len(Dir(Path)) > 0 Then Ret = 1
     End If
@@ -309,8 +311,8 @@ End Function
 
 '字节集连接
 Public Function Concat_Byte(ByRef Bin1() As Byte, ByRef Bin2() As Byte) As Byte()
-    Dim ADO As Stream  '引用工程 Microsoft ActiveX Data Objects 2.5 Libary
-    Dim bin() As Byte
+    Dim ADO As stream  '引用工程 Microsoft ActiveX Data Objects 2.5 Libary
+    Dim Bin() As Byte
 
     Set ADO = CreateObject("ADODB.Stream")
     ADO.Type = 1
@@ -318,18 +320,18 @@ Public Function Concat_Byte(ByRef Bin1() As Byte, ByRef Bin2() As Byte) As Byte(
     ADO.Write Bin1
     ADO.Write Bin2
     ADO.Position = 0
-    bin = ADO.Read
+    Bin = ADO.Read
     ADO.Close
     Set ADO = Nothing
-    Concat_Byte = bin
+    Concat_Byte = Bin
 End Function
 
 
 '字节集连接
 Public Function Concat_ByteByArray(ByRef Args As Variant) As Byte()
-    Dim ADO     As Stream  '引用工程 Microsoft ActiveX Data Objects 2.5 Libary
+    Dim ADO     As stream  '引用工程 Microsoft ActiveX Data Objects 2.5 Libary
     Dim v       As Variant
-    Dim bin()   As Byte
+    Dim Bin()   As Byte
 
     Set ADO = CreateObject("ADODB.Stream")
     ADO.Type = 1
@@ -340,20 +342,20 @@ Public Function Concat_ByteByArray(ByRef Args As Variant) As Byte()
         End If
     Next
     ADO.Position = 0
-    bin = ADO.Read
+    Bin = ADO.Read
     ADO.Close
     Set ADO = Nothing
-    Concat_ByteByArray = bin
+    Concat_ByteByArray = Bin
 End Function
 
 
-Function CBytes(Str)
+Function CBytes(str)
     Dim MD, node, i, StrH
     Set MD = CreateObject("Msxml2.DOMDocument")
     Set node = MD.createElement("binary")
     node.dataType = "bin.hex"
-    For i = 1 To Len(Str)
-        StrH = StrH & Right("0" + Hex(Asc(Mid(Str, i, 1))), 2)
+    For i = 1 To Len(str)
+        StrH = StrH & Right("0" + Hex(Asc(Mid(str, i, 1))), 2)
     Next
     node.Text = StrH
     CBytes = node.nodeTypedValue
@@ -382,17 +384,17 @@ End Function
 Public Function T_HexToBin_XML(ByVal HexStr As String) As Byte()
     Dim MD As DOMDocument       '引用工程 Microsoft XML v3.0
     Dim node As IXMLDOMElement
-    Dim bin() As Byte
+    Dim Bin() As Byte
 
     On Error Resume Next
     Set MD = CreateObject("Msxml2.DOMDocument")
     Set node = MD.createElement("binary")
     node.dataType = "bin.hex"
     node.Text = HexStr
-    bin() = node.nodeTypedValue
+    Bin() = node.nodeTypedValue
     Set node = Nothing
     Set MD = Nothing
-    T_HexToBin_XML = bin()
+    T_HexToBin_XML = Bin()
 End Function
 
 
@@ -517,7 +519,7 @@ Public Function Fun_GetJSON(ByVal JSONStr As String, ByVal key As String) As Var
     Dim temp    As String
     Dim Ret     As Variant
 
-    'On Error Resume Next
+    ' On Error Resume Next
     L1 = InStr(JSONStr, "{"): L2 = InStrRev(JSONStr, "}")
     If L1 > 0 And L2 > L1 Then
         sJSON = Mid(JSONStr, L1, L2 - L1 + 1)
@@ -675,11 +677,7 @@ Public Function GetScreenXY() As String
     
     ScRX = Screen.Width \ Screen.TwipsPerPixelX
     ScRY = Screen.Height \ Screen.TwipsPerPixelY
-<<<<<<< HEAD:bas/Utils.bas
-    GetScreenXY = ScRX & "*" & ScRY
-=======
     GetScreenXY = ScRX & "x" & ScRY
->>>>>>> dev-1.0.0.2:Project/bas/Utils.bas
 End Function
 
 
@@ -700,8 +698,6 @@ Public Function IsJavaInstalled() As Boolean
 End Function
 
 
-<<<<<<< HEAD:bas/Utils.bas
-=======
 ' 获取浏览器语言环境
 Public Function GetBrowserLanguage() As String
     Dim Language        As String
@@ -727,7 +723,6 @@ Public Function GetBrowserLanguage() As String
 End Function
 
 
->>>>>>> dev-1.0.0.2:Project/bas/Utils.bas
 ' 获取当前系统语言环境
 Public Function GetLanguageLocale() As String
     Dim lngLCID         As Long
@@ -750,8 +745,26 @@ Public Function GetLanguageLocale() As String
     End If
 End Function
 
-<<<<<<< HEAD:bas/Utils.bas
-=======
+
+'取出中间文本
+Function T_MidS(ByVal str As String, ByVal StrHome As String, Optional ByVal StrEnd As String = vbNullString)
+    Dim Ret, arr1, arr2
+
+    Ret = ""
+    arr1 = Split(str, StrHome, 2)
+    If UBound(arr1) = 1 Then
+        If Len(StrEnd) = 0 Then
+            Ret = arr1(1)
+        Else
+            arr2 = Split(arr1(1), StrEnd, 2)
+            If UBound(arr2) = 1 Then
+                Ret = arr2(0)
+            End If
+        End If
+    End If
+    T_MidS = Ret
+End Function
+
 
 '获取自身命令行参数
 Function GetCommLine() As String
@@ -768,19 +781,18 @@ End Function
 
 
 '获取自身执行文件名
-'Public Function GetMeExeName() As String
-'    Dim lRet As Long
-'    Dim Path As String
-'    Dim sRet As String
-'
-'    Path = String(255, 0)
-'    lRet = GetModuleFileName(0, Path, 255)
-'    Path = Left(Path, lRet)
-'    sRet = Mid(Path, InStrRev(Path, "\") + 1)
-'    If LCase(sRet) = "runner.exe" Or LCase(sRet) = "runnerlua.exe" Then
-'        Path = T_MidS(GetCommLine(), """", """")
-'        sRet = Mid(Path, InStrRev(Path, "\") + 1)
-'    End If
-'    GetMeExeName = sRet
-'End Function
->>>>>>> dev-1.0.0.2:Project/bas/Utils.bas
+Public Function GetMeExeName() As String
+    Dim lRet As Long
+    Dim Path As String
+    Dim sRet As String
+
+    Path = String(255, 0)
+    lRet = GetModuleFileName(0, Path, 255)
+    Path = Left(Path, lRet)
+    sRet = Mid(Path, InStrRev(Path, "\") + 1)
+    If LCase(sRet) = "runner.exe" Or LCase(sRet) = "runnerlua.exe" Then
+        Path = T_MidS(GetCommLine(), """", """")
+        sRet = Mid(Path, InStrRev(Path, "\") + 1)
+    End If
+    GetMeExeName = sRet
+End Function

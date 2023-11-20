@@ -42,12 +42,9 @@
 </td></tr><tr><th>命令功能：</th><td>
 构造JSON主体
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
-参数1【必选】：文本型，键名1
-参数2【必选】：文本型，键值1
-参数3【可选】：文本型，键名2
-参数4【可选】：文本型，键值2
-参数5【可选】：文本型，键名3
-参数6【可选】：文本型，键值3
+参数1、2【必选】：（文本型）键名1、（文本型）键值1
+参数3、4【可选】：（文本型）键名2、（文本型）键值2
+参数5、6【可选】：（文本型）键名3、（文本型）键值3
 ……
 </td></tr><tr><th>返回值：</th><td class='fanhui'>
 文本型，JSON主体
@@ -55,7 +52,7 @@
 </th><td class='lizi'><pre name="code8_JsonData" class="vb" id="code8_JsonData">
 Dim JsonData
 
-' 构造 JSON 主体
+' 构造 JSON 主体（简单）
 JsonData = SmHTTP.JsonData( _
     "empty", Empty, _
     "null", Null, _
@@ -64,6 +61,74 @@ JsonData = SmHTTP.JsonData( _
     "bool", CBool(True), _
     "str", "神梦无痕""1042207232""", _
     "array", Array(1, 3.14, CBool(True), Null, "按键精灵") _
+)
+TracePrint JsonData
+
+
+' 构造 JSON 主体（中等）
+JsonData = SmHTTP.JsonData( _
+    "header", SmHTTP.JsonData( _
+        "fn", "auto_translation" _
+    ), _
+    "type", "plain", _
+    "model_category", "normal", _
+    "text_domain", "general", _
+    "source", SmHTTP.JsonData( _
+        "lang", "auto", _
+        "text_list", Array("My cat likes eating fish.") _
+    ), _
+    "target", SmHTTP.JsonData( _
+        "lang", "zh" _
+    ) _
+)
+TracePrint JsonData
+
+
+' 构造 JSON 主体（复杂）
+JsonData = SmHTTP.JsonData( _
+    "jsonrpc", "2.0", _
+    "method", "LMT_handle_jobs", _
+    "params", SmHTTP.JsonData( _
+        "jobs", "[" & _
+    		SmHTTP.JsonData( _
+        		"kind", "default", _
+        		"sentences", "[" & _
+            		SmHTTP.JsonData( _
+                		"text", enStr, _
+                		"id", 1, _
+                		"prefix", "" _
+            		) & _
+        		"]", _
+        		"raw_en_context_before", Array(), _
+        		"raw_en_context_after", Array(), _
+        		"preferred_num_beams", 4 _
+    		) & _
+		"]", _
+        "lang", SmHTTP.JsonData( _
+    		"target_lang", lang, _
+    		"preference", SmHTTP.JsonData( _
+        		"weight", SmHTTP.JsonData( _
+            		"DE", 0.18427, _
+            		"EN", 9.93878, _
+            		"ES", 0.13236, "FR", 0.16311, "IT", 0.11621, "JA", 0.17963, "NL", 0.1865, "PL", 0.11549, "PT", 0.10159, "RU", 0.10577, _
+            		"ZH", 5.90582, _
+            		"BG", 0.07468, "CS", 0.09005, "DA", 0.08567, "EL", 0.07069, "ET", 0.0836, "FI", 0.09628, "HU", 0.08731, "LT", 0.07119, _
+            		"LV", 0.06866, "RO", 0.07842, "SK", 0.07497, "SL", 0.08492, "SV", 0.10275, "TR", 0.07728, "ID", 0.09161, "UK", 0.08573, "KO", 0.04671, _
+            		"NB", 0.05511 _
+        		), _
+        		"default", "default" _
+    		), _
+    		"source_lang_user_selected", from _
+		), _
+        "priority", 1, _
+        "commonJobParams", SmHTTP.JsonData( _
+            "mode", "translate", _
+            "textType", "plaintext", _
+            "browserType", 1 _
+        ), _
+        "timestamp", timestamp _
+    ), _
+    "id", deepl_id _
 )
 TracePrint JsonData
 </td></tr></table>	

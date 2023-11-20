@@ -42,12 +42,16 @@
 </td></tr><tr><th>命令功能：</th><td>
 构造表单主体
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
-参数1【必选】：文本型，表单名1
-参数2【必选】：文本型，输入值1
-参数3【可选】：文本型，表单名2
-参数4【可选】：文本型，输入值2
-参数5【可选】：文本型，表单名3
-参数6【可选】：文本型，输入值3
+（情况一、纯文本表单）
+参数1、2【必选】：（文本型）表单名1、（文本型）输入值1
+参数3、4【可选】：（文本型）表单名2、（文本型）输入值2
+参数5、6【可选】：（文本型）表单名3、（文本型）输入值3
+……
+<hr>
+（带上传文件的表单）
+参数1、2、3【必选】：（文本型）@表单名1、（文本型）文件路径、（文本型）文件类型，只用表单名加“@”前缀时生效
+参数4、5　 【可选】：（文本型） 表单名2、（文本型）输入值2
+参数6、7　 【可选】：（文本型） 表单名3、（文本型）输入值3
 ……
 </td></tr><tr><th>返回值：</th><td class='fanhui'>
 任意型，表单主体
@@ -60,7 +64,28 @@ FormData = Plugin.SmHTTP.FormData(_
     "UserName", "SMWH", _
     "PassWord", "123456" _
 )
-TracePrint FormData
+TracePrint FormData  '返回文本
+
+
+' 构建上传图片表单
+' 图片数据的键名要加 @ 表示为二进制文件
+' 带有 @ 的键名额外支持一个文件类型参数“image/png”
+FormData = SmHTTP.FormData( _
+    "@smfile", "C:\1.png", "image/png", _
+    "format", "json" _
+)
+TracePrint TypeName(FormData)  '返回字节集
+TracePrint LenB(FormData)
+
+
+' 构建上传多文件表单
+FormData = SmHTTP.FormData( _
+    "@smfile", "C:\1.png", "image/png", _
+    "@source", "C:\2.jpg", "image/jpg", _
+    "format", "json" _
+)
+TracePrint TypeName(FormData)  '返回字节集
+TracePrint LenB(FormData)
 </td></tr></table>	
 	
 	

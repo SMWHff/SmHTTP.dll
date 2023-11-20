@@ -60,7 +60,7 @@ Private Function IsBytesByContentTypeMatch(ByVal Text As String) As Boolean
     Dim Result  As String
     
     re.IgnoreCase = True
-    re.pattern = "image/.*|application/octet-stream"
+    re.pattern = "image/.*|audio/.*|application/octet-stream"
     Result = re.Test(Text)
     Set re = Nothing
     IsBytesByContentTypeMatch = Result
@@ -251,7 +251,7 @@ Begin:
             Headers = Headers & vbCrLf & "Accept-Encoding: identity"  ' 强制服务器返回未压缩的内容
         End If
         If InStr(1, Headers, "Accept-Language:", 1) = 0 Then
-            Headers = Headers & vbCrLf & "Accept-Language: zh-CN,zh;q=0.8"
+            Headers = Headers & vbCrLf & "Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
         End If
         If InStr(1, Headers, "Cache-Control:", 1) = 0 Then
             Headers = Headers & vbCrLf & "Cache-Control: no-cache"
@@ -263,7 +263,7 @@ Begin:
             Headers = Headers & vbCrLf & "Host: " & Split(URL, "/")(2)
         End If
         If InStr(1, Headers, "User-Agent:", 1) = 0 Then
-            Headers = Headers & vbCrLf & "User-Agent: Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)"
+            Headers = Headers & vbCrLf & "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
         End If
         If InStr(1, Headers, "Content-Type:", 1) = 0 Then
             Headers = Headers & vbCrLf & "Content-Type: application/x-www-form-urlencoded"
@@ -298,7 +298,6 @@ Begin:
     
     ' 如果异步，则不等待返回结果
     If IsAsync Then
-        Set this = http     ' 将内部对象传到外面
         GoTo return_
     End If
     
@@ -350,27 +349,59 @@ Begin:
         Result = ResBody
     ElseIf Len(ContentTypeCharset) <> 0 And Len(Charset) = 0 And IsGzip = False Then
         Result = http.ResponseText
-    ElseIf Len(ResBody) > 0 Then
+    End If
+    If Len(Result) = 0 And Len(ResBody) > 0 Then
         ' 如果没有指定编码，则自动从网页源码中获取，如果获取失败，则默认 UTF-8
-        If Len(Charset) = 0 Then Charset = GetCharsetMatch(http.ResponseText)
+        If Len(Charset) = 0 Then Charset = GetCharsetMatch(StrConv(ResBody, vbUnicode))
         If Len(Charset) = 0 Then Charset = "UTF-8"
-        Set ObjStream = CreateObject("Adodb.Stream")
-        With ObjStream
-            .Type = 1
-            .Mode = 3
-            .Open
-            .Write ResBody
-            .Position = 0
-            .Type = 2
-            .Charset = Charset
-             Result = .ReadText
-            .Close
-        End With
-        Set ObjStream = Nothing
+        If Left(LCase(Charset), 5) = "file|" Then
+            ' 保存到文件
+            Dim ReqStream       As Stream
+            Dim bufferSize      As Long
+            Dim bytesRead       As Long
+            Dim buffer          As Variant
+            Dim filePath        As String
+            
+            filePath = Mid(Charset, 6)
+            Set ReqStream = http.ResponseStream
+            Set ObjStream = CreateObject("ADODB.Stream")
+            ObjStream.Type = 1 ' Binary
+            ObjStream.Open
+            ' 从 ResponseStream 读取数据并写入 outputStream
+            bufferSize = 2048 ' 例如，每次读取 2048 字节
+            Do
+                buffer = ReqStream.Read(bufferSize)
+                bytesRead = LenB(buffer)
+                If bytesRead > 0 Then
+                    ObjStream.Write buffer
+                End If
+            Loop While bytesRead = bufferSize
+            ObjStream.SaveToFile filePath, 2 ' 2 = Overwrite
+            ObjStream.Close
+            Set ObjStream = Nothing
+            Set ReqStream = Nothing
+            Result = IIf(IsFileExist(filePath), 1, 0)
+        Else
+            ' 返回文本内容
+            Set ObjStream = CreateObject("Adodb.Stream")
+            With ObjStream
+                .Type = 1
+                .Mode = 3
+                .Open
+                .Write ResBody
+                .Position = 0
+                .Type = 2
+                .Charset = Charset
+                 Result = .ReadText
+                .Close
+            End With
+            Set ObjStream = Nothing
+        End If
     End If
     Set http = Nothing
     
 return_:
+    'If Err Then Debug.Print Err.Description
     WinHtpRequest = Result
 End Function
 
