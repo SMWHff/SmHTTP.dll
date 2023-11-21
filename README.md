@@ -57,8 +57,9 @@
 
 ### 上手指南
 1. 安装 <a href="https://pc.qq.com/detail/19/detail_91139.html" target="_blank">Visual Basic 6.0</a>
-2. 双击 `神梦HTTP请求插件工程组.vbg` 打开项目工程
+2. 双击 `神梦HTTP请求插件工程组.vbg` 打开项目工程  
 
+![Guide](Guide.gif)
 
 #### 开发前的配置要求
 1. 使用 Windows 操作系统
