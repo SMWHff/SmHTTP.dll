@@ -18,28 +18,37 @@
 <!-- PROJECT LOGO -->
 <br />
 
-<p align="center">
+<div style="text-align: center;">
   <a href="https://github.com/SMWHff/SmHTTP.dll/">
     <img src="logo.png" alt="Logo">
   </a>
+  
+  <h3>神梦HTTP请求插件</h3>
+  <div style="text-align: left; display: inline-block;" width='100px'>
+    ♦ 支持GET、POST、HEAD等HTTP协议请求<br>
+    ♦ 支持构造请求协议头、请求Cookies<br>
+    ♦ 支持构造各种类型请求体（url、form、json）<br>
+    ♦ 支持解析JSON响应<br><br>
+  </div>
+  <p>希望这个插件能适用于开发者们的技术产品或服务与众不同的企业或个人。</p>
+  <br />
+  <a href="https://github.com/SMWHff/SmHTTP.dll/Documents/SmHTTP.html"><strong>探索本项目的文档 »</strong></a>
+  <br />
+  <br />
+  <a href="https://github.com/SMWHff/SmHTTP.dll/Examples">查看Demo</a>
+  ·
+  <a href="https://github.com/SMWHff/SmHTTP.dll/issues">报告Bug</a>
+  ·
+  <a href="https://github.com/SMWHff/SmHTTP.dll/issues">提出新特性</a>
+</div>
 
-  <h3 align="center">神梦HTTP请求插件</h3>
-  <p align="center">
-  支持GET、POST、HEAD等HTTP协议请求；支持构造请求协议头、请求Cookies；支持构造各种类型请求体（url、form、json）；支持解析JSON响应。希望这个插件能适用于开发者们的技术产品或服务与众不同的企业或个人。
-    <br />
-    <a href="https://github.com/SMWHff/SmHTTP.dll/Documents/SmHTTP.html"><strong>探索本项目的文档 »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/SMWHff/SmHTTP.dll/Examples">查看Demo</a>
-    ·
-    <a href="https://github.com/SMWHff/SmHTTP.dll/issues">报告Bug</a>
-    ·
-    <a href="https://github.com/SMWHff/SmHTTP.dll/issues">提出新特性</a>
-  </p>
-</p>
 
 
- 本项目面向开发者
+## 免责声明
+> 1、本软件（指 'SmHTTP.dll' 插件）按 "原样" 提供，不带任何形式的明示或暗示保证，包括但不限于适销性、特定用途的适用性和非侵权性。在任何情况下，作者或版权持有者均不承担任何索赔、损害赔偿或其他责任，无论是在一个行动的合同、侵权行为或其他方面，从而产生、引起或与本软件的使用或其他交易有关。
+> 2、使用者必须了解使用本软件进行网络请求可能受到各种法律法规和或第三方服务条款的约束，并且使用者应当自行确保其使用行为符合所有适用的法律和服务条款。作者或版权持有者不对因使用本软件而可能导致的任何形式的法律问题或损失承担责任。
+> 3、使用本软件即表示您了解并同意此免责声明。如果您不同意上述条款，请不要使用本软件。
+
  
 ## 目录
 - [上手指南](#上手指南)
@@ -204,12 +213,6 @@ End If
 
 ### 版权说明
 该项目签署了 BSD 授权许可，详情请参阅 [LICENSE](https://github.com/SMWHff/SmHTTP.dll/blob/master/LICENSE)
-
-
-### 免责声明
-> 本软件（指 'SmHTTP.dll' 插件）按 "原样" 提供，不带任何形式的明示或暗示保证，包括但不限于适销性、特定用途的适用性和非侵权性。在任何情况下，作者或版权持有者均不承担任何索赔、损害赔偿或其他责任，无论是在一个行动的合同、侵权行为或其他方面，从而产生、引起或与本软件的使用或其他交易有关。
-> 使用者必须了解使用本软件进行网络请求可能受到各种法律法规和或第三方服务条款的约束，并且使用者应当自行确保其使用行为符合所有适用的法律和服务条款。作者或版权持有者不对因使用本软件而可能导致的任何形式的法律问题或损失承担责任。
-> 使用本软件即表示您了解并同意此免责声明。如果您不同意上述条款，请不要使用本软件。
 
 
 ### 鸣谢
