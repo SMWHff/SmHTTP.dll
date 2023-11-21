@@ -8,6 +8,7 @@
 [![JSON][JSON-shield]][JSON-url]
 [![httpbin][httpbin-shield]][httpbin-url]
 [![Anjian][anjian-shield]][anjian-url]
+![platform][platform-shield]
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -244,6 +245,7 @@ End If
 [VB6-url]: https://pc.qq.com/detail/19/detail_91139.html
 [anjian-shield]: https://img.shields.io/badge/%E6%8C%89%E9%94%AE%E7%B2%BE%E7%81%B5-2014-white?logoColor=24ab5e&labelColor=24ab5e
 [anjian-url]: http://www.anjian.com/
+[platform-shield]: https://img.shields.io/badge/platform-Windows-blue
 [WinHTTP-shield]: https://img.shields.io/badge/WinHTTP-5.1-blue
 [WinHTTP-url]: https://learn.microsoft.com/zh-cn/windows/win32/winhttp/using-winhttp
 [JSON-shield]: https://img.shields.io/badge/JSON-2009.4-blue
