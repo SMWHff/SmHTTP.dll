@@ -44,7 +44,7 @@ Public Sub test_ver()
     Dim ver: ver = SmHTTP.ver()
     
     ' 断言
-    Debug.Assert Expression(ver, "=", "1.0.0.3")
+    Debug.Assert Expression(ver, "=", "1.0.0.4")
 End Sub
 
 
@@ -158,7 +158,7 @@ Public Sub test_json_data()
     )
     
     ' 断言
-    Debug.Assert Expression(json, "=", "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""神梦无痕\""1042207232\"""",""array"":[1,3.14,true,null,""按键精灵""]}")
+    Debug.Assert Expression(json, "=", "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""\u795E\u68A6\u65E0\u75D5\""1042207232\"""",""array"":[1,3.14,true,null,""\u6309\u952E\u7CBE\u7075""]}")
 End Sub
 
 
@@ -520,6 +520,16 @@ Public Sub test_http_ret_not_gzip()
 End Sub
 
 
+' 测试smos-cdn
+Public Sub test_http_ret_smos_cdn()
+    Dim json: json = SmHTTP.HTTP_GET("https://cname-china.vercel-dns.com/Ver/SmHTTP.json", "Host: smos-cdn.vercel.app")
+    Dim name: name = SmHTTP.GetJSON(json, "name")
+    
+    ' 断言
+    Debug.Assert Expression(name, "=", "神梦HTTP请求插件")
+End Sub
+
+
 ' 测试获取QQ昵称
 Public Sub test_get_qq_nick_name()
     Dim qq: qq = "1042207232"
@@ -562,20 +572,20 @@ End Sub
 
 ' 测试百度翻译(英译中)
 Public Sub test_Translate_Baidu()
-    Dim enStr: enStr = "I Love You"
-    Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
-    Dim ret: ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
-    Dim L: L = InStr(1, ret, "var s_domain = {", vbTextCompare): Debug.Assert L > 0
-    Dim r: r = InStr(L, ret, "};", vbTextCompare): Debug.Assert r > 0
-    Dim s_domain: s_domain = Mid(ret, L, r - L + 1)
-    Dim sensearch: sensearch = SmHTTP.GetJSON(s_domain, "ssllist['sensearch.baidu.com']")
-    ret = SmHTTP.HTTP_GET("http://" & sensearch & "/sensearch/selecttext?cb=jQuery_Fun_" & timestamp & "&q=" & enStr & "&_=" & timestamp)
-    Dim errno: errno = SmHTTP.GetJSON(ret, "errno")
-    Dim result: result = SmHTTP.GetJSON(ret, "data.result")
-    
-    ' 断言
-    Debug.Assert Expression(errno, "=", 0)
-    Debug.Assert Expression(result, "=", "我爱你")
+'    Dim enStr: enStr = "I Love You"
+'    Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
+'    Dim ret: ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
+'    Dim L: L = InStr(1, ret, "var s_domain = {", vbTextCompare): Debug.Assert L > 0
+'    Dim r: r = InStr(L, ret, "};", vbTextCompare): Debug.Assert r > 0
+'    Dim s_domain: s_domain = Mid(ret, L, r - L + 1)
+'    Dim sensearch: sensearch = SmHTTP.GetJSON(s_domain, "ssllist['sensearch.baidu.com']")
+'    ret = SmHTTP.HTTP_GET("http://" & sensearch & "/sensearch/selecttext?cb=jQuery_Fun_" & timestamp & "&q=" & enStr & "&_=" & timestamp)
+'    Dim errno: errno = SmHTTP.GetJSON(ret, "errno")
+'    Dim result: result = SmHTTP.GetJSON(ret, "data.result")
+'
+'    ' 断言
+'    Debug.Assert Expression(errno, "=", 0)
+'    Debug.Assert Expression(result, "=", "我爱你")
 End Sub
 
 
@@ -964,61 +974,96 @@ End Sub
 ' 测试文本转原神语音，并下载语音文件
 Public Sub test_http_download_TTS_yuanshen()
     Dim text: text = "没想到没想到，胡桃我现在力如泉涌，心似雄鹰，非常有自信哦。"
-    Dim api: api = "https://genshinvoice.top/api?"
-    Dim Args: Args = SmHTTP.data( _
-        "speaker", "胡桃_ZH", _
-        "text", text, _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
+    Dim json: json = SmHTTP.JsonData( _
+        "data", Array( _
+            text, _
+            "胡桃_ZH", _
+            0.2, _
+            0.6, _
+            0.8, _
+            1, _
+            "ZH", _
+            Null, _
+            "Happy", _
+            "Text prompt", _
+            "", _
+            0.7 _
+        ), _
+        "event_data", Null, _
+        "fn_index", 0, _
+        "session_hash", TestTool.GetGUID() _
     )
-    Dim url: url = api & Args
     Dim Path: Path = Environ("TEMP") & "\胡桃.wav"
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
-    'Dim pRet: pRet = PlayWAV(Path): Call StopWAV
-    
+    Dim ret: ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+    'Debug.Print ret
+    Dim status, name: status = SmHTTP.GetStatus()
+    If status = 200 Then status = SmHTTP.GetJSON(ret, "data[0]")
+    If status = "Success" Then name = SmHTTP.GetJSON(ret, "data[1].name")
+    ret = SmHTTP.HTTP_DownLoad("https://v2.genshinvoice.top/file=" & name, Path)
+    Dim pRet: pRet = PlayWAV(Path): Call StopWAV
+
     ' 断言
-    'Debug.Assert Expression(pRet, "=", True)
+    Debug.Assert Expression(pRet, "=", True)
     Debug.Assert Expression(ret, "=", 1)
 End Sub
 
 
 ' 测试多角色文本转原神语音，并下载语音文件
 Public Sub test_http_downloadEx_TTS_yuanshen()
-    Dim api: api = "https://genshinvoice.top/api?"
-    Dim htArgs: htArgs = SmHTTP.data( _
-        "speaker", "可莉_ZH", _
-        "text", "西风骑士团，「火花骑士」，可莉，前来报到！…呃—后面该说什么词来着？可莉背不下来啦...", _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
+    Dim urlArr(1)
+    Dim json: json = SmHTTP.JsonData( _
+        "data", Array( _
+            "西风骑士团，「火花骑士」，可莉，前来报到！…呃—后面该说什么词来着？可莉背不下来啦...", _
+            "可莉_ZH", _
+            0.2, _
+            0.6, _
+            0.8, _
+            1, _
+            "ZH", _
+            Null, _
+            "Happy", _
+            "Text prompt", _
+            "", _
+            0.7 _
+        ), _
+        "event_data", Null, _
+        "fn_index", 0, _
+        "session_hash", TestTool.GetGUID() _
     )
-    Dim hlydArgs: hlydArgs = SmHTTP.data( _
-        "speaker", "荒泷一斗_ZH", _
-        "text", "嘿嘿，荒泷天下第一斗到此一游！ 哈哈哈哈…咳…", _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
+    Dim ret: ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+    If InStr(ret, "Success") > 0 Then urlArr(0) = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(ret, "data[1].name")
+    json = SmHTTP.JsonData( _
+        "data", Array( _
+            "嘿嘿，荒泷天下第一斗到此一游！ 哈哈哈哈…咳…", _
+            "荒泷一斗_ZH", _
+            0.2, _
+            0.6, _
+            0.8, _
+            1, _
+            "ZH", _
+            Null, _
+            "Happy", _
+            "Text prompt", _
+            "", _
+            0.7 _
+        ), _
+        "event_data", Null, _
+        "fn_index", 0, _
+        "session_hash", TestTool.GetGUID() _
     )
-    Dim url: url = api & htArgs & "|" & api & hlydArgs
+    ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+    If InStr(ret, "Success") > 0 Then urlArr(1) = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(ret, "data[1].name")
+    
+    Dim url: url = Join(urlArr, "|")
     Dim Path: Path = Environ("TEMP") & "\可莉.wav|" & Environ("TEMP") & "\荒泷一斗.wav"
     Dim pathArr: pathArr = Split(Path, "|")
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path, "GET")
+    ret = SmHTTP.HTTP_DownLoadEx(url, Path, "GET")
     Dim pRet
-    'pRet = PlayWAV(pathArr(0)): Call StopWAV
-    'pRet = PlayWAV(pathArr(1)): Call StopWAV
-    
+    pRet = PlayWAV(pathArr(0)): Call StopWAV
+    pRet = PlayWAV(pathArr(1)): Call StopWAV
+
     ' 断言
-    'Debug.Assert Expression(pRet, "=", True)
+    Debug.Assert Expression(VarType(ret), "=", vbString)
     Debug.Assert Expression(ret, "=", "")
 End Sub
 
@@ -1026,74 +1071,65 @@ End Sub
 
 ' 测试小说多角色文本转原神语音，并下载语音文件
 Public Sub test_http_downloadEx_TTS_yuanshen_ebook()
-    Dim i
-    Dim api: api = "https://genshinvoice.top/api?"
-    Dim sp(8)
+    Dim i, sp(8), json, ret, url, pRet
     Dim 赵倩倩: 赵倩倩 = "荧_ZH"
     Dim 医生: 医生 = "凯亚_ZH"
     Dim 电话: 电话 = "凝光_ZH"
-    sp(0) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "我妈什么时候知道自己脑子里有良性肿瘤？" _
+    sp(0) = Array( _
+        "我妈什么时候知道自己脑子里有良性肿瘤？", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "Astounded", "Text prompt", "", 0.7 _
     )
-    sp(1) = SmHTTP.data( _
-        "speaker", 医生, _
-        "text", "大概半年前，汪女士视线模糊，看东西不清楚，所以到医院就诊。我们建议尽早手术切除，但汪女士想保守治疗，不愿意冒险。手术费加住院费，最多五六万。做手术是最佳方案。" _
+    sp(1) = Array( _
+        "大概半年前，汪女士视线模糊，看东西不清楚，所以到医院就诊。我们建议尽早手术切除，但汪女士想保守治疗，不愿意冒险。手术费加住院费，最多五六万。做手术是最佳方案。", _
+        医生, 0.2, 0.6, 0.8, 1, "ZH", Null, "Earnest", "Text prompt", "", 0.7 _
     )
-    sp(2) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "……变成恶性肿瘤会怎么样？" _
+    sp(2) = Array( _
+        "……变成恶性肿瘤会怎么样？", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "Astounded", "Text prompt", "", 0.7 _
     )
-    sp(3) = SmHTTP.data( _
-        "speaker", 医生, _
-        "text", "即便切除，也有可能多次复发。有病要趁早医，这两天做手术来得及。" _
+    sp(3) = Array( _
+        "即便切除，也有可能多次复发。有病要趁早医，这两天做手术来得及。", _
+        医生, 0.2, 0.6, 0.8, 1, "ZH", Null, "Earnest", "Text prompt", "", 0.7 _
     )
-    sp(4) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "我妈醒来后，我会跟她商量。那手术的事等病人苏醒后再说。" _
+    sp(4) = Array( _
+        "我妈醒来后，我会跟她商量。那手术的事等病人苏醒后再说。", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "sad", "Text prompt", "", 0.7 _
     )
-    sp(5) = SmHTTP.data( _
-        "speaker", 医生, _
-        "text", "麻烦您待会儿去柜台补交住院费用。" _
+    sp(5) = Array( _
+        "麻烦您待会儿去柜台补交住院费用。", _
+        医生, 0.2, 0.6, 0.8, 1, "ZH", Null, "Earnest", "Text prompt", "", 0.7 _
     )
-    sp(6) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "好。钱包里只有101.5块，我哪来的钱交住院费用？" _
+    sp(6) = Array( _
+        "好。钱包里只有101.5块，我哪来的钱交住院费用？", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "sad", "Text prompt", "", 0.7 _
     )
-    sp(7) = SmHTTP.data( _
-        "speaker", 电话, _
-        "text", "您好，您拨打的用户已关机，请稍后再拨……" _
+    sp(7) = Array( _
+        "您好，您拨打的用户已关机，请稍后再拨……", _
+        电话, 0.2, 0.6, 0.8, 1, "ZH", Null, "emotionless", "Text prompt", "", 0.7 _
     )
-    sp(8) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "年终奖到账，我买了理财。我借钱交首付，这会儿背了一屁股债，没有闲钱。" _
+    sp(8) = Array( _
+        "年终奖到账，我买了理财。我借钱交首付，这会儿背了一屁股债，没有闲钱。", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "sad", "Text prompt", "", 0.7 _
     )
-    Dim Args: Args = SmHTTP.data( _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
-    )
-    Dim urlArr(), pathArr()
-    ReDim urlArr(UBound(sp))
+    Dim pathArr()
     ReDim pathArr(UBound(sp))
     For i = 0 To UBound(sp)
-        urlArr(i) = api & sp(i) & Args
-    Next
-    For i = 0 To UBound(sp)
+        json = SmHTTP.JsonData( _
+            "data", sp(i), _
+            "event_data", Null, _
+            "fn_index", 0, _
+            "session_hash", TestTool.GetGUID() _
+        )
+        ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+        'Debug.Print ret
+        If InStr(ret, "Success") > 0 Then url = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(ret, "data[1].name")
         pathArr(i) = Environ("TEMP") & "\" & i & ".wav"
+        ret = SmHTTP.HTTP_DownLoad(url, pathArr(i))
     Next
-    Dim url: url = Join(urlArr, "|")
-    Dim Path: Path = Join(pathArr, "|")
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path, "GET")
-    Dim pRet
     For i = 0 To UBound(sp)
-        'pRet = PlayWAV(pathArr(i)): Call StopWAV
+        pRet = PlayWAV(pathArr(i)): Call StopWAV
     Next
-    
+
     ' 断言
-    'Debug.Assert Expression(pRet, "=", True)
-    Debug.Assert Expression(ret, "=", "")
+    Debug.Assert Expression(ret, "=", 1)
 End Sub

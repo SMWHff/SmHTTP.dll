@@ -154,14 +154,26 @@
                     </OBJECT>
                 </LI>
                 <LI> <OBJECT type="text/sitemap">
-                    <param name="Name" value="HTTP_TRACE 对请求进行信息回环测试">
-                    <param name="Local" value="html/同步请求/HTTP_TRACE.html">
-                    <param name="ImageNumber" value="11">
-                </OBJECT>
-            </LI>
+                        <param name="Name" value="HTTP_TRACE 对请求进行信息回环测试">
+                        <param name="Local" value="html/同步请求/HTTP_TRACE.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
                 <LI> <OBJECT type="text/sitemap">
                         <param name="Name" value="HTTP_Request 超文本传输协议">
                         <param name="Local" value="html/同步请求/HTTP_Request.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_DownLoad 下载指定资源到本地">
+                        <param name="Local" value="html/同步请求/HTTP_DownLoad.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="HTTP_DownLoadEx 加强版下载指定资源到本地">
+                        <param name="Local" value="html/同步请求/HTTP_DownLoadEx.html">
                         <param name="ImageNumber" value="11">
                     </OBJECT>
                 </LI>

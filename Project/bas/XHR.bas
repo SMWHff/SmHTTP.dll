@@ -177,7 +177,7 @@ Public Function WinHtpRequest(ByRef this As WinHttpRequest, _
                             ) As Variant
                             
     Dim http                As WinHttpRequest
-    Dim ObjStream           As Stream
+    Dim ObjStream           As stream
     Dim UserPassB64         As String
     Dim HeadersArr          As Variant
     Dim Header              As Variant
@@ -356,13 +356,13 @@ Begin:
         If Len(Charset) = 0 Then Charset = "UTF-8"
         If Left(LCase(Charset), 5) = "file|" Then
             ' 保存到文件
-            Dim ReqStream       As Stream
+            Dim ReqStream       As stream   '工程引用 Microsoft ActiveX Data Objects 2.8 Libary
             Dim bufferSize      As Long
             Dim bytesRead       As Long
             Dim buffer          As Variant
-            Dim filePath        As String
+            Dim FilePath        As String
             
-            filePath = Mid(Charset, 6)
+            FilePath = Mid(Charset, 6)
             Set ReqStream = http.ResponseStream
             Set ObjStream = CreateObject("ADODB.Stream")
             ObjStream.Type = 1 ' Binary
@@ -376,11 +376,11 @@ Begin:
                     ObjStream.Write buffer
                 End If
             Loop While bytesRead = bufferSize
-            ObjStream.SaveToFile filePath, 2 ' 2 = Overwrite
+            ObjStream.SaveToFile FilePath, 2 ' 2 = Overwrite
             ObjStream.Close
             Set ObjStream = Nothing
             Set ReqStream = Nothing
-            Result = IIf(IsFileExist(filePath), 1, 0)
+            Result = IIf(IsFileExist(FilePath), 1, 0)
         Else
             ' 返回文本内容
             Set ObjStream = CreateObject("Adodb.Stream")
@@ -389,7 +389,7 @@ Begin:
                 .Mode = 3
                 .Open
                 .Write ResBody
-                .Position = 0
+                .position = 0
                 .Type = 2
                 .Charset = Charset
                  Result = .ReadText

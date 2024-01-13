@@ -76,7 +76,7 @@ Status = SmHTTP.GetStatus()
 If Status = 200 Then 
     TracePrint "访问成功！"
 Else
-    MsgBox "访问失败：" & Status, 16 + 4096, "出错！"
+    MsgBox "访问失败：" & Status & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If
 </td></tr></table>	
 	

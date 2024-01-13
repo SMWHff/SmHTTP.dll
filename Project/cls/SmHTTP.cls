@@ -260,7 +260,7 @@ Attribute JsonData.VB_Description = "构造JSON主体"
         Call sc.Eval("$['" & key & "']=" & value)
         i = i + 2
     Wend
-    JsonData = sc.Eval("JSON.stringify($)||'{}'")
+    JsonData = JSON.toString(JSON.parse(sc.Eval("JSON.stringify($)||'{}'")))
     Set sc = Nothing
 End Function
 
@@ -381,6 +381,20 @@ Attribute GetJSON.VB_Description = "解析JSON取值"
     GetJSON = Utils.Fun_GetJSON(sJSON, key)
 End Function
 
+
+' Base64编码
+Public Function Base64Encode(ByVal Data As Variant, Optional ByVal IsFile As Long) As String
+    Dim bin() As Byte
+    
+    bin() = Data
+    Base64Encode = Encoding.Encoding_Base64(bin)
+End Function
+
+
+' Base64解码
+Public Function Base64Decode(ByVal B64 As String, Optional ByVal IsFile As Long, Optional ByVal FilePath As String) As Variant
+    Base64Decode = Encoding.Encoding_UnBase64(B64)
+End Function
 
 
 '========================================【同步请求函数】========================================
@@ -681,6 +695,7 @@ Public Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths A
     Dim n           As Long
     Dim t           As Long
     Dim errRet      As String
+    Dim Body        As Variant
     Dim Ret()       As Variant
     
     If App.LogMode = 0 Then On Error Resume Next
@@ -698,7 +713,8 @@ Public Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths A
     ReDim http(UBound(URLArr))
     For i = 0 To UBound(URLArr)
         Set http(i) = New WinHttpRequest
-        Call XHR.WinHtpRequest(this:=http(i), Method:=Method, URL:=URLArr(i), Data:=Data, Headers:=Headers, Cookies:=Cookies, Charset:="Byte()", Redirects:=Redirects, Proxy:=Proxy, ProxyUser:=ProxyUser, AuthType:=AuthType, AuthUser:=AuthUser, AuthPass:=AuthPass, IsAsync:=True)
+        If IsArray(Data) Then Body = Data(i) Else Body = Data
+        Call XHR.WinHtpRequest(this:=http(i), Method:=Method, URL:=URLArr(i), Data:=Body, Headers:=Headers, Cookies:=Cookies, Charset:="Byte()", Redirects:=Redirects, Proxy:=Proxy, ProxyUser:=ProxyUser, AuthType:=AuthType, AuthUser:=AuthUser, AuthPass:=AuthPass, IsAsync:=True)
     Next
     ' 异步等待响应内容
     ReDim Ret(UBound(URLArr))

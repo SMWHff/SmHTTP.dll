@@ -34,6 +34,8 @@ html\同步请求\HTTP_PATCH.html
 html\同步请求\HTTP_PUT.html
 html\同步请求\HTTP_DELETE.html
 html\同步请求\HTTP_Request.html
+html\同步请求\HTTP_DownLoad.html
+html\同步请求\HTTP_DownLoadEx.html
 html\其他命令\GetStatus.html
 html\其他命令\GetHeaders.html
 html\其他命令\GetCookies.html

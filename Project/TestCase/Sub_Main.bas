@@ -7,7 +7,7 @@ Sub Main()
     Dim testName    As String
     Dim result      As String
     
-    'Call CallByName(TestSmHTTP, "test_http_upload_file_upload", VbMethod): End
+    'Call CallByName(TestSmHTTP, "test_http_downloadEx_TTS_yuanshen_ebook", VbMethod): End
     
     ' ÷¥––≤‚ ‘”√¿˝
     testNameAll = TestTool.GetFuncNameAll(App.Path & "\TestCase\cTestSmHTTP.cls")

@@ -67,7 +67,7 @@ Dim ver
 
 ' 检查插件版本号
 ver = Plugin.SmHTTP.Ver()
-If ver = "1.0.0.0" Then
+If ver = "1.0.0.4" Then
     TracePrint "插件版本与文档一致！"
 Else
     TracePrint "出错，请检查插件版本：" & ver
@@ -312,9 +312,9 @@ TracePrint LenB(FormData)
 </td></tr><tr><th>命令功能：</th><td>
 构造JSON主体
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
-参数1、2【必选】：文本型，键名1、文本型，键值1
-参数3、4【可选】：文本型，键名2、文本型，键值2
-参数5、6【可选】：文本型，键名3、文本型，键值3
+参数1、2【必选】：（文本型）键名1、（任意型）键值1
+参数3、4【可选】：（文本型）键名2、（任意型）键值2
+参数5、6【可选】：（文本型）键名3、（任意型）键值3
 ……
 
 </td></tr><tr><th>返回值：</th><td class='fanhui'>
@@ -379,13 +379,16 @@ JsonData = SmHTTP.JsonData( _
     		"target_lang", lang, _
     		"preference", SmHTTP.JsonData( _
         		"weight", SmHTTP.JsonData( _
-            		"DE", 0.18427, _
-            		"EN", 9.93878, _
-            		"ES", 0.13236, "FR", 0.16311, "IT", 0.11621, "JA", 0.17963, "NL", 0.1865, "PL", 0.11549, "PT", 0.10159, "RU", 0.10577, _
-            		"ZH", 5.90582, _
-            		"BG", 0.07468, "CS", 0.09005, "DA", 0.08567, "EL", 0.07069, "ET", 0.0836, "FI", 0.09628, "HU", 0.08731, "LT", 0.07119, _
-            		"LV", 0.06866, "RO", 0.07842, "SK", 0.07497, "SL", 0.08492, "SV", 0.10275, "TR", 0.07728, "ID", 0.09161, "UK", 0.08573, "KO", 0.04671, _
-            		"NB", 0.05511 _
+                    "DE", 0.18427, _
+                    "EN", 9.93878, _
+                    "ES", 0.13236, "FR", 0.16311, "IT", 0.11621, "JA", 0.17963, _
+                    "NL", 0.1865, "PL", 0.11549, "PT", 0.10159, "RU", 0.10577, _
+                    "ZH", 5.90582, _
+                    "BG", 0.07468, "CS", 0.09005, "DA", 0.08567, "EL", 0.07069, _
+                    "ET", 0.0836, "FI", 0.09628, "HU", 0.08731, "LT", 0.07119, _
+                    "LV", 0.06866, "RO", 0.07842, "SK", 0.07497, "SL", 0.08492, _
+                    "SV", 0.10275, "TR", 0.07728, "ID", 0.09161, "UK", 0.08573, _
+                    "KO", 0.04671, "NB", 0.05511 _
         		), _
         		"default", "default" _
     		), _
@@ -447,7 +450,7 @@ Status = SmHTTP.GetStatus()
 If Status = 200 Then 
     TracePrint "访问成功！"
 Else
-    MsgBox "访问失败：" & Status, 16 + 4096, "出错！"
+    MsgBox "访问失败：" & Status & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If
 </td></tr></table>	
 	
@@ -698,7 +701,7 @@ HTTP GET 方法请求指定资源的表示。使用 GET 的请求应该只用于
 --------------------</pre>
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
-参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数2【可选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数3【可选】：文本型，请求Cookies
 参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
 参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -735,7 +738,7 @@ If SmHTTP.GetJSON(Ret, "errno") = 0 Then
     TracePrint "原文：" & enStr
     TracePrint "译文：" & SmHTTP.GetJSON(Ret, "data.result")
 Else
-    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+    MsgBox "访问失败：" & SmHTTP.GetStatus() & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If
 
 
@@ -745,7 +748,7 @@ RetIP = SmHTTP.HTTP_GET("http://www.bathome.net/s/ip.php", "120.196.186.248:9091
 If RetIP = "120.196.186.248" Then 
     TracePrint "通过代理IP访问成功！"
 Else
-    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+    MsgBox "访问失败：" & SmHTTP.GetStatus() & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If
 
 
@@ -755,7 +758,7 @@ Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
 If SmHTTP.GetStatus() = 200 Then 
     TracePrint "通过身份认证"
 Else
-    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+    MsgBox "访问失败：" & SmHTTP.GetStatus() & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If 
 
 
@@ -793,7 +796,7 @@ PUT 和 POST 方法的区别是，PUT 方法是幂等的：调用一次与连续
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
 参数2【必选】：任意型，请求主体
-参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【必选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数4【必选】：文本型，请求Cookies
 参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
 参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -858,6 +861,7 @@ If SmHTTP.GetStatus() = 200 Then
 	TracePrint SmHTTP.GetJSON(json, "image.url")
 Else 
 	TracePrint json
+    TracePrint SmHTTP.GetLastError()
 	ExitScript 
 End If
 </td></tr></table>	
@@ -882,7 +886,7 @@ HTTP HEAD 方法请求资源的标头信息，并且这些标头与 HTTP GET 方
 --------------------</pre>
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
-参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数2【可选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数3【可选】：文本型，请求Cookies
 参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
 参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -936,7 +940,7 @@ HTTP OPTIONS 方法请求给定的 URL 或服务器的允许通信选项。客�
 --------------------</pre>
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
-参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数2【可选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数3【可选】：文本型，请求Cookies
 参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
 参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -992,7 +996,7 @@ HTTP PATCH 请求方法用于对资源进行部分修改。PATCH 有点类似于
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
 参数2【必选】：任意型，请求主体
-参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【必选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数4【必选】：文本型，请求Cookies
 参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
 参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -1050,7 +1054,7 @@ HTTP PUT 请求方法创建一个新的资源或用请求的有效载荷替换�
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
 参数2【必选】：任意型，请求主体
-参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【必选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数4【必选】：文本型，请求Cookies
 参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
 参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -1106,7 +1110,7 @@ HTTP DELETE 请求方法删除指定的资源。
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
 参数2【必选】：任意型，请求主体
-参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
+参数3【必选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数4【必选】：文本型，请求Cookies
 参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
 参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -1162,7 +1166,7 @@ HTTP TRACE 方法沿着通往目标资源的路径进行信息回环测试，提
 --------------------</pre>
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
 参数1【必选】：文本型，网址
-参数2【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数2【可选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数3【可选】：文本型，请求Cookies
 参数4【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
 参数5【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -1210,7 +1214,7 @@ End If
 参数1【必选】：文本型，访问方法：GET、POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
 参数2【必选】：文本型，网址
 参数3【可选】：任意型，请求主体
-参数4【可选】：文本型，请求协议头，一行一个用换行符隔开
+参数4【可选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
 参数5【可选】：文本型，请求Cookies
 参数6【可选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集
 参数7【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
@@ -1304,6 +1308,99 @@ Else
 End If
 </td></tr></table>	
 
+
+
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='HTTP_DownLoadEx'></a>HTTP_DownLoadEx 加强版下载指定资源到本地
+</td></tr><tr><th>命令功能：</th><td>
+用 HTTP 协议并行请求下载指定多个资源到本地
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，下载地址，支持多个地址，每个地址用 “|” 分割开
+参数2【必选】：文本型，保存路径，支持多个路径，每个地址用 “|” 分割开（务必与下载地址数量保存一致）
+参数3【可选】：文本型，访问方法：默认 "GET"；POST、HEAD、PUT、OPTIONS、DELETE、TRACE、CONNECT、PATCH
+参数4【可选】：任意型，请求主体
+参数5【可选】：文本型，请求协议头，一行一个用换行符 vbCrLf 隔开
+参数6【可选】：文本型，请求Cookies
+参数7【可选】：整数型，超时秒数，默认 30 秒；-1=无限等待
+参数8【可选】：逻辑型，是否重定向，默认 True=开启；False=禁止
+参数9【可选】：文本型，代理IP，格式为 1.1.1.1:80
+参数10【可选】：文本型，代理用户名
+参数11【可选】：文本型，代理密码
+参数12【可选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
+参数13【可选】：文本型，认证账号
+参数14【可选】：文本型，认证密码
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，成功返回空；否则返回失败的下载地址+"|"+保存路径
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_HTTP_DownLoadEx" class="vb" id="code8_HTTP_DownLoadEx">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim i, spArr, sp, URLs, Paths, Ret, t
+Dim 赵倩倩, 医生, 电话
+
+赵倩倩 = "荧_ZH"
+医生 = "凯亚_ZH"
+电话 = "凝光_ZH"
+spArr = Array( _
+    Array(赵倩倩, "我妈什么时候知道自己脑子里有良性肿瘤？"), _
+    Array(医生, "大概半年前，汪女士视线模糊，看东西不清楚，所以到医院就诊。我们建议尽早手术切除，但汪女士想保守治疗，不愿意冒险。手术费加住院费，最多五六万。做手术是最佳方案。"), _
+    Array(赵倩倩, "……变成恶性肿瘤会怎么样？"), _
+    Array(医生, "即便切除，也有可能多次复发。有病要趁早医，这两天做手术来得及。"), _
+    Array(赵倩倩, "我妈醒来后，我会跟她商量。那手术的事等病人苏醒后再说。"), _
+    Array(医生, "麻烦您待会儿去柜台补交住院费用。"), _
+    Array(赵倩倩, "好。钱包里只有101.5块，我哪来的钱交住院费用？"), _
+    Array(电话, "您好，您拨打的用户已关机，请稍后再拨……"), _
+    Array(赵倩倩, "年终奖到账，我买了理财。我借钱交首付，这会儿背了一屁股债，没有闲钱。") _
+)
+Dim Args: Args = SmHTTP.data( _
+    "format", "wav", _
+    "language", "ZH", _
+    "length", "1", _
+    "sdp", "0.4", _
+    "noise", "0.6", _
+    "noisew", "0.8" _
+)
+urlArr = Array()
+pathArr = Array()
+ReDim urlArr(UBound(spArr))
+ReDim pathArr(UBound(spArr))
+For i = 0 To UBound(spArr)
+    sp = SmHTTP.data( _
+        "speaker", spArr(i)(0), _
+        "text", spArr(i)(1) _
+    )
+    urlArr(i) = "https://genshinvoice.top/api?" & sp & Args
+Next
+For i = 0 To UBound(pathArr)
+    pathArr(i) = "D:\" & i & ".wav"
+Next
+URLs = Join(urlArr, "|")
+Paths = Join(pathArr, "|")
+t = Timer()
+Ret = SmHTTP.HTTP_DownLoadEx(URLs, Paths, "GET")
+TracePrint "下载耗时：" & Round(Timer() - t, 2) & " 秒"
+If Ret = "" Then 
+    ' 下载成功
+    For i = 0 To UBound(pathArr)
+        ' 播放音频
+        Call Plugin.Media.Play(pathArr(i))
+        ' 等待播放完毕
+        Delay Len(spArr(i)(1)) * 210
+    	' 停止播放
+    	Call Plugin.Media.Stop()
+    Next
+Else 
+    ' 下载失败
+    TracePrint ret
+    TracePrint SmHTTP.GetLastError()
+    ExitScript 
+End If 
+</td></tr></table>	
 
 
 
