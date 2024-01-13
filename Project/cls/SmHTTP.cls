@@ -385,8 +385,11 @@ End Function
 ' Base64编码
 Public Function Base64Encode(ByVal Data As Variant, Optional ByVal IsFile As Long) As String
     Dim bin() As Byte
-    
-    bin() = Data
+    If IsFile Then
+        bin() = Utils.File_ReadByte(Data)
+    Else
+        bin() = Data
+    End If
     Base64Encode = Encoding.Encoding_Base64(bin)
 End Function
 
@@ -394,7 +397,18 @@ End Function
 ' Base64解码
 Public Function Base64Decode(ByVal B64 As String, Optional ByVal IsFile As Long, Optional ByVal FilePath As String) As Variant
     Base64Decode = Encoding.Encoding_UnBase64(B64)
+    If IsFile Then
+        Base64Decode = Utils.File_WriteByte(FilePath, Base64Decode)
+    End If
 End Function
+
+
+
+
+
+
+
+
 
 
 '========================================【同步请求函数】========================================
