@@ -388,7 +388,7 @@ Public Function Base64Encode(ByVal Data As Variant, Optional ByVal IsFile As Lon
     If IsFile Then
         bin() = Utils.File_ReadByte(Data)
     Else
-        bin() = Data
+        bin() = StrConv(Data, vbFromUnicode)
     End If
     Base64Encode = Encoding.Encoding_Base64(bin)
 End Function
@@ -399,6 +399,8 @@ Public Function Base64Decode(ByVal B64 As String, Optional ByVal IsFile As Long,
     Base64Decode = Encoding.Encoding_UnBase64(B64)
     If IsFile Then
         Base64Decode = Utils.File_WriteByte(FilePath, Base64Decode)
+    Else
+        Base64Decode = StrConv(Base64Decode, vbUnicode)
     End If
 End Function
 
