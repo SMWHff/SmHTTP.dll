@@ -86,7 +86,7 @@ End Sub
 
 ' 测试构造请求头
 Public Sub test_headers()
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Accept", "*/*", _
         "Accept-Language", "zh-CN,zh;q=0.8", _
         "Host", "https://bbs.anjian.com", _
@@ -95,7 +95,7 @@ Public Sub test_headers()
     )
     
     ' 断言
-    Debug.Assert Expression(Headers, "=", "Accept:*/*" & vbCrLf & _
+    Debug.Assert Expression(headers, "=", "Accept:*/*" & vbCrLf & _
         "Accept-Language:zh-CN,zh;q=0.8" & vbCrLf & _
         "Host:https://bbs.anjian.com" & vbCrLf & _
         "User-Agent:Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)" & vbCrLf & _
@@ -147,7 +147,7 @@ End Sub
 
 ' 构造 JSON 请求体
 Public Sub test_json_data()
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "empty", Empty, _
         "null", Null, _
         "int", 123, _
@@ -158,28 +158,13 @@ Public Sub test_json_data()
     )
     
     ' 断言
-    Debug.Assert Expression(json, "=", "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""\u795E\u68A6\u65E0\u75D5\""1042207232\"""",""array"":[1,3.14,true,null,""\u6309\u952E\u7CBE\u7075""]}")
+    Debug.Assert Expression(Json, "=", "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""\u795E\u68A6\u65E0\u75D5\""1042207232\"""",""array"":[1,3.14,true,null,""\u6309\u952E\u7CBE\u7075""]}")
 End Sub
 
 
 ' 测试 GET 请求
 Public Sub test_http_get()
     Dim ret: ret = SmHTTP.HTTP_GET("http://localhost:8080/get")
-    Dim status: status = SmHTTP.GetStatus()
-    
-    ' 断言
-    Debug.Assert Expression(status, "=", 200)
-End Sub
-
-
-' 测试 GET 请求API余额
-Public Sub test_http_get_api_balance()
-    Dim Headers: Headers = SmHTTP.Headers( _
-        "api-id", "19682662733224024298926531509058411934", _
-        "api-key", "3WKZFAP1FWRETY3C283XPLAABFH2EH" _
-    )
-    Dim ret: ret = SmHTTP.HTTP_GET("https://dp33c1xwtxufgln-db202204160934.adb.us-phoenix-1.oraclecloudapps.com/ords/tardigrade_api/api/v1/balance", Headers)
-    Debug.Print ret
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -389,15 +374,15 @@ Public Sub test_http_upload_file_smms()
         "@smfile", App.Path & "\..\Logo.png", "image/png", _
         "format", "json" _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Authorization", token _
     )
-    Dim ret: ret = SmHTTP.HTTP_POST("https://smms.app/api/v2/upload", data, Headers)
+    Dim ret: ret = SmHTTP.HTTP_POST("https://smms.app/api/v2/upload", data, headers)
     ' Debug.Print ret
     Dim success: success = SmHTTP.GetJSON(ret, "success")
     Dim filename: filename = SmHTTP.GetJSON(ret, "data.filename")
     Dim hash: hash = SmHTTP.GetJSON(ret, "data.hash")
-    Call SmHTTP.HTTP_GET("https://smms.app/api/v2/delete/" & hash, Headers) ' 删除上传图片
+    Call SmHTTP.HTTP_GET("https://smms.app/api/v2/delete/" & hash, headers) ' 删除上传图片
 
     ' 断言
     Debug.Assert Expression(success, "=", True)
@@ -419,11 +404,11 @@ Public Sub test_http_upload_file_imgbb()
         "auth_token", token _
     )
     Call test_set_auto_param_array_on
-    Dim json: json = SmHTTP.HTTP_POST(url, formdata)
+    Dim Json: Json = SmHTTP.HTTP_POST(url, formdata)
     ' Debug.Print json
-    Dim code: code = SmHTTP.GetJSON(json, "status_code")
-    Dim imgName: imgName = SmHTTP.GetJSON(json, "image.name")
-    Dim imgURL: imgURL = SmHTTP.GetJSON(json, "image.url")
+    Dim code: code = SmHTTP.GetJSON(Json, "status_code")
+    Dim imgName: imgName = SmHTTP.GetJSON(Json, "image.name")
+    Dim imgURL: imgURL = SmHTTP.GetJSON(Json, "image.url")
     Call test_set_auto_param_array_off
 
     ' 断言
@@ -475,9 +460,31 @@ Public Sub test_http_upload_file_upload()
 End Sub
 
 
+' 测试 VMLogin 创建浏览器配置文件
+Public Sub test_vmlogin_profile_create()
+    Dim ret, Cookies
+    Dim user: user = Environ("AJ_USER")
+    Dim pass: pass = Environ("AJ_PASS")
+    'Debug.Print user, pass
+    Dim Json: Json = CreateObject("scripting.filesystemobject").opentextfile("C:\varo\JS_en.txt", 1).readall
+    Dim headers: headers = SmHTTP.headers( _
+        "Content-Type", "application/json" _
+    )
+    'SmHTTP.调试开关 = True
+    Call test_set_auto_param_array_on
+    ret = SmHTTP.HTTP_POST("https://api.vmlogin.com/v1/profile/create", Json, headers)
+    Call test_set_auto_param_array_off
+    'Debug.Print ret
+    Dim status: status = SmHTTP.GetJSON(ret, "status")
+    
+    ' 断言
+    Debug.Assert Expression(status, "=", "OK")  ' 判断是否签到成功
+End Sub
+
+
 ' 测试按键精灵论坛签到
 Public Sub test_bbs_anjian_signin()
-    Dim ret, Cookies, Headers
+    Dim ret, Cookies, headers
     Dim user: user = Environ("AJ_USER")
     Dim pass: pass = Environ("AJ_PASS")
     'Debug.Print user, pass
@@ -500,10 +507,10 @@ Public Sub test_bbs_anjian_signin()
     data = SmHTTP.data( _
         "signmessage", "签个到，每天心情都是美美哒~~按键精灵祝大家新年好运连连！！" _
     )
-    Headers = SmHTTP.Headers( _
+    headers = SmHTTP.headers( _
         "Referer", "http://bbs.anjian.com/" _
     )
-    ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", data, Headers, Cookies)
+    ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", data, headers, Cookies)
     Call test_set_auto_param_array_off
     
     ' 断言
@@ -514,7 +521,7 @@ End Sub
 ' 测试强制服务器返回未压缩的内容
 Public Sub test_http_ret_not_gzip()
     Call test_set_auto_param_array_on
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "detail_enid", "obyrmnqGdwxkXW6Yo3JelBz2D5ZO8a", _
         "note_type", 2, _
         "only_replied", False, _
@@ -523,10 +530,10 @@ Public Sub test_http_ret_not_gzip()
         "sort_by", "create", _
         "source_type", 65 _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Accept-Encoding", "identity" _
     )
-    Dim ret: ret = SmHTTP.HTTP_POST("https://www.dedao.cn/pc/ledgers/notes/article_comment_list", json, Headers)
+    Dim ret: ret = SmHTTP.HTTP_POST("https://www.dedao.cn/pc/ledgers/notes/article_comment_list", Json, headers)
     Dim message: message = SmHTTP.GetJSON(ret, "h.c")
     Call test_set_auto_param_array_off
     
@@ -537,8 +544,8 @@ End Sub
 
 ' 测试smos-cdn
 Public Sub test_http_ret_smos_cdn()
-    Dim json: json = SmHTTP.HTTP_GET("https://cname-china.vercel-dns.com/Ver/SmHTTP.json", "Host: smos-cdn.vercel.app")
-    Dim name: name = SmHTTP.GetJSON(json, "name")
+    Dim Json: Json = SmHTTP.HTTP_GET("https://cname-china.vercel-dns.com/Ver/SmHTTP.json", "Host: smos-cdn.vercel.app")
+    Dim name: name = SmHTTP.GetJSON(Json, "name")
     
     ' 断言
     Debug.Assert Expression(name, "=", "神梦HTTP请求插件")
@@ -610,13 +617,13 @@ End Sub
 Public Sub test_Translate_Microsoft()
     Dim enStr: enStr = "I Love You"
     Dim authCode: authCode = SmHTTP.HTTP_GET("https://edge.microsoft.com/translate/auth")
-    Dim json: json = "[" & SmHTTP.JsonData( _
+    Dim Json: Json = "[" & SmHTTP.Jsondata( _
         "Text", enStr _
     ) & "]"
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Authorization", "Bearer " & authCode _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://api-edge.cognitive.microsofttranslator.com/translate?from=&to=zh-Hans&api-version=3.0&includeSentenceLength=true", json, Headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://api-edge.cognitive.microsofttranslator.com/translate?from=&to=zh-Hans&api-version=3.0&includeSentenceLength=true", Json, headers)
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "[0].translations[0].text")
     
@@ -642,14 +649,14 @@ Public Sub test_Translate_AliBaba()
         "query", enStr, _
         dataName, ali_uuid _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "accept", "application/json, text/plain, */*", _
         "Origin", "https://translate.alibaba.com", _
         "Referer", "https://translate.alibaba.com/", _
         headerName, ali_uuid, _
         "sec-fetch-site", "same-origin" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://translate.alibaba.com/api/translate/text", fromData, Headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://translate.alibaba.com/api/translate/text", fromData, headers)
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "data.translateText")
 
@@ -664,27 +671,27 @@ End Sub
 ' 中文：zh
 Public Sub test_Translate_TencentQQ()
     Dim enStr: enStr = "I Love You"
-    Dim json: json = SmHTTP.JsonData( _
-        "header", SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
+        "header", SmHTTP.Jsondata( _
             "fn", "auto_translation" _
         ), _
         "type", "plain", _
         "model_category", "normal", _
         "text_domain", "general", _
-        "source", SmHTTP.JsonData( _
+        "source", SmHTTP.Jsondata( _
             "lang", "auto", _
             "text_list", Array(enStr) _
         ), _
-        "target", SmHTTP.JsonData( _
+        "target", SmHTTP.Jsondata( _
             "lang", "zh" _
         ) _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Host", "transmart.qq.com", _
         "Origin", "https://transmart.qq.com", _
         "Referer", "https://transmart.qq.com/" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://transmart.qq.com/api/imt", json, Headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://transmart.qq.com/api/imt", Json, headers)
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "auto_translation[0]")
     
@@ -707,10 +714,10 @@ Public Sub test_Translate_DeepL()
     Dim iCount: iCount = Len(enStr) - Len(Replace(enStr, "i", "")): n = n + iCount
     Dim timestamp: timestamp = r + (n - r Mod n)
     Dim jobsJSON: jobsJSON = "[" & _
-        SmHTTP.JsonData( _
+        SmHTTP.Jsondata( _
             "kind", "default", _
             "sentences", "[" & _
-                SmHTTP.JsonData( _
+                SmHTTP.Jsondata( _
                     "text", enStr, _
                     "id", 1, _
                     "prefix", "" _
@@ -721,10 +728,10 @@ Public Sub test_Translate_DeepL()
             "preferred_num_beams", 4 _
         ) & _
     "]"
-    Dim langJSON: langJSON = SmHTTP.JsonData( _
+    Dim langJSON: langJSON = SmHTTP.Jsondata( _
         "target_lang", lang, _
-        "preference", SmHTTP.JsonData( _
-            "weight", SmHTTP.JsonData( _
+        "preference", SmHTTP.Jsondata( _
+            "weight", SmHTTP.Jsondata( _
                 "DE", 0.18427, _
                 "EN", IIf(from = "EN", 9.93878, 5.90582), _
                 "ES", 0.13236, "FR", 0.16311, "IT", 0.11621, "JA", 0.17963, "NL", 0.1865, "PL", 0.11549, "PT", 0.10159, "RU", 0.10577, _
@@ -737,14 +744,14 @@ Public Sub test_Translate_DeepL()
         ), _
         "source_lang_user_selected", from _
     )
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "jsonrpc", "2.0", _
         "method", "LMT_handle_jobs", _
-        "params", SmHTTP.JsonData( _
+        "params", SmHTTP.Jsondata( _
             "jobs", jobsJSON, _
             "lang", langJSON, _
             "priority", 1, _
-            "commonJobParams", SmHTTP.JsonData( _
+            "commonJobParams", SmHTTP.Jsondata( _
                 "mode", "translate", _
                 "textType", "plaintext", _
                 "browserType", 1 _
@@ -753,14 +760,14 @@ Public Sub test_Translate_DeepL()
         ), _
         "id", deepl_id _
     )
-    json = Replace(json, "hod"":""", IIf((deepl_id + 3) Mod 13 = 0 Or (deepl_id + 5) Mod 29 = 0, "hod"" : """, "hod"": """))
+    Json = Replace(Json, "hod"":""", IIf((deepl_id + 3) Mod 13 = 0 Or (deepl_id + 5) Mod 29 = 0, "hod"" : """, "hod"": """))
     'Debug.Print json
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "authority", "www2.deepl.com", _
         "Origin", "https://www.deepl.com", _
         "Referer", "https://www.deepl.com/" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://www2.deepl.com/jsonrpc", json, Headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://www2.deepl.com/jsonrpc", Json, headers)
     'Debug.Print result
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "result.translations[0].beams[0].sentences[0].text")
@@ -782,11 +789,11 @@ Public Sub test_Translate_YoudaoMobileWeb()
         "inputtext", enStr, _
         "type", from & "2" & lang _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Origin", "https://m.youdao.com", _
         "Referer", "https://m.youdao.com/translate/" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://m.youdao.com/translate", data, Headers, , "UTF-8")
+    Dim result: result = SmHTTP.HTTP_POST("https://m.youdao.com/translate", data, headers, , "UTF-8")
     'Debug.Print result
     Dim htmlDoc: Set htmlDoc = CreateObject("htmlfile")
     htmlDoc.Write result
@@ -822,7 +829,7 @@ Public Sub test_Translate_SogouWeb()
         "transto", lang, _
         "model", "general" _
     )
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "from", from, _
         "to", lang, _
         "text", enStr, _
@@ -833,14 +840,14 @@ Public Sub test_Translate_SogouWeb()
         "uuid", uuid, _
         "exchange", False _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Origin", "https://fanyi.sogou.com", _
         "Referer", "https://fanyi.sogou.com/text?" & data, _
         "Accept", "application/json, text/plain, */*", _
         "Pragma", "no-cache", _
         "Cache-Control", "no-cache" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://fanyi.sogou.com/api/transpc/text/result", json, Headers, Cookies)
+    Dim result: result = SmHTTP.HTTP_POST("https://fanyi.sogou.com/api/transpc/text/result", Json, headers, Cookies)
     ' Debug.Print result
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "data.translate.dit")
@@ -862,13 +869,13 @@ Public Sub test_Baidu_tongji()
         "ep", 0, _
         "fl", "11.0" _
     )
-    Dim Headers: Headers = SmHTTP.Headers( _
+    Dim headers: headers = SmHTTP.headers( _
         "Referer", "https://www.SmHTTP.com/", _
         "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.46 VB/6.0", _
         "Cookie", "HMACCOUNT=SMWHff-VB6-GUID" _
     )
     Dim url: url = "https://hm.baidu.com/hm.gif?si=212f0c3f981a440699efc710f3043368&" & data
-    Call SmHTTP.HTTP_GET(url, Headers)
+    Call SmHTTP.HTTP_GET(url, headers)
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -988,11 +995,11 @@ End Sub
 
 ' 测试文本转原神语音，并下载语音文件
 Public Sub test_http_download_TTS_yuanshen()
-    Dim text: text = "没想到没想到，胡桃我现在力如泉涌，心似雄鹰，非常有自信哦。"
-    Dim json: json = SmHTTP.JsonData( _
+    Dim text: text = "你已经很优秀了，我知道你一直在努力守护着自我，我喜欢这样的你，真的很喜欢，所以，可以稍稍休息一下了，等你睁开眼，我还在这里。"
+    Dim Json: Json = SmHTTP.Jsondata( _
         "data", Array( _
             text, _
-            "胡桃_ZH", _
+            "甘雨_ZH", _
             0.2, _
             0.6, _
             0.8, _
@@ -1009,7 +1016,7 @@ Public Sub test_http_download_TTS_yuanshen()
         "session_hash", TestTool.GetGUID() _
     )
     Dim Path: Path = Environ("TEMP") & "\胡桃.wav"
-    Dim ret: ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+    Dim ret: ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
     'Debug.Print ret
     Dim status, name: status = SmHTTP.GetStatus()
     If status = 200 Then status = SmHTTP.GetJSON(ret, "data[0]")
@@ -1026,7 +1033,7 @@ End Sub
 ' 测试多角色文本转原神语音，并下载语音文件
 Public Sub test_http_downloadEx_TTS_yuanshen()
     Dim urlArr(1)
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "data", Array( _
             "西风骑士团，「火花骑士」，可莉，前来报到！…呃—后面该说什么词来着？可莉背不下来啦...", _
             "可莉_ZH", _
@@ -1045,9 +1052,9 @@ Public Sub test_http_downloadEx_TTS_yuanshen()
         "fn_index", 0, _
         "session_hash", TestTool.GetGUID() _
     )
-    Dim ret: ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+    Dim ret: ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
     If InStr(ret, "Success") > 0 Then urlArr(0) = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(ret, "data[1].name")
-    json = SmHTTP.JsonData( _
+    Json = SmHTTP.Jsondata( _
         "data", Array( _
             "嘿嘿，荒泷天下第一斗到此一游！ 哈哈哈哈…咳…", _
             "荒泷一斗_ZH", _
@@ -1066,7 +1073,7 @@ Public Sub test_http_downloadEx_TTS_yuanshen()
         "fn_index", 0, _
         "session_hash", TestTool.GetGUID() _
     )
-    ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+    ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
     If InStr(ret, "Success") > 0 Then urlArr(1) = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(ret, "data[1].name")
     
     Dim url: url = Join(urlArr, "|")
@@ -1086,7 +1093,7 @@ End Sub
 
 ' 测试小说多角色文本转原神语音，并下载语音文件
 Public Sub test_http_downloadEx_TTS_yuanshen_ebook()
-    Dim i, sp(8), json, ret, url, pRet
+    Dim i, sp(8), Json, ret, url, pRet
     Dim 赵倩倩: 赵倩倩 = "荧_ZH"
     Dim 医生: 医生 = "凯亚_ZH"
     Dim 电话: 电话 = "凝光_ZH"
@@ -1129,13 +1136,13 @@ Public Sub test_http_downloadEx_TTS_yuanshen_ebook()
     Dim pathArr()
     ReDim pathArr(UBound(sp))
     For i = 0 To UBound(sp)
-        json = SmHTTP.JsonData( _
+        Json = SmHTTP.Jsondata( _
             "data", sp(i), _
             "event_data", Null, _
             "fn_index", 0, _
             "session_hash", TestTool.GetGUID() _
         )
-        ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", json)
+        ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
         'Debug.Print ret
         If InStr(ret, "Success") > 0 Then url = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(ret, "data[1].name")
         pathArr(i) = Environ("TEMP") & "\" & i & ".wav"
@@ -1148,3 +1155,7 @@ Public Sub test_http_downloadEx_TTS_yuanshen_ebook()
     ' 断言
     Debug.Assert Expression(ret, "=", 1)
 End Sub
+
+
+
+

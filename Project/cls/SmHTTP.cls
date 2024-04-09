@@ -597,7 +597,7 @@ Attribute HTTP_Request.VB_UserMemId = 0
                 CompHeaders = (v <> "关闭补全")
             Case Utils.ArgumentsMatch(v, vbString, "^(开启|关闭)合并$", SavaArg:=CompCookies)
                 CompCookies = (v <> "关闭合并")
-            Case Utils.ArgumentsMatch(v, vbString, "^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$", SavaArg:=Cookies)
+            Case Utils.ArgumentsMatch(v, vbString, "^([\w%+-]+=[\w%+-]*|[\w%+-]+)(;[\s]?([\w%+-]+=[\w%+-]*|[\w%+-]+))*;?$", SavaArg:=Cookies) '^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$
                 Cookies = v
             Case Utils.ArgumentsMatch(v, vbString, "^(Accept|Accept-Encoding|Accept-Language|Authorization|Cache-Control|Connection|Content-Type|Content-Length|Cookie|Host|Origin|Proxy-Authenticate|Range|Referer|User-Agent|X-Requested-With):.*", SavaArg:=Headers)
                 Headers = v
@@ -626,11 +626,6 @@ Attribute HTTP_Request.VB_UserMemId = 0
         If UBound(Args) >= 16 Then CompCookies = IIf(VarType(Args(16)) = vbBoolean Or IsNumeric(Args(16)), Args(16) <> 0, Args(16) <> "关闭合并")
     End If
     
-    ' 构造主体用的数据类型
-    If InStr(1, Headers, "Content-Type:", 1) = 0 Then
-        Headers = Headers & vbCrLf & cls_ContentType
-    End If
-    
     ' 设置参数默认值
     If IsEmpty(Timeout) Then Timeout = 30
     If IsEmpty(Redirects) Then Redirects = True
@@ -638,6 +633,12 @@ Attribute HTTP_Request.VB_UserMemId = 0
     If IsEmpty(CompHeaders) Then CompHeaders = True
     If IsEmpty(CompCookies) Then CompCookies = True
     
+    ' 构造主体用的数据类型
+    If CompHeaders Then
+        If InStr(1, Headers, "Content-Type:", 1) = 0 Then
+            Headers = Headers & vbCrLf & cls_ContentType
+        End If
+    End If
     
     If 调试开关 Then
         Debug.Print "Method：", Method
