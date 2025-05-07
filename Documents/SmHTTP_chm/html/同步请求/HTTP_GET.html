@@ -90,7 +90,7 @@ If SmHTTP.GetJSON(Ret, "errno") = 0 Then
     TracePrint "原文：" & enStr
     TracePrint "译文：" & SmHTTP.GetJSON(Ret, "data.result")
 Else
-    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+    MsgBox "访问失败：" & SmHTTP.GetStatus() & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If
 
 
@@ -100,7 +100,7 @@ RetIP = SmHTTP.HTTP_GET("http://www.bathome.net/s/ip.php", "120.196.186.248:9091
 If RetIP = "120.196.186.248" Then 
     TracePrint "通过代理IP访问成功！"
 Else
-    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+    MsgBox "访问失败：" & SmHTTP.GetStatus() & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If
 
 
@@ -110,7 +110,8 @@ Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
 If SmHTTP.GetStatus() = 200 Then 
     TracePrint "通过身份认证"
 Else
-    MsgBox "访问失败：" & SmHTTP.GetStatus(), 16 + 4096, "出错！"
+    TracePrint SmHTTP.GetLastError()
+    MsgBox "访问失败：" & SmHTTP.GetStatus() & vbCrLf & "最后错误：" & SmHTTP.GetLastError(), 16 + 4096, "出错！"
 End If 
 
 
@@ -154,7 +155,7 @@ TracePrint IPv6
         'MessageBox RunApp PutAttachment TracePrint LogStart LogStop BeginThread StopThread PauseThread ContinueThread GetThreadID SetEnv GetEnv Beep Execute '+
         'GetExeDir GetScreenResolution ExecuteGlobal QMLibrary QUIMethodObj '+
         'Access Bkgnd BkgndColor Color Console Encrypt File GetSysInfo Media Memory Msg MySql Net Office Oracle Pic SQLServer Sys Web Window '+
-        'sm SMWH SMWH_ff SmIE SmADO SmVM SmWeb SmReg SmOCR SGuoBrowser TURING';
+        'sm SMWH SMWH_ff SmIE SmADO SmVM SmWeb SmReg SmOCR SmAssert SmPrint SmHTTP SGuoBrowser TURING';
         this.regexList = [
             { regex: new RegExp('(//|\').*$', 'gm'), css: 'comment' }, 
             { regex: new RegExp('/\\*([\\s\\S]*?)\\*/', 'gm'), css: 'comments' }, 

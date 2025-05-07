@@ -130,7 +130,7 @@ Function Expression(ByVal actual As Variant, ByVal sq As String, ByVal expected 
     sc.Reset
     Set sc = Nothing
     
-    If Expression = False Or Err > 0 Then
+    If Expression = False Or Err Then
         Debug.Print , "表达式不成立：", sActual & vbTab & sq & vbTab & sExpected
     End If
 End Function
@@ -161,38 +161,15 @@ Public Function EscapeURL(ByVal url)
 End Function
 
 
+'字符编码
+Public Function EscapeUnicode(ByVal text)
+    Dim sc As ScriptControl  '需要引用工程 Microsoft Script Control
 
-Function DecryptText(ByVal inputText As String) As String
-    Dim i As Integer
-    Dim currentChar As String
-    Dim decryptedChar As String
-    Dim result As String
-    
-    For i = 1 To Len(inputText)
-        currentChar = Mid(inputText, i, 1)
-        
-        ' Handle byte swapping for multi-byte characters
-        If Asc(currentChar) >= 128 Then
-            ' For multi-byte characters, swap the first two bytes with the last byte
-            decryptedChar = Chr(Asc(Mid(currentChar, 3, 1))) & _
-                            Chr(Asc(Mid(currentChar, 1, 1))) & _
-                            Chr(Asc(Mid(currentChar, 2, 1)))
-        Else
-            decryptedChar = currentChar
-        End If
-        
-        ' Handle specific replacements
-        Select Case decryptedChar
-            Case "儿"
-                decryptedChar = ChrW(&H5FF)
-            Case "神", "梦", "无", "痕"
-                decryptedChar = ChrW(&H7BA)
-        End Select
-        
-        result = result & decryptedChar
-    Next i
-    
-    DecryptText = result
+    Set sc = CreateObject("MSScriptControl.ScriptControl")
+    sc.Language = "JScript"
+    sc.AddCode "function encodeUnicode(text){var result=[];for(var i=0;i<text.length;i++){var c=text.charAt(i);if(c>'\u00FF'){result.push('\\u'+c.charCodeAt(0).toString(16).toUpperCase());}else{result.push(c);}}return result.join('');}"
+    EscapeUnicode = sc.Run("encodeUnicode", text)
+    Set sc = Nothing
 End Function
 
 
@@ -215,3 +192,12 @@ Function GetMidS(ByVal str As String, ByVal StrHome As String, Optional ByVal St
     GetMidS = ret
 End Function
 
+' 生成GUID
+Function GetGUID()
+    Dim objScriptContext As Object
+    Dim Guid As String
+    
+    Set objScriptContext = CreateObject("Scriptlet.TypeLib")
+    Guid = Mid(CreateObject("Scriptlet.TypeLib").Guid, 2, 36)
+    GetGUID = Guid
+End Function

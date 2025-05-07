@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>HTTP_DELETE</title>
-    <script type="text/javascript" src="../../JS/shCore.js" charset="gbk"></script>
+    <title>Base64Decode</title>
+    <script type="text/javascript" src="../../JS/shCore.js"></script>
     <link rel="stylesheet" type="text/css" href="../../CSS/SyntaxHighlighter.css">
     <link rel="stylesheet" type="text/css" href="../../CSS/help.css">
     <style>
@@ -38,57 +38,27 @@
 
 <table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
 <tr><th width='100px'>命令名称：</th><td class='name'>
-<a name='HTTP_DELETE'></a>HTTP_DELETE 请求方法删除指定的资源
-</td></tr><tr><th>命令功能：</th><td><pre>
-HTTP DELETE 请求方法删除指定的资源。
---------------------
-特点        是否支持
---------------------
-请求主体       May 
-返回主体       May
-安全　　        ×
-幂等　　        √
-缓存　　        ×
-表单提交        ×
---------------------</pre>
+<a name='Base64Decode'></a>Base64Decode Base64编码
+</td></tr><tr><th>命令功能：</th><td>
+Base64编码
 </td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
-参数1【必选】：文本型，网址
-参数2【必选】：任意型，请求主体
-参数3【必选】：文本型，请求协议头，一行一个用换行符隔开
-参数4【必选】：文本型，请求Cookies
-参数5【必选】：文本型，网页编码，默认 "ANSI"；UTF-8、UTF-16、UNICODE、GB2312、GBK、GB18030、BIG5、ASCII、Byte()=字节集 
-参数6【必选】：整数型，超时秒数，默认 30 秒；-1=无限等待
-参数7【必选】：逻辑型，是否重定向，默认 True=开启；False=禁止
-参数8【必选】：文本型，代理IP，格式为 1.1.1.1:80
-参数9【必选】：文本型，代理用户名
-参数10【必选】：文本型，代理密码
-参数11【必选】：文本型，认证类型，BASIC=基本认证；DIGEST=摘要认证
-参数12【必选】：文本型，认证账号
-参数13【必选】：文本型，认证密码
+参数1【必选】：文本型，B64编码内容
+参数2【可选】：文本型，文件路径
 
 </td></tr><tr><th>返回值：</th><td class='fanhui'>
-任意型，响应内容
+任意型，返回原始内容
 </td></tr><tr><th><span class='red'>脚本例子：</span>
-</th><td class='lizi'><pre name="code8_HTTP_DELETE" class="vb" id="code8_HTTP_DELETE">
-Import "SmHTTP.dll"
-Set SmHTTP = CreateObject("SMWH.SmHTTP")
+</th><td class='lizi'><pre name="code8_Base64Decode" class="vb" id="code8_Base64Decode">
+Dim str, path_str, path_file
 
-' 开启自动识别对应传入参数
-Call SmHTTP.SetAutoParamArray(True)
-
-Dim FormData, Json
-
-' 构造表单主体
-FormData = Plugin.SmHTTP.FormData(_
-    "UserName", "SMWH", _
-    "PassWord", "123456" _
-)
-
-' 测试 DELETE
-Json = SmHTTP.HTTP_DELETE("https://httpbin.org/delete", FormData)
-If SmHTTP.GetStatus() = 200 Then 
-    TracePrint Json
-End If
+str = Plugin.SmHTTP.Base64Decode("U01XSDoxMjM0NTY=")
+path_str = Plugin.SmHTTP.Base64Decode("QzpcV2luZG93c1xzeXN0ZW0zMlxub3RlcGFkLmV4ZQ==")
+path_file = Plugin.SmHTTP.Base64Decode("QzpcV2luZG93c1xzeXN0ZW0zMlxub3RlcGFkLmV4ZQ==", "C:\1.txt")
+    
+' 输出结果
+TracePrint str
+TracePrint path_str
+TracePrint path_file
 </td></tr></table>	
 	
 	
@@ -130,8 +100,7 @@ End If
         this.CssClass = 'dp-vb'; 
     }
     dp.sh.Brushes.Vb.prototype = new dp.sh.Highlighter(); dp.sh.Brushes.Vb.Aliases = ['vb', 'vb.net'];
-    dp.SyntaxHighlighter.ClipboardSwf = "http://www.vrbrothers.com/cn/qmacro/qmdn/htmls/zh_chs/qm/scripts/clipboard.swf";
-    dp.SyntaxHighlighter.HighlightAll('code8_HTTP_DELETE',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_Base64Decode',true,true,false);
 
 </script>
 </body>

@@ -34,7 +34,7 @@ TracePrint("**********************【神梦HTTP请求插件 SmHTTP.dll 演示 VBScript 例
 
 
 '判断插件版本
-Assert "1.0.0.3" = SmHTTP.Ver(), "出错，插件版本号不匹配！"
+Assert "1.0.0.4" = SmHTTP.Ver(), "出错，插件版本号不匹配！"
 
 ' 定义变量
 Dim user, pass, Data, Ret, Cookies, Headers

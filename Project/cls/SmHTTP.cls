@@ -25,6 +25,7 @@ Option Explicit
 
 Private cls_WinHttp     As WinHttpRequest
 Private cls_AutoParam   As Boolean
+Private cls_Proxy       As String
 Private cls_Status      As Long
 Private cls_Stream      As Variant
 Private cls_Headers     As String
@@ -74,7 +75,7 @@ Attribute SetAutoParamArray.VB_Description = "设置自动识别对应传入参数"
     SetAutoParamArray = 1
     
     ' 百度统计代码
-    'If G_Init = False Then
+    If G_Init = False Then
         G_Init = True
         On Error Resume Next
         Dim Baidu_Tongji_Http As WinHttpRequest
@@ -88,8 +89,9 @@ Attribute SetAutoParamArray.VB_Description = "设置自动识别对应传入参数"
         Baidu_Tongji_Http.SetRequestHeader "Cookie", "HMACCOUNT=" & Utils.GetHDDSN() & Utils.GetBaseBoard() & Utils.GetBIOS()
         Baidu_Tongji_Http.Send
         Set Baidu_Tongji_Http = Nothing
-    'End If
+    End If
 End Function
+
 
 
 ' 构造协议头
@@ -260,7 +262,7 @@ Attribute JsonData.VB_Description = "构造JSON主体"
         Call sc.Eval("$['" & key & "']=" & value)
         i = i + 2
     Wend
-    JsonData = sc.Eval("JSON.stringify($)||'{}'")
+    JsonData = JSON.toString(JSON.parse(sc.Eval("JSON.stringify($)||'{}'")))
     Set sc = Nothing
 End Function
 
@@ -382,60 +384,91 @@ Attribute GetJSON.VB_Description = "解析JSON取值"
 End Function
 
 
+' Base64编码
+Public Function Base64Encode(ByVal Data As Variant, Optional ByVal IsFile As Variant) As String
+    Dim bin() As Byte
+    If IsMissing(IsFile) Then IsFile = IsFileExist(Data)
+    If IsFile Then
+        bin() = Utils.File_ReadByte(Data)
+    Else
+        bin() = StrConv(Data, vbFromUnicode)
+    End If
+    Base64Encode = Encoding.Encoding_Base64(bin)
+End Function
+
+
+' Base64解码
+Public Function Base64Decode(ByVal B64 As String, Optional ByVal FilePath As String) As Variant
+    Base64Decode = Encoding.Encoding_UnBase64(B64)
+    If Len(FilePath) = 0 Then
+        Base64Decode = StrConv(Base64Decode, vbUnicode)
+    Else
+        Base64Decode = Utils.File_WriteByte(FilePath, Base64Decode)
+    End If
+End Function
+
+
+
+
+
+
+
+
+
 
 '========================================【同步请求函数】========================================
 ' Get请求
 Public Function HTTP_GET(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_GET.VB_Description = "Get请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_GET = HTTP_Request("GET", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Post请求
 Public Function HTTP_POST(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_POST.VB_Description = "Post请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_POST = HTTP_Request("POST", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Head请求
 Public Function HTTP_HEAD(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_HEAD.VB_Description = "Head请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_HEAD = HTTP_Request("HEAD", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Options请求
 Public Function HTTP_OPTIONS(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_OPTIONS.VB_Description = "Options请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_OPTIONS = HTTP_Request("OPTIONS", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Patch请求
 Public Function HTTP_PATCH(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_PATCH.VB_Description = "Patch请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_PATCH = HTTP_Request("PATCH", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Put请求
 Public Function HTTP_PUT(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_PUT.VB_Description = "Put请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_PUT = HTTP_Request("PUT", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Delete请求
 Public Function HTTP_DELETE(ByVal URL As String, Optional ByVal Data As Variant = "", Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
 Attribute HTTP_DELETE.VB_Description = "Delete请求"
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_DELETE = HTTP_Request("DELETE", URL, Data, Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
 ' Trace请求
 Public Function HTTP_TRACE(ByVal URL As String, Optional ByVal Headers As Variant = "", Optional ByVal Cookies As Variant = "", Optional ByVal Charset As Variant = "", Optional ByVal Timeout As Variant = 0, Optional ByVal Redirects As Variant = True, Optional ByVal Proxy As Variant = "", Optional ByVal ProxyUser As Variant = "", Optional ByVal ProxyPass As Variant = "", Optional ByVal AuthType As Variant = "", Optional ByVal AuthUser As Variant = "", Optional ByVal AuthPass As Variant = "") As Variant
-    If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
+    'If G_AutoParam Then Proxy = Gen_Proxies(Proxy, ProxyUser, ProxyPass): ProxyUser = "": ProxyPass = ""
     HTTP_TRACE = HTTP_Request("TRACE", URL, "", Headers, Cookies, Charset, Timeout, Redirects, Proxy, ProxyUser, ProxyPass, AuthType, AuthUser, AuthPass, "同步")
 End Function
 
@@ -542,13 +575,22 @@ Attribute HTTP_Request.VB_UserMemId = 0
                 Method = v
             Case Utils.ArgumentsMatch(v, vbString, "^(http|https)://.*$", SavaArg:=URL)
                 URL = v
-            Case Utils.ArgumentsMatch(v, vbString, "^(ANSI|ASCII|UTF-8|UTF-16|Unicode|GB\d+|GBK|BIG5|Byte\(\))$", SavaArg:=Charset)
+            Case Utils.ArgumentsMatch(v, vbString, "^(ANSI|ASCII|UTF-8|UTF-16|Unicode|GB2312|GB18030|GBK|BIG5|Byte\(\))$", SavaArg:=Charset)
                 Charset = v
             Case Utils.ArgumentsMatch(v, vbDecimal, "x >= -1", SavaArg:=Timeout)
                 Timeout = v
             Case Utils.ArgumentsMatch(v, vbBoolean, SavaArg:=Redirects)
                 Redirects = v
-            Case Utils.ArgumentsMatch(v, vbString, "^([^:]+:[^@]+)?@?(\d+\.\d+\.\d+\.\d+)(:\d{1,6})?$", SavaArg:=Proxy, Result:=Proxies)
+            Case Utils.ArgumentsMatch(v, vbString, "^((?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?))(\:(?:[0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5]))?$", SavaArg:=Proxy, Result:=Proxies)
+                ' 代理地址格式【IP:端口号】
+                Proxy = Proxies(0) & Proxies(1)
+                If i + 1 <= UBound(Args) Then v = Args(i + 1)
+                If Utils.ArgumentsMatch(v, vbString, "^(BASIC|DIGEST|FORMBASE|同步|异步|开启补全|关闭补全)$", SavaArg:=ProxyUser) = False Then
+                    If i + 1 <= UBound(Args) Then ProxyUser = Args(i + 1)
+                    If i + 2 <= UBound(Args) Then ProxyPass = Args(i + 2)
+                    i = i + 2
+                End If
+            Case Utils.ArgumentsMatch(v, vbString, "^([\w]+?:[^@]+)?@?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d{1,5})?$", SavaArg:=Proxy, Result:=Proxies)
                 ' 代理地址格式【用户名:密码@IP:端口号】
                 If Len(Proxies(0)) <> 0 Then
                     UserPass = Split(Proxies(0), ":")
@@ -567,7 +609,7 @@ Attribute HTTP_Request.VB_UserMemId = 0
                 CompHeaders = (v <> "关闭补全")
             Case Utils.ArgumentsMatch(v, vbString, "^(开启|关闭)合并$", SavaArg:=CompCookies)
                 CompCookies = (v <> "关闭合并")
-            Case Utils.ArgumentsMatch(v, vbString, "^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$", SavaArg:=Cookies)
+            Case Utils.ArgumentsMatch(v, vbString, "^([\w_-]+?=[\w+-|=&%~]+?;\s*)+[\w_-]+?=[\w+-|=&%~]+?$", SavaArg:=Cookies) '^([^=\r\n]+=[^;\r\n]+;)+[^=\r\n]+=[^;\r\n]+[;\s]*$
                 Cookies = v
             Case Utils.ArgumentsMatch(v, vbString, "^(Accept|Accept-Encoding|Accept-Language|Authorization|Cache-Control|Connection|Content-Type|Content-Length|Cookie|Host|Origin|Proxy-Authenticate|Range|Referer|User-Agent|X-Requested-With):.*", SavaArg:=Headers)
                 Headers = v
@@ -596,11 +638,6 @@ Attribute HTTP_Request.VB_UserMemId = 0
         If UBound(Args) >= 16 Then CompCookies = IIf(VarType(Args(16)) = vbBoolean Or IsNumeric(Args(16)), Args(16) <> 0, Args(16) <> "关闭合并")
     End If
     
-    ' 构造主体用的数据类型
-    If InStr(1, Headers, "Content-Type:", 1) = 0 Then
-        Headers = Headers & vbCrLf & cls_ContentType
-    End If
-    
     ' 设置参数默认值
     If IsEmpty(Timeout) Then Timeout = 30
     If IsEmpty(Redirects) Then Redirects = True
@@ -608,6 +645,13 @@ Attribute HTTP_Request.VB_UserMemId = 0
     If IsEmpty(CompHeaders) Then CompHeaders = True
     If IsEmpty(CompCookies) Then CompCookies = True
     
+    
+    ' 构造主体用的数据类型
+    If CompHeaders Then
+        If InStr(1, Headers, "Content-Type:", 1) = 0 Then
+            Headers = Headers & vbCrLf & cls_ContentType
+        End If
+    End If
     
     If 调试开关 Then
         Debug.Print "Method：", Method
@@ -681,6 +725,7 @@ Public Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths A
     Dim n           As Long
     Dim t           As Long
     Dim errRet      As String
+    Dim Body        As Variant
     Dim Ret()       As Variant
     
     If App.LogMode = 0 Then On Error Resume Next
@@ -698,7 +743,8 @@ Public Function HTTP_DownLoadEx(ByVal URLs As String, Optional ByVal SavePaths A
     ReDim http(UBound(URLArr))
     For i = 0 To UBound(URLArr)
         Set http(i) = New WinHttpRequest
-        Call XHR.WinHtpRequest(this:=http(i), Method:=Method, URL:=URLArr(i), Data:=Data, Headers:=Headers, Cookies:=Cookies, Charset:="Byte()", Redirects:=Redirects, Proxy:=Proxy, ProxyUser:=ProxyUser, AuthType:=AuthType, AuthUser:=AuthUser, AuthPass:=AuthPass, IsAsync:=True)
+        If IsArray(Data) Then Body = Data(i) Else Body = Data
+        Call XHR.WinHtpRequest(this:=http(i), Method:=Method, URL:=URLArr(i), Data:=Body, Headers:=Headers, Cookies:=Cookies, Charset:="Byte()", Redirects:=Redirects, Proxy:=Proxy, ProxyUser:=ProxyUser, AuthType:=AuthType, AuthUser:=AuthUser, AuthPass:=AuthPass, IsAsync:=True)
     Next
     ' 异步等待响应内容
     ReDim Ret(UBound(URLArr))
@@ -780,6 +826,10 @@ Public Function Get_Plugin_Description(ByVal ItemName As String) As String
         Description_Text = "字典对象转JSON字符串(字典对象.)【JSON字符串$】"
     Case "GetJSON"
         Description_Text = "解析JSON取值(JSON字符串$, 键名$)【值】"
+    Case "Base64Encode"
+        Description_Text = "Base64编码(内容或路径$, [是否文件|])【编码内容$】"
+    Case "Base64Decode"
+        Description_Text = "Base64解码(B64编码内容$, [文件路径$])【解码内容$】"
     Case "HTTP_GET"
         Description_Text = "Get请求(网址$, [请求协议头=〓一行一个用换行符隔开$], [请求Cookies$],［网页编码=ANSI|UTF-8|UTF-16|UNICODE|GB2312|GBK|GB18030|BIG5|ASCII|Byte()〓返回字节集$], [超时秒数=30|-1〓无限等待&], [是否重定向=True〓开启|False〓禁止|], [代理IP=〓格式为 1.1.1.1:80$], [代理用户名$], [代理密码$], [认证类型=BASIC〓基本认证|DIGEST〓摘要认证$], [认证账号$], [认证密码$])【网页源码$】"
     Case "HTTP_POST"
@@ -860,6 +910,10 @@ Public Function Get_Plugin_Interpret_Template(ByVal ItemName As String) As Strin
         Description_Text = "将字典对象 $1 转为JSON字符串"
     Case "GetJSON"
         Description_Text = "解析JSON字符串 $1 并获取键名 $2 的值"
+    Case "Base64Encode"
+        Description_Text = "根据 $2 将 $1 作为文本或文件编码为 Base64 字符串"
+    Case "Base64Decode"
+        Description_Text = "将 Base64 字符串 $1 根据 $2 解码为原始内容或文件"
     Case "HTTP_GET"
         Description_Text = "用 Get 方法访问 $1 并带上请求头 $2 和请求Cookes $3 重定向为 $6 通过代理IP $7@$8:$9 通过 $10 身份认证 $11:12 在 $5 秒内返回 $4 编码格式的网页内容"
     Case "HTTP_POST"

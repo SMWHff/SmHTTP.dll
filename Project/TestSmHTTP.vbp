@@ -12,6 +12,7 @@ Module=TestTool; TestCase\TestTool.bas
 Class=cTestSmHTTP; TestCase\cTestSmHTTP.cls
 Module=TestSound; TestCase\TestSound.bas
 Module=TestCryptoAPI; TestCase\TestCryptoAPI.bas
+ResFile32="TestCase\TestSmHTTP.RES"
 Startup="Sub Main"
 HelpFile=""
 Title="TestSmHTTP"

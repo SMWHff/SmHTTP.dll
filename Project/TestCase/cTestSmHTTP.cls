@@ -44,7 +44,7 @@ Public Sub test_ver()
     Dim ver: ver = SmHTTP.ver()
     
     ' 断言
-    Debug.Assert Expression(ver, "=", "1.0.0.3")
+    Debug.Assert Expression(ver, "=", "1.0.0.4")
 End Sub
 
 
@@ -68,19 +68,19 @@ End Sub
 
 ' 测试设置开启自动识别对应传入参数
 Public Sub test_set_auto_param_array_on()
-    Dim ret: ret = SmHTTP.SetAutoParamArray(True)
+    Dim Ret: Ret = SmHTTP.SetAutoParamArray(True)
     
     ' 断言
-    Debug.Assert Expression(ret, "=", 1)
+    Debug.Assert Expression(Ret, "=", 1)
 End Sub
 
 
 ' 测试设置关闭自动识别对应传入参数
 Public Sub test_set_auto_param_array_off()
-    Dim ret: ret = SmHTTP.SetAutoParamArray(False)
+    Dim Ret: Ret = SmHTTP.SetAutoParamArray(False)
     
     ' 断言
-    Debug.Assert Expression(ret, "=", 1)
+    Debug.Assert Expression(Ret, "=", 1)
 End Sub
 
 
@@ -105,36 +105,36 @@ End Sub
 
 ' 构造Cookies
 Public Sub test_cookies()
-    Dim ret: ret = SmHTTP.Cookies( _
+    Dim Ret: Ret = SmHTTP.Cookies( _
         "_ga", "GA1.2.1206281266.1647004488", _
         "BAIDUID_BFESS", "0F068EE7974C72C13A37B02D9855DD1C:SL=0:NR=10:FG=1", _
         "ZFY", "O7YgtvLEvTKeDmPLbV8Nbwq3xYhFAOP9m9A:BTtT0AkQ:C" _
     )
     
     ' 断言
-    Debug.Assert Expression(ret, "=", "_ga=GA1.2.1206281266.1647004488;BAIDUID_BFESS=0F068EE7974C72C13A37B02D9855DD1C:SL=0:NR=10:FG=1;ZFY=O7YgtvLEvTKeDmPLbV8Nbwq3xYhFAOP9m9A:BTtT0AkQ:C")
+    Debug.Assert Expression(Ret, "=", "_ga=GA1.2.1206281266.1647004488;BAIDUID_BFESS=0F068EE7974C72C13A37B02D9855DD1C:SL=0:NR=10:FG=1;ZFY=O7YgtvLEvTKeDmPLbV8Nbwq3xYhFAOP9m9A:BTtT0AkQ:C")
 End Sub
 
 ' 构造 URLData 请求体
 Public Sub test_data()
-    Dim ret: ret = SmHTTP.data( _
+    Dim Ret: Ret = SmHTTP.data( _
         "username", "SMWH", _
         "password", "123456" _
     )
     
     ' 断言
-    Debug.Assert Expression(ret, "=", "username=SMWH&password=123456")
+    Debug.Assert Expression(Ret, "=", "username=SMWH&password=123456")
 End Sub
 
 ' 构造 form-data 请求体
 Public Sub test_form_data()
-    Dim ret: ret = SmHTTP.formdata( _
+    Dim Ret: Ret = SmHTTP.formdata( _
         "username", "SMWH", _
         "password", "123456" _
     )
     
     ' 断言
-    Debug.Assert Expression(ret, "=", "--WebKitFormBoundarySmHTTPSMWHff" & vbCrLf & _
+    Debug.Assert Expression(Ret, "=", "--WebKitFormBoundarySmHTTPSMWHff" & vbCrLf & _
                       "Content-Disposition: form-data; name=""username""" & vbCrLf & _
                       "" & vbCrLf & _
                       "SMWH" & vbCrLf & _
@@ -147,7 +147,7 @@ End Sub
 
 ' 构造 JSON 请求体
 Public Sub test_json_data()
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "empty", Empty, _
         "null", Null, _
         "int", 123, _
@@ -158,13 +158,54 @@ Public Sub test_json_data()
     )
     
     ' 断言
-    Debug.Assert Expression(json, "=", "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""神梦无痕\""1042207232\"""",""array"":[1,3.14,true,null,""按键精灵""]}")
+    Debug.Assert Expression(Json, "=", "{""empty"":"""",""null"":null,""int"":123,""float"":3.14,""bool"":true,""str"":""\u795E\u68A6\u65E0\u75D5\""1042207232\"""",""array"":[1,3.14,true,null,""\u6309\u952E\u7CBE\u7075""]}")
 End Sub
+
+
+
+' 测试 Base64编码字符串
+Public Sub test_base64_encode_str()
+    Dim b64: b64 = SmHTTP.Base64Encode("SMWH:123456")
+    
+    ' 断言
+    Debug.Assert Expression(b64, "=", "U01XSDoxMjM0NTY=")
+End Sub
+
+
+' 测试 Base64编码字符串
+Public Sub test_base64_encode_filepath_str()
+    Dim b64: b64 = SmHTTP.Base64Encode("C:\Windows\system32\notepad.exe", False)
+    
+    ' 断言
+    Debug.Assert Expression(b64, "=", "QzpcV2luZG93c1xzeXN0ZW0zMlxub3RlcGFkLmV4ZQ==")
+End Sub
+
+
+' 测试 Base64编码文件
+Public Sub test_base64_encode_file()
+    Dim b64: b64 = SmHTTP.Base64Encode(App.Path & "\..\Logo.png")
+    Dim data: data = LoadResData(101, "TXT")
+    b64 = Replace(b64, vbLf, "")
+    data = StrConv(data, vbUnicode)
+    
+    ' 断言
+    Debug.Assert Expression(b64, "=", data)
+End Sub
+
+
+' 测试 Base64解码字符串
+Public Sub test_base64_decode_str()
+    Dim text: text = SmHTTP.Base64Decode("U01XSDoxMjM0NTY=")
+    
+    ' 断言
+    Debug.Assert Expression(text, "=", "SMWH:123456")
+End Sub
+
 
 
 ' 测试 GET 请求
 Public Sub test_http_get()
-    Dim ret: ret = SmHTTP.HTTP_GET("http://localhost:8080/get")
+    Dim Ret: Ret = SmHTTP.HTTP_GET("http://localhost:8080/get")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -174,7 +215,7 @@ End Sub
 
 ' 测试 POST 请求
 Public Sub test_http_post()
-    Dim ret: ret = SmHTTP.HTTP_POST("http://localhost:8080/post", "username=SMWH&password=123456", "Content-Type: application/x-www-form-urlencoded")
+    Dim Ret: Ret = SmHTTP.HTTP_POST("http://localhost:8080/post", "username=SMWH&password=123456", "Content-Type: application/x-www-form-urlencoded")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -184,7 +225,7 @@ End Sub
 
 ' 测试 HEAD 请求
 Public Sub test_http_head()
-    Dim ret: ret = SmHTTP.HTTP_HEAD("http://localhost:8080/head")
+    Dim Ret: Ret = SmHTTP.HTTP_HEAD("http://localhost:8080/head")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -194,7 +235,7 @@ End Sub
 
 ' 测试 OPTIONS 请求
 Public Sub test_http_options()
-    Dim ret: ret = SmHTTP.HTTP_OPTIONS("http://localhost:8080/options")
+    Dim Ret: Ret = SmHTTP.HTTP_OPTIONS("http://localhost:8080/options")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -204,7 +245,7 @@ End Sub
 
 ' 测试 PATCH 请求
 Public Sub test_http_patch()
-    Dim ret: ret = SmHTTP.HTTP_PATCH("http://localhost:8080/patch")
+    Dim Ret: Ret = SmHTTP.HTTP_PATCH("http://localhost:8080/patch")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -214,7 +255,7 @@ End Sub
 
 ' 测试 PUT 请求
 Public Sub test_http_put()
-    Dim ret: ret = SmHTTP.HTTP_PUT("http://localhost:8080/put")
+    Dim Ret: Ret = SmHTTP.HTTP_PUT("http://localhost:8080/put")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -224,7 +265,7 @@ End Sub
 
 ' 测试 DELETE 请求
 Public Sub test_http_delete()
-    Dim ret: ret = SmHTTP.HTTP_DELETE("http://localhost:8080/delete")
+    Dim Ret: Ret = SmHTTP.HTTP_DELETE("http://localhost:8080/delete")
     Dim status: status = SmHTTP.GetStatus()
     
     ' 断言
@@ -235,7 +276,7 @@ End Sub
 ' 测试 Request 请求
 Public Sub test_http_request()
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_Request("GET", "https://www.bing.com/ipv6test/test?FORM=MONITR", "UTF-8")
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "https://www.bing.com/ipv6test/test?FORM=MONITR", "UTF-8")
     Dim status: status = SmHTTP.GetStatus()
     Call test_set_auto_param_array_off
     
@@ -246,18 +287,18 @@ End Sub
 
 ' 测试 Request 请求，无参数情况
 Public Sub test_http_request_not_args()
-    Dim ret: ret = SmHTTP.HTTP_Request()
+    Dim Ret: Ret = SmHTTP.HTTP_Request()
     
     ' 断言
-    Debug.Assert Expression(ret, "=", "SmHTTP")
+    Debug.Assert Expression(Ret, "=", "SmHTTP")
 End Sub
 
 
 ' 测试 Request 请求，参数匹配测试
 Public Sub test_http_request_args_match()
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_Request("http://localhost:8080/post", "POST")
-    Dim url: url = SmHTTP.GetJSON(ret, "url")
+    Dim Ret: Ret = SmHTTP.HTTP_Request("http://localhost:8080/post", "POST")
+    Dim url: url = SmHTTP.GetJSON(Ret, "url")
     Call test_set_auto_param_array_off
     
     ' 断言
@@ -269,12 +310,12 @@ End Sub
 Public Sub test_http_request_invalid_url()
     Call test_set_auto_param_array_on
     On Error Resume Next
-    Dim ret: ret = SmHTTP.HTTP_Request("GET", "invalid_url")
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "invalid_url")
     On Error GoTo 0
     Call test_set_auto_param_array_off
 
     ' 断言
-    Debug.Assert Expression(IsEmpty(ret), "=", True)
+    Debug.Assert Expression(IsEmpty(Ret), "=", True)
 End Sub
 
 
@@ -282,51 +323,68 @@ End Sub
 Public Sub test_http_request_largeData()
     Call test_set_auto_param_array_on
     Dim data: data = String(10000, "a")
-    Dim ret: ret = SmHTTP.HTTP_Request("POST", "http://localhost:8080/post", data)
+    Dim Ret: Ret = SmHTTP.HTTP_Request("POST", "http://localhost:8080/post", data)
     Call test_set_auto_param_array_off
 
     ' 断言
-    Debug.Assert Expression(ret, "=", "error parsing request body: invalid character 'a' looking for beginning of value" & vbLf)
+    Debug.Assert Expression(Ret, "=", "error parsing request body: invalid character 'a' looking for beginning of value" & vbLf)
 End Sub
 
 
 ' 测试 Request 请求，超时与重定向测试
 ' 注意：这需要实际的测试服务器或服务来模拟长时间响应和重定向。
-Public Sub test_http_request_slow_response()
-'    Call test_set_auto_param_array_on
-'    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://slow-response.com", 1)
-'    Call test_set_auto_param_array_off
-'
-'    ' 断言
-'    Debug.Assert Expression(IsEmpty(Ret), "=", True)
+Public Sub test_http_request_slow_response_skip()
+    Call test_set_auto_param_array_on
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://slow-response.com", 1)
+    Call test_set_auto_param_array_off
+
+    ' 断言
+    Debug.Assert Expression(IsEmpty(Ret), "=", True)
 End Sub
 
 
 ' 测试代理IP
-Public Sub test_http_proxy()
-'    Dim proxy: proxy = "136.243.90.203:80"
-'    Call test_set_auto_param_array_on
-'    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", proxy)
-'    Call test_set_auto_param_array_off
-'
-'    ' 断言
-'    Debug.Assert Expression(Ret, "=", Split(proxy, ":")(0))
+Public Sub test_http_proxy_skip()
+    Dim proxy: proxy = "136.243.90.203:80"
+    Call test_set_auto_param_array_on
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", proxy)
+    Call test_set_auto_param_array_off
+
+    ' 断言
+    Debug.Assert Expression(Ret, "=", Split(proxy, ":")(0))
 End Sub
 
 
 ' 测试代理IP(带身份认证)
-Public Sub test_http_proxy_auth()
-'    Call test_set_auto_param_array_on
-'    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", "112.5.56.2:9091")
-'    Debug.Assert Ret = "112.5.56.2"
-'    Call test_set_auto_param_array_off
+Public Sub test_http_proxy_auth_skip()
+    'SmHTTP.调试开关 = True
+    Call test_set_auto_param_array_on
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", "http://www.bathome.net/s/ip.php", "192.154.195.77:8000", "proxy", "rv9tpt7")
+    Dim status: status = SmHTTP.GetStatus()
+    Call test_set_auto_param_array_off
+
+    ' 断言
+    Debug.Assert Expression(status, "=", 200)
 End Sub
 
 
 ' 测试身份认证
 Public Sub test_http_auth_basic()
+    'SmHTTP.调试开关 = True
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "BASIC", "admin", "admin")
+    Dim status: status = SmHTTP.GetStatus()
+    Call test_set_auto_param_array_off
+    
+    ' 断言
+    Debug.Assert Expression(status, "=", 200)
+End Sub
+
+
+' 测试身份认证+带认证代理IP
+Public Sub test_http_proxy_auth_basic_skip()
+    Call test_set_auto_param_array_on
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://ssr3.scrape.center/", "192.154.195.77:8000", "proxy", "rv9tpt7", "BASIC", "admin", "admin")
     Dim status: status = SmHTTP.GetStatus()
     Call test_set_auto_param_array_off
     
@@ -339,8 +397,8 @@ End Sub
 Public Sub test_http_ret_json()
     Call test_set_auto_param_array_on
     Dim url: url = "https://extreme-ip-lookup.com/json/?tdsourcetag=s_pcqq_aiomsg"
-    Dim ret: ret = SmHTTP.HTTP_Request("GET", url)
-    Dim message: message = SmHTTP.GetJSON(ret, "status")
+    Dim Ret: Ret = SmHTTP.HTTP_Request("GET", url)
+    Dim message: message = SmHTTP.GetJSON(Ret, "status")
     Call test_set_auto_param_array_off
     
     ' 断言
@@ -356,9 +414,9 @@ Public Sub test_http_upload_file()
         "password", "123456" _
     )
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_POST("http://localhost:8080/post", data)
-    Dim username: username = SmHTTP.GetJSON(ret, "form.username[0]")
-    Dim password: password = SmHTTP.GetJSON(ret, "form.password[0]")
+    Dim Ret: Ret = SmHTTP.HTTP_POST("http://localhost:8080/post", data)
+    Dim username: username = SmHTTP.GetJSON(Ret, "form.username[0]")
+    Dim password: password = SmHTTP.GetJSON(Ret, "form.password[0]")
     Call test_set_auto_param_array_off
     
     ' 断言
@@ -377,11 +435,11 @@ Public Sub test_http_upload_file_smms()
     Dim headers: headers = SmHTTP.headers( _
         "Authorization", token _
     )
-    Dim ret: ret = SmHTTP.HTTP_POST("https://smms.app/api/v2/upload", data, headers)
+    Dim Ret: Ret = SmHTTP.HTTP_POST("https://smms.app/api/v2/upload", data, headers)
     ' Debug.Print ret
-    Dim success: success = SmHTTP.GetJSON(ret, "success")
-    Dim filename: filename = SmHTTP.GetJSON(ret, "data.filename")
-    Dim hash: hash = SmHTTP.GetJSON(ret, "data.hash")
+    Dim success: success = SmHTTP.GetJSON(Ret, "success")
+    Dim filename: filename = SmHTTP.GetJSON(Ret, "data.filename")
+    Dim hash: hash = SmHTTP.GetJSON(Ret, "data.hash")
     Call SmHTTP.HTTP_GET("https://smms.app/api/v2/delete/" & hash, headers) ' 删除上传图片
 
     ' 断言
@@ -391,10 +449,10 @@ End Sub
 
 
 ' 测试上传图片到imgbb
-Public Sub test_http_upload_file_imgbb()
-    Dim ret: ret = SmHTTP.HTTP_GET("https://imgbb.com/")
-    Dim url: url = TestTool.GetMidS(ret, "PF.obj.config.json_api=""", """;")
-    Dim token: token = TestTool.GetMidS(ret, "PF.obj.config.auth_token=""", """;")
+Public Sub test_http_upload_file_imgbb_skip()
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://imgbb.com/")
+    Dim url: url = TestTool.GetMidS(Ret, "PF.obj.config.json_api=""", """;")
+    Dim token: token = TestTool.GetMidS(Ret, "PF.obj.config.auth_token=""", """;")
     Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
     Dim formdata: formdata = SmHTTP.formdata( _
         "@source", App.Path & "\..\Logo.png", "image/png", _
@@ -404,11 +462,11 @@ Public Sub test_http_upload_file_imgbb()
         "auth_token", token _
     )
     Call test_set_auto_param_array_on
-    Dim json: json = SmHTTP.HTTP_POST(url, formdata)
+    Dim Json: Json = SmHTTP.HTTP_POST(url, formdata)
     ' Debug.Print json
-    Dim code: code = SmHTTP.GetJSON(json, "status_code")
-    Dim imgName: imgName = SmHTTP.GetJSON(json, "image.name")
-    Dim imgURL: imgURL = SmHTTP.GetJSON(json, "image.url")
+    Dim code: code = SmHTTP.GetJSON(Json, "status_code")
+    Dim imgName: imgName = SmHTTP.GetJSON(Json, "image.name")
+    Dim imgURL: imgURL = SmHTTP.GetJSON(Json, "image.url")
     Call test_set_auto_param_array_off
 
     ' 断言
@@ -419,17 +477,17 @@ End Sub
 
 
 ' 测试上传图片到SunPics
-Public Sub test_http_upload_file_SunPics()
+Public Sub test_http_upload_file_SunPics_skip()
     Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
     Dim formdata: formdata = SmHTTP.formdata( _
         "@file", App.Path & "\..\Logo.png", "image/png", _
         "name", "Logo.png", _
         "uuid", timestamp _
     )
-    Dim ret: ret = SmHTTP.HTTP_POST("https://pics.sunbangyan.cn/application/upload.php", formdata)
-    ' Debug.Print ret
-    Dim code: code = SmHTTP.GetJSON(ret, "code")
-    Dim srcName: srcName = SmHTTP.GetJSON(ret, "srcName")
+    Dim Ret: Ret = SmHTTP.HTTP_POST("https://pics.sunbangyan.cn/application/upload.php", formdata)
+    Debug.Print Ret
+    Dim code: code = SmHTTP.GetJSON(Ret, "code")
+    Dim srcName: srcName = SmHTTP.GetJSON(Ret, "srcName")
 
     ' 断言
     Debug.Assert Expression(code, "=", 200)
@@ -438,31 +496,53 @@ End Sub
 
 
 ' 测试上传图片到upload
-Public Sub test_http_upload_file_upload()
-'    Dim formdata: formdata = SmHTTP.formdata( _
-'        "@uploaded_file[]", "C:\Users\SMWH\Pictures\Saved Pictures\jkansjxasd202374.ico", "image/png" _
-'    )
-'    Debug.Print formdata
-'    Dim headers: headers = SmHTTP.headers( _
-'        "origin", "https://upload.cc", _
-'        "pragma", "no-cache", _
-'        "referer", "https://upload.cc/", _
-'        "X-Requested-With", "XMLHttpRequest" _
-'    )
-'    Dim ret: ret = SmHTTP.HTTP_POST("https://upload.cc/image_upload", formdata, headers)
-'    Debug.Print ret
-'    Dim code: code = SmHTTP.GetJSON(ret, "code")
-'    Dim name: name = SmHTTP.GetJSON(ret, "success_image[0].name")
-'
-'    ' 断言
-'    Debug.Assert Expression(code, "=", 100)
-'    Debug.Assert Expression(name, "=", "Logo.png")
+Public Sub test_http_upload_file_upload_skip()
+    Dim formdata: formdata = SmHTTP.formdata( _
+        "@uploaded_file[]", "C:\Users\SMWH\Pictures\Saved Pictures\jkansjxasd202374.ico", "image/png" _
+    )
+    Debug.Print formdata
+    Dim headers: headers = SmHTTP.headers( _
+        "origin", "https://upload.cc", _
+        "pragma", "no-cache", _
+        "referer", "https://upload.cc/", _
+        "X-Requested-With", "XMLHttpRequest" _
+    )
+    Dim Ret: Ret = SmHTTP.HTTP_POST("https://upload.cc/image_upload", formdata, headers)
+    Debug.Print Ret
+    Dim code: code = SmHTTP.GetJSON(Ret, "code")
+    Dim name: name = SmHTTP.GetJSON(Ret, "success_image[0].name")
+
+    ' 断言
+    Debug.Assert Expression(code, "=", 100)
+    Debug.Assert Expression(name, "=", "Logo.png")
+End Sub
+
+
+' 测试 VMLogin 创建浏览器配置文件
+Public Sub test_vmlogin_profile_create_skip()
+    Dim Ret, Cookies
+    Dim user: user = Environ("AJ_USER")
+    Dim pass: pass = Environ("AJ_PASS")
+    'Debug.Print user, pass
+    Dim Json: Json = CreateObject("scripting.filesystemobject").opentextfile("C:\varo\JS_en.txt", 1).readall
+    Dim headers: headers = SmHTTP.headers( _
+        "Content-Type", "application/json" _
+    )
+    'SmHTTP.调试开关 = True
+    Call test_set_auto_param_array_on
+    Ret = SmHTTP.HTTP_POST("https://api.vmlogin.com/v1/profile/create", Json, headers)
+    Call test_set_auto_param_array_off
+    'Debug.Print ret
+    Dim status: status = SmHTTP.GetJSON(Ret, "status")
+    
+    ' 断言
+    Debug.Assert Expression(status, "=", "OK")  ' 判断是否签到成功
 End Sub
 
 
 ' 测试按键精灵论坛签到
-Public Sub test_bbs_anjian_signin()
-    Dim ret, Cookies, headers
+Public Sub test_bbs_anjian_signin_skip()
+    Dim Ret, Cookies, headers
     Dim user: user = Environ("AJ_USER")
     Dim pass: pass = Environ("AJ_PASS")
     'Debug.Print user, pass
@@ -475,11 +555,11 @@ Public Sub test_bbs_anjian_signin()
         "login", "", _
         "expires", "43200" _
     )
-    'SmHTTP.调试开关 = True
+    ' SmHTTP.调试开关 = True
     Call test_set_auto_param_array_on
     ' 登录论坛账号
-    ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", data)
-    Debug.Assert InStr(ret, user)  ' 判断是否登录成功
+    Ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/login.aspx?referer=forumindex.aspx", data)
+    Debug.Assert InStr(Ret, user)  ' 判断是否登录成功
     Cookies = SmHTTP.getCookies()
     ' 打卡签到
     data = SmHTTP.data( _
@@ -488,18 +568,19 @@ Public Sub test_bbs_anjian_signin()
     headers = SmHTTP.headers( _
         "Referer", "http://bbs.anjian.com/" _
     )
-    ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", data, headers, Cookies)
+    Ret = SmHTTP.HTTP_POST("http://bbs.anjian.com/addsignin.aspx?infloat=1&inajax=1", data, headers, Cookies)
+    'Debug.Print Ret
     Call test_set_auto_param_array_off
     
     ' 断言
-    Debug.Assert Expression(InStr(ret, "恭喜您获取本日签到奖励") Or InStr(ret, "你今天已经签到过了"), ">", 0)  ' 判断是否签到成功
+    Debug.Assert Expression(InStr(Ret, "恭喜您获取本日签到奖励") Or InStr(Ret, "你今天已经签到过了"), ">", 0)  ' 判断是否签到成功
 End Sub
 
 
 ' 测试强制服务器返回未压缩的内容
 Public Sub test_http_ret_not_gzip()
     Call test_set_auto_param_array_on
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "detail_enid", "obyrmnqGdwxkXW6Yo3JelBz2D5ZO8a", _
         "note_type", 2, _
         "only_replied", False, _
@@ -511,8 +592,8 @@ Public Sub test_http_ret_not_gzip()
     Dim headers: headers = SmHTTP.headers( _
         "Accept-Encoding", "identity" _
     )
-    Dim ret: ret = SmHTTP.HTTP_POST("https://www.dedao.cn/pc/ledgers/notes/article_comment_list", json, headers)
-    Dim message: message = SmHTTP.GetJSON(ret, "h.c")
+    Dim Ret: Ret = SmHTTP.HTTP_POST("https://www.dedao.cn/pc/ledgers/notes/article_comment_list", Json, headers)
+    Dim message: message = SmHTTP.GetJSON(Ret, "h.c")
     Call test_set_auto_param_array_off
     
     ' 断言
@@ -520,12 +601,22 @@ Public Sub test_http_ret_not_gzip()
 End Sub
 
 
+' 测试smos-cdn
+Public Sub test_http_ret_smos_cdn()
+    Dim Json: Json = SmHTTP.HTTP_GET("https://cname-china.vercel-dns.com/Ver/SmHTTP.json", "Host: smos-cdn.vercel.app")
+    Dim name: name = SmHTTP.GetJSON(Json, "name")
+    
+    ' 断言
+    Debug.Assert Expression(name, "=", "神梦HTTP请求插件")
+End Sub
+
+
 ' 测试获取QQ昵称
 Public Sub test_get_qq_nick_name()
     Dim qq: qq = "1042207232"
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_GET("https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "UTF-8")
-    Dim name: name = SmHTTP.GetJSON(ret, "[" + CStr(qq) + "][6]")
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "UTF-8")
+    Dim name: name = SmHTTP.GetJSON(Ret, "[" + CStr(qq) + "][6]")
     Call test_set_auto_param_array_off
 
     ' 断言
@@ -537,8 +628,8 @@ End Sub
 Public Sub test_download_qq_avatar_url()
     Dim qq: qq = 1042207232
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_GET("https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "UTF-8")
-    Dim img_src: img_src = SmHTTP.GetJSON(ret, "[" + CStr(qq) + "][0]")
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://users.qzone.qq.com/fcg-bin/cgi_get_portrait.fcg?uins=" & qq, "UTF-8")
+    Dim img_src: img_src = SmHTTP.GetJSON(Ret, "[" + CStr(qq) + "][0]")
     Call test_set_auto_param_array_off
 
     ' 断言
@@ -550,29 +641,29 @@ End Sub
 Public Sub test_download_qq_qlogo()
     Dim qq: qq = 1042207232
     Call test_set_auto_param_array_on
-    Dim ret: ret = SmHTTP.HTTP_GET("http://q1.qlogo.cn/g?b=qq&s=100&nk=" & qq)
+    Dim Ret: Ret = SmHTTP.HTTP_GET("http://q1.qlogo.cn/g?b=qq&s=100&nk=" & qq)
     Call test_set_auto_param_array_off
     
     ' 断言
-    Debug.Assert Expression(TypeName(ret), "=", "Byte()")
-    Debug.Assert Expression(LenB(ret), "=", 16893)
+    Debug.Assert Expression(TypeName(Ret), "=", "Byte()")
+    Debug.Assert Expression(LenB(Ret), "=", 16893)
 End Sub
 
 
 
 ' 测试百度翻译(英译中)
-Public Sub test_Translate_Baidu()
+Public Sub test_Translate_Baidu_skip()
     Dim enStr: enStr = "I Love You"
     Dim timestamp: timestamp = DateDiff("s", "1970-1-1 0:0:0", DateAdd("h", -8, Now)) & Right(CLng(Timer() * 1000), 3)
-    Dim ret: ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
-    Dim L: L = InStr(1, ret, "var s_domain = {", vbTextCompare): Debug.Assert L > 0
-    Dim r: r = InStr(L, ret, "};", vbTextCompare): Debug.Assert r > 0
-    Dim s_domain: s_domain = Mid(ret, L, r - L + 1)
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://www.baidu.com/")
+    Dim L: L = InStr(1, Ret, "var s_domain = {", vbTextCompare): Debug.Assert L > 0
+    Dim r: r = InStr(L, Ret, "};", vbTextCompare): Debug.Assert r > 0
+    Dim s_domain: s_domain = Mid(Ret, L, r - L + 1)
     Dim sensearch: sensearch = SmHTTP.GetJSON(s_domain, "ssllist['sensearch.baidu.com']")
-    ret = SmHTTP.HTTP_GET("http://" & sensearch & "/sensearch/selecttext?cb=jQuery_Fun_" & timestamp & "&q=" & enStr & "&_=" & timestamp)
-    Dim errno: errno = SmHTTP.GetJSON(ret, "errno")
-    Dim result: result = SmHTTP.GetJSON(ret, "data.result")
-    
+    Ret = SmHTTP.HTTP_GET("http://" & sensearch & "/sensearch/selecttext?cb=jQuery_Fun_" & timestamp & "&q=" & enStr & "&_=" & timestamp)
+    Dim errno: errno = SmHTTP.GetJSON(Ret, "errno")
+    Dim result: result = SmHTTP.GetJSON(Ret, "data.result")
+
     ' 断言
     Debug.Assert Expression(errno, "=", 0)
     Debug.Assert Expression(result, "=", "我爱你")
@@ -585,13 +676,13 @@ End Sub
 Public Sub test_Translate_Microsoft()
     Dim enStr: enStr = "I Love You"
     Dim authCode: authCode = SmHTTP.HTTP_GET("https://edge.microsoft.com/translate/auth")
-    Dim json: json = "[" & SmHTTP.JsonData( _
+    Dim Json: Json = "[" & SmHTTP.Jsondata( _
         "Text", enStr _
     ) & "]"
     Dim headers: headers = SmHTTP.headers( _
         "Authorization", "Bearer " & authCode _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://api-edge.cognitive.microsofttranslator.com/translate?from=&to=zh-Hans&api-version=3.0&includeSentenceLength=true", json, headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://api-edge.cognitive.microsofttranslator.com/translate?from=&to=zh-Hans&api-version=3.0&includeSentenceLength=true", Json, headers)
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "[0].translations[0].text")
     
@@ -606,10 +697,10 @@ End Sub
 ' 中文：zh
 Public Sub test_Translate_AliBaba()
     Dim enStr: enStr = "I Love You"
-    Dim ret: ret = SmHTTP.HTTP_GET("https://translate.alibaba.com/api/translate/csrftoken")
-    Dim ali_uuid: ali_uuid = SmHTTP.GetJSON(ret, "token")
-    Dim dataName: dataName = SmHTTP.GetJSON(ret, "parameterName")
-    Dim headerName: headerName = SmHTTP.GetJSON(ret, "headerName")
+    Dim Ret: Ret = SmHTTP.HTTP_GET("https://translate.alibaba.com/api/translate/csrftoken")
+    Dim ali_uuid: ali_uuid = SmHTTP.GetJSON(Ret, "token")
+    Dim dataName: dataName = SmHTTP.GetJSON(Ret, "parameterName")
+    Dim headerName: headerName = SmHTTP.GetJSON(Ret, "headerName")
     Dim fromData: fromData = SmHTTP.formdata( _
         "srcLang", "auto", _
         "tgtLang", "zh", _
@@ -637,20 +728,20 @@ End Sub
 ' 测试腾讯交互翻译(英译中)
 ' 英文：en
 ' 中文：zh
-Public Sub test_Translate_TencentQQ()
+Public Sub test_Translate_TencentQQ_skip()
     Dim enStr: enStr = "I Love You"
-    Dim json: json = SmHTTP.JsonData( _
-        "header", SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
+        "header", SmHTTP.Jsondata( _
             "fn", "auto_translation" _
         ), _
         "type", "plain", _
         "model_category", "normal", _
         "text_domain", "general", _
-        "source", SmHTTP.JsonData( _
+        "source", SmHTTP.Jsondata( _
             "lang", "auto", _
             "text_list", Array(enStr) _
         ), _
-        "target", SmHTTP.JsonData( _
+        "target", SmHTTP.Jsondata( _
             "lang", "zh" _
         ) _
     )
@@ -659,7 +750,7 @@ Public Sub test_Translate_TencentQQ()
         "Origin", "https://transmart.qq.com", _
         "Referer", "https://transmart.qq.com/" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://transmart.qq.com/api/imt", json, headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://transmart.qq.com/api/imt", Json, headers)
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "auto_translation[0]")
     
@@ -672,7 +763,7 @@ End Sub
 ' 测试 DeepL 翻译(英译中)
 ' 英文：EN
 ' 中文：ZH
-Public Sub test_Translate_DeepL()
+Public Sub test_Translate_DeepL_skip()
     Dim enStr: enStr = "I Love You"
     Dim from: from = "auto"
     Dim lang: lang = "ZH"
@@ -682,10 +773,10 @@ Public Sub test_Translate_DeepL()
     Dim iCount: iCount = Len(enStr) - Len(Replace(enStr, "i", "")): n = n + iCount
     Dim timestamp: timestamp = r + (n - r Mod n)
     Dim jobsJSON: jobsJSON = "[" & _
-        SmHTTP.JsonData( _
+        SmHTTP.Jsondata( _
             "kind", "default", _
             "sentences", "[" & _
-                SmHTTP.JsonData( _
+                SmHTTP.Jsondata( _
                     "text", enStr, _
                     "id", 1, _
                     "prefix", "" _
@@ -696,10 +787,10 @@ Public Sub test_Translate_DeepL()
             "preferred_num_beams", 4 _
         ) & _
     "]"
-    Dim langJSON: langJSON = SmHTTP.JsonData( _
+    Dim langJSON: langJSON = SmHTTP.Jsondata( _
         "target_lang", lang, _
-        "preference", SmHTTP.JsonData( _
-            "weight", SmHTTP.JsonData( _
+        "preference", SmHTTP.Jsondata( _
+            "weight", SmHTTP.Jsondata( _
                 "DE", 0.18427, _
                 "EN", IIf(from = "EN", 9.93878, 5.90582), _
                 "ES", 0.13236, "FR", 0.16311, "IT", 0.11621, "JA", 0.17963, "NL", 0.1865, "PL", 0.11549, "PT", 0.10159, "RU", 0.10577, _
@@ -712,14 +803,14 @@ Public Sub test_Translate_DeepL()
         ), _
         "source_lang_user_selected", from _
     )
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "jsonrpc", "2.0", _
         "method", "LMT_handle_jobs", _
-        "params", SmHTTP.JsonData( _
+        "params", SmHTTP.Jsondata( _
             "jobs", jobsJSON, _
             "lang", langJSON, _
             "priority", 1, _
-            "commonJobParams", SmHTTP.JsonData( _
+            "commonJobParams", SmHTTP.Jsondata( _
                 "mode", "translate", _
                 "textType", "plaintext", _
                 "browserType", 1 _
@@ -728,21 +819,21 @@ Public Sub test_Translate_DeepL()
         ), _
         "id", deepl_id _
     )
-    json = Replace(json, "hod"":""", IIf((deepl_id + 3) Mod 13 = 0 Or (deepl_id + 5) Mod 29 = 0, "hod"" : """, "hod"": """))
+    Json = Replace(Json, "hod"":""", IIf((deepl_id + 3) Mod 13 = 0 Or (deepl_id + 5) Mod 29 = 0, "hod"" : """, "hod"": """))
     'Debug.Print json
     Dim headers: headers = SmHTTP.headers( _
         "authority", "www2.deepl.com", _
         "Origin", "https://www.deepl.com", _
         "Referer", "https://www.deepl.com/" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://www2.deepl.com/jsonrpc", json, headers)
+    Dim result: result = SmHTTP.HTTP_POST("https://www2.deepl.com/jsonrpc", Json, headers)
     'Debug.Print result
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "result.translations[0].beams[0].sentences[0].text")
 
     ' 断言
-    'Debug.Assert Expression(status, "=", 200)
-    'Debug.Assert Expression(result, "=", "我爱你")
+    Debug.Assert Expression(status, "=", 200)
+    Debug.Assert Expression(result, "=", "我爱你")
 End Sub
 
 
@@ -797,7 +888,7 @@ Public Sub test_Translate_SogouWeb()
         "transto", lang, _
         "model", "general" _
     )
-    Dim json: json = SmHTTP.JsonData( _
+    Dim Json: Json = SmHTTP.Jsondata( _
         "from", from, _
         "to", lang, _
         "text", enStr, _
@@ -815,7 +906,7 @@ Public Sub test_Translate_SogouWeb()
         "Pragma", "no-cache", _
         "Cache-Control", "no-cache" _
     )
-    Dim result: result = SmHTTP.HTTP_POST("https://fanyi.sogou.com/api/transpc/text/result", json, headers, Cookies)
+    Dim result: result = SmHTTP.HTTP_POST("https://fanyi.sogou.com/api/transpc/text/result", Json, headers, Cookies)
     ' Debug.Print result
     Dim status: status = SmHTTP.GetStatus()
     If status = 200 Then result = SmHTTP.GetJSON(result, "data.translate.dit")
@@ -855,10 +946,10 @@ End Sub
 Public Sub test_http_download()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png"
     Dim Path: Path = Environ("TEMP") & "\logo1.png"
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoad(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", 1)
+    Debug.Assert Expression(Ret, "=", 1)
 End Sub
 
 
@@ -866,10 +957,10 @@ End Sub
 Public Sub test_http_download_invalid_url()
     Dim url: url = "http://invalid.url"
     Dim Path: Path = Environ("TEMP") & "\file.txt"
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoad(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", 0)
+    Debug.Assert Expression(Ret, "=", 0)
 End Sub
 
 
@@ -877,10 +968,10 @@ End Sub
 Public Sub test_http_download_empty_url()
     Dim url: url = ""
     Dim Path: Path = Environ("TEMP") & "\EmptyURLFile.txt"
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoad(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", 0)
+    Debug.Assert Expression(Ret, "=", 0)
 End Sub
 
 
@@ -888,10 +979,10 @@ End Sub
 Public Sub test_http_download_invalid_path()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png"
     Dim Path: Path = "X:\Invalid\Path\file.txt"
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoad(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", 0)
+    Debug.Assert Expression(Ret, "=", 0)
 End Sub
 
 
@@ -899,10 +990,10 @@ End Sub
 Public Sub test_http_download_empty_path()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png"
     Dim Path: Path = ""
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoad(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", 0)
+    Debug.Assert Expression(Ret, "=", 0)
 End Sub
 
 
@@ -910,10 +1001,10 @@ End Sub
 Public Sub test_http_downloadEx()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png|http://res2.mobileanjian.com/Advert/20230531/139355dc1da4409f80f852b6523f8051.png"
     Dim Path: Path = Environ("TEMP") & "\logo1.png|" & Environ("TEMP") & "\139355dc1da4409f80f852b6523f8051.png"
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoadEx(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", "")
+    Debug.Assert Expression(Ret, "=", "")
 End Sub
 
 
@@ -921,10 +1012,10 @@ End Sub
 Public Sub test_http_downloadEx_invalid_url()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png|http://res2.mobileanjian.com/Advert/20230531/139355dc1da4409f80f852b6523f8051.png|http://invalid.url"
     Dim Path: Path = Environ("TEMP") & "\logo1.png|" & Environ("TEMP") & "\139355dc1da4409f80f852b6523f8051.png|" & Environ("TEMP") & "\invalid.url"
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoadEx(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", "http://invalid.url," & Environ("TEMP") & "\invalid.url")
+    Debug.Assert Expression(Ret, "=", "http://invalid.url," & Environ("TEMP") & "\invalid.url")
 End Sub
 
 
@@ -932,10 +1023,10 @@ End Sub
 Public Sub test_http_downloadEx_empty_url()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png|http://res2.mobileanjian.com/Advert/20230531/139355dc1da4409f80f852b6523f8051.png"
     Dim Path: Path = Environ("TEMP") & "\logo1.png|" & Environ("TEMP") & "\139355dc1da4409f80f852b6523f8051.png|" & Environ("TEMP") & "\EmptyURLFileEx.txt"
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoadEx(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", "," & Environ("TEMP") & "\EmptyURLFileEx.txt")
+    Debug.Assert Expression(Ret, "=", "," & Environ("TEMP") & "\EmptyURLFileEx.txt")
 End Sub
 
 
@@ -943,10 +1034,10 @@ End Sub
 Public Sub test_http_downloadEx_invalid_path()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png|http://res2.mobileanjian.com/Advert/20230531/139355dc1da4409f80f852b6523f8051.png|http://files.anjian.com/avatars/avatars/upload/002/69/99/98_avatar_middle.jpg"
     Dim Path: Path = Environ("TEMP") & "\logo1.png|" & Environ("TEMP") & "\139355dc1da4409f80f852b6523f8051.png|X:\Invalid\Path\fileEx.txt"
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoadEx(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", "http://files.anjian.com/avatars/avatars/upload/002/69/99/98_avatar_middle.jpg,X:\Invalid\Path\fileEx.txt")
+    Debug.Assert Expression(Ret, "=", "http://files.anjian.com/avatars/avatars/upload/002/69/99/98_avatar_middle.jpg,X:\Invalid\Path\fileEx.txt")
 End Sub
 
 
@@ -954,146 +1045,176 @@ End Sub
 Public Sub test_http_downloadEx_empty_path()
     Dim url: url = "https://bbs.anjian.com/templates/default/Images/logo1.png|http://res2.mobileanjian.com/Advert/20230531/139355dc1da4409f80f852b6523f8051.png|http://files.anjian.com/avatars/avatars/upload/002/69/99/98_avatar_middle.jpg"
     Dim Path: Path = Environ("TEMP") & "\logo1.png|" & Environ("TEMP") & "\139355dc1da4409f80f852b6523f8051.png|"
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path)
+    Dim Ret: Ret = SmHTTP.HTTP_DownLoadEx(url, Path)
 
     ' 断言
-    Debug.Assert Expression(ret, "=", "http://files.anjian.com/avatars/avatars/upload/002/69/99/98_avatar_middle.jpg,")
+    Debug.Assert Expression(Ret, "=", "http://files.anjian.com/avatars/avatars/upload/002/69/99/98_avatar_middle.jpg,")
 End Sub
 
 
 ' 测试文本转原神语音，并下载语音文件
-Public Sub test_http_download_TTS_yuanshen()
-    Dim text: text = "没想到没想到，胡桃我现在力如泉涌，心似雄鹰，非常有自信哦。"
-    Dim api: api = "https://genshinvoice.top/api?"
-    Dim Args: Args = SmHTTP.data( _
-        "speaker", "胡桃_ZH", _
-        "text", text, _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
+Public Sub test_http_download_TTS_yuanshen_skip()
+    Dim text: text = "你已经很优秀了，我知道你一直在努力守护着自我，我喜欢这样的你，真的很喜欢，所以，可以稍稍休息一下了，等你睁开眼，我还在这里。"
+    Dim Json: Json = SmHTTP.Jsondata( _
+        "data", Array( _
+            text, _
+            "甘雨_ZH", _
+            0.2, _
+            0.6, _
+            0.8, _
+            1, _
+            "ZH", _
+            Null, _
+            "Happy", _
+            "Text prompt", _
+            "", _
+            0.7 _
+        ), _
+        "event_data", Null, _
+        "fn_index", 0, _
+        "session_hash", TestTool.GetGUID() _
     )
-    Dim url: url = api & Args
     Dim Path: Path = Environ("TEMP") & "\胡桃.wav"
-    Dim ret: ret = SmHTTP.HTTP_DownLoad(url, Path)
-    'Dim pRet: pRet = PlayWAV(Path): Call StopWAV
-    
+    Dim Ret: Ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
+    'Debug.Print ret
+    Dim status, name: status = SmHTTP.GetStatus()
+    If status = 200 Then status = SmHTTP.GetJSON(Ret, "data[0]")
+    If status = "Success" Then name = SmHTTP.GetJSON(Ret, "data[1].name")
+    Ret = SmHTTP.HTTP_DownLoad("https://v2.genshinvoice.top/file=" & name, Path)
+    Dim pRet: pRet = PlayWAV(Path): Call StopWAV
+
     ' 断言
-    'Debug.Assert Expression(pRet, "=", True)
-    Debug.Assert Expression(ret, "=", 1)
+    Debug.Assert Expression(pRet, "=", True)
+    Debug.Assert Expression(Ret, "=", 1)
 End Sub
 
 
 ' 测试多角色文本转原神语音，并下载语音文件
-Public Sub test_http_downloadEx_TTS_yuanshen()
-    Dim api: api = "https://genshinvoice.top/api?"
-    Dim htArgs: htArgs = SmHTTP.data( _
-        "speaker", "可莉_ZH", _
-        "text", "西风骑士团，「火花骑士」，可莉，前来报到！…呃—后面该说什么词来着？可莉背不下来啦...", _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
+Public Sub test_http_downloadEx_TTS_yuanshen_skip()
+    Dim urlArr(1)
+    Dim Json: Json = SmHTTP.Jsondata( _
+        "data", Array( _
+            "西风骑士团，「火花骑士」，可莉，前来报到！…呃—后面该说什么词来着？可莉背不下来啦...", _
+            "可莉_ZH", _
+            0.2, _
+            0.6, _
+            0.8, _
+            1, _
+            "ZH", _
+            Null, _
+            "Happy", _
+            "Text prompt", _
+            "", _
+            0.7 _
+        ), _
+        "event_data", Null, _
+        "fn_index", 0, _
+        "session_hash", TestTool.GetGUID() _
     )
-    Dim hlydArgs: hlydArgs = SmHTTP.data( _
-        "speaker", "荒泷一斗_ZH", _
-        "text", "嘿嘿，荒泷天下第一斗到此一游！ 哈哈哈哈…咳…", _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
+    Dim Ret: Ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
+    If InStr(Ret, "Success") > 0 Then urlArr(0) = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(Ret, "data[1].name")
+    Json = SmHTTP.Jsondata( _
+        "data", Array( _
+            "嘿嘿，荒泷天下第一斗到此一游！ 哈哈哈哈…咳…", _
+            "荒泷一斗_ZH", _
+            0.2, _
+            0.6, _
+            0.8, _
+            1, _
+            "ZH", _
+            Null, _
+            "Happy", _
+            "Text prompt", _
+            "", _
+            0.7 _
+        ), _
+        "event_data", Null, _
+        "fn_index", 0, _
+        "session_hash", TestTool.GetGUID() _
     )
-    Dim url: url = api & htArgs & "|" & api & hlydArgs
+    Ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
+    If InStr(Ret, "Success") > 0 Then urlArr(1) = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(Ret, "data[1].name")
+    
+    Dim url: url = Join(urlArr, "|")
     Dim Path: Path = Environ("TEMP") & "\可莉.wav|" & Environ("TEMP") & "\荒泷一斗.wav"
     Dim pathArr: pathArr = Split(Path, "|")
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path, "GET")
+    Ret = SmHTTP.HTTP_DownLoadEx(url, Path, "GET")
     Dim pRet
-    'pRet = PlayWAV(pathArr(0)): Call StopWAV
-    'pRet = PlayWAV(pathArr(1)): Call StopWAV
-    
+    pRet = PlayWAV(pathArr(0)): Call StopWAV
+    pRet = PlayWAV(pathArr(1)): Call StopWAV
+
     ' 断言
-    'Debug.Assert Expression(pRet, "=", True)
-    Debug.Assert Expression(ret, "=", "")
+    Debug.Assert Expression(VarType(Ret), "=", vbString)
+    Debug.Assert Expression(Ret, "=", "")
 End Sub
 
 
 
 ' 测试小说多角色文本转原神语音，并下载语音文件
-Public Sub test_http_downloadEx_TTS_yuanshen_ebook()
-    Dim i
-    Dim api: api = "https://genshinvoice.top/api?"
-    Dim sp(8)
+Public Sub test_http_downloadEx_TTS_yuanshen_ebook_skip()
+    Dim i, sp(8), Json, Ret, url, pRet
     Dim 赵倩倩: 赵倩倩 = "荧_ZH"
     Dim 医生: 医生 = "凯亚_ZH"
     Dim 电话: 电话 = "凝光_ZH"
-    sp(0) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "我妈什么时候知道自己脑子里有良性肿瘤？" _
+    sp(0) = Array( _
+        "我妈什么时候知道自己脑子里有良性肿瘤？", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "Astounded", "Text prompt", "", 0.7 _
     )
-    sp(1) = SmHTTP.data( _
-        "speaker", 医生, _
-        "text", "大概半年前，汪女士视线模糊，看东西不清楚，所以到医院就诊。我们建议尽早手术切除，但汪女士想保守治疗，不愿意冒险。手术费加住院费，最多五六万。做手术是最佳方案。" _
+    sp(1) = Array( _
+        "大概半年前，汪女士视线模糊，看东西不清楚，所以到医院就诊。我们建议尽早手术切除，但汪女士想保守治疗，不愿意冒险。手术费加住院费，最多五六万。做手术是最佳方案。", _
+        医生, 0.2, 0.6, 0.8, 1, "ZH", Null, "Earnest", "Text prompt", "", 0.7 _
     )
-    sp(2) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "……变成恶性肿瘤会怎么样？" _
+    sp(2) = Array( _
+        "……变成恶性肿瘤会怎么样？", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "Astounded", "Text prompt", "", 0.7 _
     )
-    sp(3) = SmHTTP.data( _
-        "speaker", 医生, _
-        "text", "即便切除，也有可能多次复发。有病要趁早医，这两天做手术来得及。" _
+    sp(3) = Array( _
+        "即便切除，也有可能多次复发。有病要趁早医，这两天做手术来得及。", _
+        医生, 0.2, 0.6, 0.8, 1, "ZH", Null, "Earnest", "Text prompt", "", 0.7 _
     )
-    sp(4) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "我妈醒来后，我会跟她商量。那手术的事等病人苏醒后再说。" _
+    sp(4) = Array( _
+        "我妈醒来后，我会跟她商量。那手术的事等病人苏醒后再说。", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "sad", "Text prompt", "", 0.7 _
     )
-    sp(5) = SmHTTP.data( _
-        "speaker", 医生, _
-        "text", "麻烦您待会儿去柜台补交住院费用。" _
+    sp(5) = Array( _
+        "麻烦您待会儿去柜台补交住院费用。", _
+        医生, 0.2, 0.6, 0.8, 1, "ZH", Null, "Earnest", "Text prompt", "", 0.7 _
     )
-    sp(6) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "好。钱包里只有101.5块，我哪来的钱交住院费用？" _
+    sp(6) = Array( _
+        "好。钱包里只有101.5块，我哪来的钱交住院费用？", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "sad", "Text prompt", "", 0.7 _
     )
-    sp(7) = SmHTTP.data( _
-        "speaker", 电话, _
-        "text", "您好，您拨打的用户已关机，请稍后再拨……" _
+    sp(7) = Array( _
+        "您好，您拨打的用户已关机，请稍后再拨……", _
+        电话, 0.2, 0.6, 0.8, 1, "ZH", Null, "emotionless", "Text prompt", "", 0.7 _
     )
-    sp(8) = SmHTTP.data( _
-        "speaker", 赵倩倩, _
-        "text", "年终奖到账，我买了理财。我借钱交首付，这会儿背了一屁股债，没有闲钱。" _
+    sp(8) = Array( _
+        "年终奖到账，我买了理财。我借钱交首付，这会儿背了一屁股债，没有闲钱。", _
+        赵倩倩, 0.2, 0.6, 0.8, 1, "ZH", Null, "sad", "Text prompt", "", 0.7 _
     )
-    Dim Args: Args = SmHTTP.data( _
-        "format", "wav", _
-        "language", "ZH", _
-        "length", "1", _
-        "sdp", "0.4", _
-        "noise", "0.6", _
-        "noisew", "0.8" _
-    )
-    Dim urlArr(), pathArr()
-    ReDim urlArr(UBound(sp))
+    Dim pathArr()
     ReDim pathArr(UBound(sp))
     For i = 0 To UBound(sp)
-        urlArr(i) = api & sp(i) & Args
-    Next
-    For i = 0 To UBound(sp)
+        Json = SmHTTP.Jsondata( _
+            "data", sp(i), _
+            "event_data", Null, _
+            "fn_index", 0, _
+            "session_hash", TestTool.GetGUID() _
+        )
+        Ret = SmHTTP.HTTP_POST("https://v2.genshinvoice.top/run/predict", Json)
+        'Debug.Print ret
+        If InStr(Ret, "Success") > 0 Then url = "https://v2.genshinvoice.top/file=" & SmHTTP.GetJSON(Ret, "data[1].name")
         pathArr(i) = Environ("TEMP") & "\" & i & ".wav"
+        Ret = SmHTTP.HTTP_DownLoad(url, pathArr(i))
     Next
-    Dim url: url = Join(urlArr, "|")
-    Dim Path: Path = Join(pathArr, "|")
-    Dim ret: ret = SmHTTP.HTTP_DownLoadEx(url, Path, "GET")
-    Dim pRet
     For i = 0 To UBound(sp)
-        'pRet = PlayWAV(pathArr(i)): Call StopWAV
+        pRet = PlayWAV(pathArr(i)): Call StopWAV
     Next
-    
+
     ' 断言
-    'Debug.Assert Expression(pRet, "=", True)
-    Debug.Assert Expression(ret, "=", "")
+    Debug.Assert Expression(Ret, "=", 1)
 End Sub
+
+
+
+

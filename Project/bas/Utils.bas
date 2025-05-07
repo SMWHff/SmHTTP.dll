@@ -258,7 +258,7 @@ End Function
 
 '读入文件字节集
 Public Function File_ReadByte(ByVal Path As String) As Byte()
-    Dim ADO As stream  '工程引用 Microsoft ActiveX Data Objects 2.5 Libary
+    Dim ADO As stream  '工程引用 Microsoft ActiveX Data Objects 2.8 Libary
 
     Set ADO = CreateObject("ADODB.Stream")
     ADO.Type = 1
@@ -271,7 +271,7 @@ End Function
 
 '写出文件
 Public Function File_WriteByte(ByVal Path As String, ByVal Bytes) As Long
-    Dim ADO As stream
+    Dim ADO As stream   '工程引用 Microsoft ActiveX Data Objects 2.8 Libary
     Dim Ret As Long
 
     If VarType(Bytes) = 8209 Then
@@ -295,14 +295,14 @@ End Function
 ' 保存字节集到文件
 Public Function SaveFile(ByVal Path As String, ByVal Data As Variant) As Long
     Dim Handle  As Long
-    Dim Bin()   As Byte
+    Dim bin()   As Byte
     Dim Ret     As Long
     
     If Len(Path) > 0 And VarType(Data) = vbArray + vbByte Then
-        Bin() = Data
+        bin() = Data
         Handle = FreeFile() '获得文件的句柄
         Open Path For Binary As #Handle
-            Put #Handle, , Bin()
+            Put #Handle, , bin()
         Close #Handle
         If Len(Dir(Path)) > 0 Then Ret = 1
     End If
@@ -311,8 +311,8 @@ End Function
 
 '字节集连接
 Public Function Concat_Byte(ByRef Bin1() As Byte, ByRef Bin2() As Byte) As Byte()
-    Dim ADO As stream  '引用工程 Microsoft ActiveX Data Objects 2.5 Libary
-    Dim Bin() As Byte
+    Dim ADO As stream  '引用工程 Microsoft ActiveX Data Objects 6.1 Libary
+    Dim bin() As Byte
 
     Set ADO = CreateObject("ADODB.Stream")
     ADO.Type = 1
@@ -320,18 +320,18 @@ Public Function Concat_Byte(ByRef Bin1() As Byte, ByRef Bin2() As Byte) As Byte(
     ADO.Write Bin1
     ADO.Write Bin2
     ADO.Position = 0
-    Bin = ADO.Read
+    bin = ADO.Read
     ADO.Close
     Set ADO = Nothing
-    Concat_Byte = Bin
+    Concat_Byte = bin
 End Function
 
 
 '字节集连接
 Public Function Concat_ByteByArray(ByRef Args As Variant) As Byte()
-    Dim ADO     As stream  '引用工程 Microsoft ActiveX Data Objects 2.5 Libary
+    Dim ADO     As stream  '引用工程 Microsoft ActiveX Data Objects 6.1 Libary
     Dim v       As Variant
-    Dim Bin()   As Byte
+    Dim bin()   As Byte
 
     Set ADO = CreateObject("ADODB.Stream")
     ADO.Type = 1
@@ -342,10 +342,10 @@ Public Function Concat_ByteByArray(ByRef Args As Variant) As Byte()
         End If
     Next
     ADO.Position = 0
-    Bin = ADO.Read
+    bin = ADO.Read
     ADO.Close
     Set ADO = Nothing
-    Concat_ByteByArray = Bin
+    Concat_ByteByArray = bin
 End Function
 
 
@@ -384,17 +384,17 @@ End Function
 Public Function T_HexToBin_XML(ByVal HexStr As String) As Byte()
     Dim MD As DOMDocument       '引用工程 Microsoft XML v3.0
     Dim node As IXMLDOMElement
-    Dim Bin() As Byte
+    Dim bin() As Byte
 
     On Error Resume Next
     Set MD = CreateObject("Msxml2.DOMDocument")
     Set node = MD.createElement("binary")
     node.dataType = "bin.hex"
     node.Text = HexStr
-    Bin() = node.nodeTypedValue
+    bin() = node.nodeTypedValue
     Set node = Nothing
     Set MD = Nothing
-    T_HexToBin_XML = Bin()
+    T_HexToBin_XML = bin()
 End Function
 
 
