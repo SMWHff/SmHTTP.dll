@@ -681,7 +681,64 @@ TracePrint TypeName(SmHTTP.GetJSON(sJSON, "array[3]"))
 TracePrint SmHTTP.GetJSON(sJSON, "array[4]")
 </td></tr></table>	
 	
-	
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='Base64Encode'></a>Base64Encode Base64编码
+</td></tr><tr><th>命令功能：</th><td>
+Base64编码
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，内容或路径
+参数2【可选】：逻辑型，是否文件，True=文件；False=文本
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+文本型，返回编码内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_Base64Encode" class="vb" id="code8_Base64Encode">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim b64_str, b64_path_str, b64_path_file
+b64_str = SmHTTP.Base64Encode("SMWH:123456")
+b64_path_str = SmHTTP.Base64Encode("C:\Windows\system32\notepad.exe", False)
+b64_path_file = SmHTTP.Base64Encode("C:\Windows\system32\notepad.exe")
+    
+' 输出结果
+TracePrint b64_str
+TracePrint b64_path_str
+TracePrint b64_path_file
+</td></tr></table>	
+
+
+
+<table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
+<tr><th width='100px'>命令名称：</th><td class='name'>
+<a name='Base64Decode'></a>Base64Decode Base64编码
+</td></tr><tr><th>命令功能：</th><td>
+Base64编码
+</td></tr><tr><th>命令参数：</th><td class='canshu'><pre>
+参数1【必选】：文本型，B64编码内容
+参数2【可选】：文本型，文件路径
+
+</td></tr><tr><th>返回值：</th><td class='fanhui'>
+任意型，返回原始内容
+</td></tr><tr><th><span class='red'>脚本例子：</span>
+</th><td class='lizi'><pre name="code8_Base64Decode" class="vb" id="code8_Base64Decode">
+Import "SmHTTP.dll"
+Set SmHTTP = CreateObject("SMWH.SmHTTP")
+
+Dim str, path_str
+str = SmHTTP.Base64Decode("U01XSDoxMjM0NTY=")
+path_str = SmHTTP.Base64Decode("QzpcV2luZG93c1xzeXN0ZW0zMlxub3RlcGFkLmV4ZQ==")
+path_file = SmHTTP.Base64Decode("QzpcV2luZG93c1xzeXN0ZW0zMlxub3RlcGFkLmV4ZQ==", "C:\1.txt")
+    
+' 输出结果
+TracePrint str
+TracePrint path_str
+TracePrint path_file
+</td></tr></table>	
+
 
 
 <table width='100%' border='0' cellpadding='0' cellspacing='1' class='ts'>
@@ -1461,6 +1518,8 @@ End If
     dp.SyntaxHighlighter.HighlightAll('code8_JSON_toObject',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_JSON_toString',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_GetJSON',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_Base64Encode',true,true,false);
+    dp.SyntaxHighlighter.HighlightAll('code8_Base64Decode',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_HTTP_GET',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_HTTP_POST',true,true,false);
     dp.SyntaxHighlighter.HighlightAll('code8_HTTP_HEAD',true,true,false);

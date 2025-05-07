@@ -238,6 +238,18 @@
                         <param name="ImageNumber" value="11">
                     </OBJECT>
                 </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="Base64Encode Base64编码">
+                        <param name="Local" value="html/其他命令/Base64Encode.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
+                <LI> <OBJECT type="text/sitemap">
+                        <param name="Name" value="Base64Decode Base64解码">
+                        <param name="Local" value="html/其他命令/Base64Decode.html">
+                        <param name="ImageNumber" value="11">
+                    </OBJECT>
+                </LI>
             </UL>
         </UL>
     </BODY>

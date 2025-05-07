@@ -45,5 +45,7 @@ html\其他命令\UpdateCookies.html
 html\其他命令\GetJSON.html
 html\其他命令\JSON_toObject.html
 html\其他命令\JSON_toString.html
+html\其他命令\Base64Encode.html
+html\其他命令\Base64Decode.html
 [WINDOWS]
 Main="神梦HTTP请求插件文档","SmHTTP.hhc","SmHTTP.hhk","html\常见问题\【更新日志】.html","html\常见问题\【更新日志】.html",,,,,144672,270,14462,[50,50,750,550],0x0000000,,,,,0,0
