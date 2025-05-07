@@ -7,16 +7,19 @@ Sub Main()
     Dim testName    As String
     Dim result      As String
     
-    'Call CallByName(TestSmHTTP, "test_bbs_anjian_signin", VbMethod): End
+'    Call CallByName(TestSmHTTP, "test_base64_decode_str", VbMethod): End
     
     ' 执行测试用例
     testNameAll = TestTool.GetFuncNameAll(App.Path & "\TestCase\cTestSmHTTP.cls")
     For i = 0 To UBound(testNameAll)
         testName = testNameAll(i)
-        Debug.Print "[" & Format$(i / UBound(testNameAll), "00%") & "]", testName
-        Call CallByName(TestSmHTTP, testName, VbMethod)
+        If InStr(testName, "skip") > 0 Then
+            Debug.Print "[" & Format$(i / UBound(testNameAll), "00%") & "]", "[SKIP]", testName
+        Else
+            Call CallByName(TestSmHTTP, testName, VbMethod)
+            Debug.Print "[" & Format$(i / UBound(testNameAll), "00%") & "]", "[PASS]", testName
+        End If
     Next
-    
     Debug.Print "脚本已经停止运行"
 End Sub
 
