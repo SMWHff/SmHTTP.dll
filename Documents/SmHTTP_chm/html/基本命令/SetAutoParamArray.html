@@ -50,13 +50,29 @@
 </th><td class='lizi'><pre name="code8_SetAutoParamArray" class="vb" id="code8_SetAutoParamArray">
 Dim Ret
 
-' 开启自动识别对应传入参数
+' ============================【开启】自动识别对应传入参数============================
 Ret = Plugin.SmHTTP.SetAutoParamArray(True)
 TracePrint Ret
 
-' 关闭自动识别对应传入参数
+' 开启了参数自动化识别，带认证代理IP格式必须为：【用户名:密码@IP:端口号】
+Call Plugin.SmHTTP.SetAutoParamArray(True)
+带认证代理IP = 代理用户名 & ":" & 代理密码 & "@" & 代理IP
+result = Plugin.SmHTTP.HTTP_GET(URL, 带认证代理IP)
+TracePrint result
+
+
+
+
+
+
+' ============================【关闭】自动识别对应传入参数============================
 Ret = Plugin.SmHTTP.SetAutoParamArray(False)
 TracePrint Ret
+
+' 未开启参数自动化识别，带认证代理IP格式可以正常写
+Call Plugin.SmHTTP.SetAutoParamArray(False)
+result = Plugin.SmHTTP.HTTP_GET(URL, "", "", "UTF-8", 30, True, 代理IP, 代理用户名, 代理密码)
+TracePrint result
 </td></tr></table>	
 	
 	

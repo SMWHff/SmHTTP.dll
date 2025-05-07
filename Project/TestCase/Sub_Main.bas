@@ -7,7 +7,7 @@ Sub Main()
     Dim testName    As String
     Dim result      As String
     
-    Call CallByName(TestSmHTTP, "test_vmlogin_profile_create", VbMethod): End
+    'Call CallByName(TestSmHTTP, "test_bbs_anjian_signin", VbMethod): End
     
     ' ÷¥––≤‚ ‘”√¿˝
     testNameAll = TestTool.GetFuncNameAll(App.Path & "\TestCase\cTestSmHTTP.cls")

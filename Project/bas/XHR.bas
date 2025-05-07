@@ -237,7 +237,8 @@ Begin:
         Case "DIGEST"   ' 摘要认证
             Headers = Headers & vbCrLf & "WWW-Authenticate: DIGEST 摘要信息"
         Case "FORMBASE" ' 表单认证
-            
+        Case "BEARER"      ' OAuth 和 JWT 授权
+            Headers = Headers & vbCrLf & "Authorization: Bearer 授权信息"
         End Select
     End If
     
